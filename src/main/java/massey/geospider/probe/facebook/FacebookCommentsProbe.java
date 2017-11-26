@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import massey.geospider.api.http.HttpHelper;
 import massey.geospider.boot.GeoCmdLine;
+import massey.geospider.conf.PropReader;
 import massey.geospider.global.GeoConstants;
 import massey.geospider.message.facebook.FacebookComment;
 import massey.geospider.message.response.GeoResponse;
@@ -128,7 +129,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
             urlString.append(FB_VERSION).append(SEPARATOR);
             urlString.append(postId).append(SEPARATOR);
             urlString.append("comments?access_token=").append(FB_ACCESS_TOKEN);
-            urlString.append("&pretty=0&limit=").append(FB_PAGE_LIMIT);
+            urlString.append("&pretty=0&limit=").append(PropReader.getReader().get(FB_PAGE_LIMIT_PROP_NAME));
             log.info(urlString);
             return urlString.toString();
         } else {

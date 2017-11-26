@@ -1,7 +1,7 @@
 package massey.geospider.global;
 
 /**
- * Most global variables are defined in this class
+ * All global variables are defined in this class
  * 
  * @author Frank Hou (faming.hou@gmail.com)
  *
@@ -40,7 +40,7 @@ public interface GeoConstants {
     }
      * </pre>
      */
-    public static final int FB_PAGE_LIMIT = 100;
+    public static final String FB_PAGE_LIMIT_PROP_NAME = "FB_PAGE_LIMIT";
 
     // public static final String SEPARATOR =
     // System.getProperty("file.separator");

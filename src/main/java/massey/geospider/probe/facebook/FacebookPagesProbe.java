@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import massey.geospider.api.http.HttpHelper;
 import massey.geospider.boot.GeoCmdLine;
+import massey.geospider.conf.PropReader;
 import massey.geospider.global.GeoConstants;
 import massey.geospider.message.facebook.FacebookPage;
 import massey.geospider.message.response.GeoResponse;
@@ -133,7 +134,7 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
             urlString.append(FB_VERSION).append(SEPARATOR);
             urlString.append("search?access_token=").append(FB_ACCESS_TOKEN);
             urlString.append("&pretty=0&q=").append(geoCmdLine.getKeywordOptionValue());
-            urlString.append("&type=page&limit=").append(FB_PAGE_LIMIT);
+            urlString.append("&type=page&limit=").append(PropReader.getReader().get(FB_PAGE_LIMIT_PROP_NAME));
             log.info(urlString);
             return urlString.toString();
         } else {
