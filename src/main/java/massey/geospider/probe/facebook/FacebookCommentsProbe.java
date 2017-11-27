@@ -55,9 +55,13 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
     }
 
     @Override
-    protected void doPreCollect() {
+    protected void doPreCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("FacebookCommentsProbe#doPreCollect()");
         log.info("Fetching all comments of the post " + postId);
+        if (inputGeoResponse == null)
+            log.info("The first page of comments searching...");
+        else
+            log.info("The next page of comments searching...");
     }
 
     /**

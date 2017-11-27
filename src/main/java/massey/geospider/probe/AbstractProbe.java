@@ -25,7 +25,7 @@ public abstract class AbstractProbe implements Probe {
      */
     @Override
     public void collect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
-        doPreCollect();
+        doPreCollect(geoCmdLine, inputGeoResponse);
         GeoResponse geoResponse = doRequest(geoCmdLine, inputGeoResponse);
         doProcessResponse(geoCmdLine, geoResponse);
         doPostCollect(geoCmdLine, geoResponse);
@@ -34,8 +34,13 @@ public abstract class AbstractProbe implements Probe {
 
     /**
      * Does preparation work for this collecting task
+     * 
+     * @param geoCmdLine
+     *            the values of the arguments which were filled by user.
+     * @param inputGeoResponse
+     *            an input GeoResponse object
      */
-    protected void doPreCollect() {
+    protected void doPreCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("doPreCollect");
     }
 
