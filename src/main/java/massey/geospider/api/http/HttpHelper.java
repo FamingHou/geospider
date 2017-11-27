@@ -4,8 +4,6 @@
 package massey.geospider.api.http;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -41,9 +39,7 @@ public class HttpHelper {
     public static String doGet(String urlString) {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         try {
-            URL url = new URL(urlString);
-            URI uri = new URI(url.getProtocol(), url.getHost(), url.getPath(), url.getQuery(), null);
-            HttpGet httpGet = new HttpGet(uri);
+            HttpGet httpGet = new HttpGet(urlString);
             log.info("Executing request: ===> " + httpGet.getRequestLine());
             // Create a custom response handler
             ResponseHandler<String> responseHandler = new ResponseHandler<String>() {

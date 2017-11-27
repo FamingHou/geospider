@@ -23,7 +23,7 @@ public class PropReader {
 
     private static PropReader single = null;
 
-    public static final String PROP_FILE_NAME = "geospider.properties";
+    private static final String PROP_FILE_NAME = "geospider.properties";
     final Properties props = new Properties();
 
     /**
