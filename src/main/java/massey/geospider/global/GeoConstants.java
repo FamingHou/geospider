@@ -20,10 +20,11 @@ public interface GeoConstants {
     public static final String FLICKR_OPTION = "flickr";
 
     /** Facebook constants */
-    public static final String FB_DOMAIN_NAME = "https://graph.facebook.com";
-    public static final String FB_VERSION = "v2.11";
-    public static final String FB_ACCESS_TOKEN = "2058156934406300|NmjKHgsdzUQV05v2nQpogKVh3OU";
-
+    public static final String FB_DOMAIN_NAME_PROP_NAME = "FB_DOMAIN_NAME";
+    public static final String FB_VERSION_PROP_NAME = "FB_VERSION";
+    public static final String FB_ACCESS_TOKEN_PROP_NAME = "FB_ACCESS_TOKEN";
+    public static final String SEPARATOR = "/";
+    
     /**
      * the number of records for each Facebook query, which is shared by page,
      * post and comment for the time being.
@@ -42,8 +43,6 @@ public interface GeoConstants {
      */
     public static final String FB_PAGE_LIMIT_PROP_NAME = "FB_PAGE_LIMIT";
 
-    // public static final String SEPARATOR =
-    // System.getProperty("file.separator");
-    public static final String SEPARATOR = "/";
+
 
 }

@@ -49,7 +49,7 @@ public class PropReader {
      * 
      * @return a singleton PropReader object
      */
-    public static PropReader getReader() {
+    private static PropReader getReader() {
         if (single == null) {
             synchronized (log) {
                 single = new PropReader();
@@ -60,18 +60,30 @@ public class PropReader {
     }
 
     /**
+     * Searches for the property with the specified key in the property map for
+     * internal usage
+     * 
+     * @param key
+     *            the property key
+     * @return the value in the property map with the specified key
+     */
+    private String getProperty(String key) {
+        String val = props.getProperty(key);
+        if (val == null)
+            throw new IllegalArgumentException(
+                    "The value with the specified key [ " + key + " ] was not found in file " + PROP_FILE_NAME);
+        return val;
+    }
+
+    /**
      * Searches for the property with the specified key in the property map.
      * 
      * @param key
      *            the property key
      * @return the value in the property map with the specified key
      */
-    public String get(String key) {
-        String val = props.getProperty(key);
-        if (val == null)
-            throw new IllegalArgumentException(
-                    "The value with the specified key [ " + key + " ] was not found in file " + PROP_FILE_NAME);
-        return val;
+    public static String get(String key) {
+        return getReader().getProperty(key);
     }
 
 }
