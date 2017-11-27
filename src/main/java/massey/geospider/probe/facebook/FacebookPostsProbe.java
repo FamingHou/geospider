@@ -76,7 +76,7 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
     }
 
     @Override
-    protected void doProcessResponse(GeoResponse inputGeoResponse) {
+    protected void doProcessResponse(GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("FacebookPostsProbe#doProcessResponse()");
         // FacebookPosts level
         FacebookPostsResponse fbPostsRsp = (FacebookPostsResponse) inputGeoResponse;
@@ -84,7 +84,7 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
     }
 
     @Override
-    protected void doPostCollect(GeoResponse inputGeoResponse) {
+    protected void doPostCollect(GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("FacebookPostsProbe#doPostCollect(), fetching comments under one page");
         // FacebookPosts level
         FacebookPostsResponse fbPostsRsp = (FacebookPostsResponse) inputGeoResponse;

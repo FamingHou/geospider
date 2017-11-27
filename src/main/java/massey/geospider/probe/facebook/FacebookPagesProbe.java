@@ -79,18 +79,19 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
      * was constructed
      */
     @Override
-    protected void doProcessResponse(GeoResponse inputGeoResponse) {
+    protected void doProcessResponse(GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("FacebookPagesProbe#doProcessResponse()");
         // FacebookPages level
         FacebookPagesResponse fbPagesRsp = (FacebookPagesResponse) inputGeoResponse;
         // @TODO do filter and persistence
+        // no need to do filter work as all results contain the keyword.
     }
 
     /**
      * Does Probe work to collect all posts under one specific page.
      */
     @Override
-    protected void doPostCollect(GeoResponse inputGeoResponse) {
+    protected void doPostCollect(GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("FacebookPagesProbe#doPostCollect(), fetching posts under one page");
         // FacebookPages level
         FacebookPagesResponse fbPagesRsp = (FacebookPagesResponse) inputGeoResponse;
@@ -106,7 +107,9 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
     @Override
     protected void doNextPageCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("FacebookPagesProbe#doNextPageCollect()");
-
+        // call collect method recursively to search the next page on pages
+        // level.
+        collect(geoCmdLine, inputGeoResponse);
     }
 
     /**

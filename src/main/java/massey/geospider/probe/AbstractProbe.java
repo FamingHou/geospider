@@ -27,8 +27,8 @@ public abstract class AbstractProbe implements Probe {
     public void collect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         doPreCollect();
         GeoResponse geoResponse = doRequest(geoCmdLine, inputGeoResponse);
-        doProcessResponse(geoResponse);
-        doPostCollect(geoResponse);
+        doProcessResponse(geoCmdLine, geoResponse);
+        doPostCollect(geoCmdLine, geoResponse);
         doNextPageCollect(geoCmdLine, geoResponse);
     }
 
@@ -55,23 +55,32 @@ public abstract class AbstractProbe implements Probe {
      * Does work (e.g. persistence) since the geoResponse object had been
      * achieved.
      * 
+     * @param geoCmdLine
+     *            the values of the arguments which were filled by user.
      * @param inputGeoResponse
+     *            an input GeoResponse object
      */
-    protected abstract void doProcessResponse(GeoResponse inputGeoResponse);
+    protected abstract void doProcessResponse(GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse);
 
     /**
+     * Does post work
      * 
+     * @param geoCmdLine
+     *            the values of the arguments which were filled by user.
      * @param inputGeoResponse
+     *            an input GeoResponse object
      */
-    protected void doPostCollect(GeoResponse inputGeoResponse) {
+    protected void doPostCollect(GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("doPostCollect");
     }
 
     /**
+     * Does collecting work of the next page
      * 
      * @param geoCmdLine
+     *            the values of the arguments which were filled by user.
      * @param inputGeoResponse
-     * 
+     *            an input GeoResponse object
      */
     protected void doNextPageCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("doNextPageCollect");

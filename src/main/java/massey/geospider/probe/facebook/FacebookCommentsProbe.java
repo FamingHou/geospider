@@ -77,7 +77,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
     }
 
     @Override
-    protected void doProcessResponse(GeoResponse inputGeoResponse) {
+    protected void doProcessResponse(GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("FacebookCommentsProbe#doProcessResponse()");
         // FacebookComments level
         FacebookCommentsResponse fbCommentsRsp = (FacebookCommentsResponse) inputGeoResponse;
@@ -86,7 +86,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
     }
 
     @Override
-    protected void doPostCollect(GeoResponse inputGeoResponse) {
+    protected void doPostCollect(GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("FacebookCommentsProbe#doPostCollect(), fetching all replies under one comment");
         // FacebookComments level
         FacebookCommentsResponse fbCommentsRsp = (FacebookCommentsResponse) inputGeoResponse;
