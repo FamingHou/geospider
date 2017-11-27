@@ -27,9 +27,13 @@ public abstract class AbstractProbe implements Probe {
     public void collect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         doPreCollect(geoCmdLine, inputGeoResponse);
         GeoResponse geoResponse = doRequest(geoCmdLine, inputGeoResponse);
-        doProcessResponse(geoCmdLine, geoResponse);
-        doPostCollect(geoCmdLine, geoResponse);
-        doNextPageCollect(geoCmdLine, geoResponse);
+        if (geoResponse != null) {
+            doProcessResponse(geoCmdLine, geoResponse);
+            doPostCollect(geoCmdLine, geoResponse);
+            doNextPageCollect(geoCmdLine, geoResponse);
+        } else {
+            log.info("geoResponse is null, which means this is the last page or the request url is invalid.");
+        }
     }
 
     /**
