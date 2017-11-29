@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="SocialMediaRecordMapper">
+
+    <insert id="insertOne" parameterType="SocialMediaRecord">
+        INSERT INTO
+        social_media_record (vendor_record_id, vendor_record_parent_id,
+        message, record_type, vendor_type) VALUES ( #{vendorRecordId},
+        #{vendorRecordParentId}, #{message},
+        #{recordType},
+        #{vendorType});
+    </insert>
+</mapper>
