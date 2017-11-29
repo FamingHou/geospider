@@ -72,7 +72,7 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
         FacebookPagesResponse fbPagesRsp = (FacebookPagesResponse) inputGeoResponse;
         String urlString = buildRequestURL(geoCmdLine, fbPagesRsp);
         if (urlString == null || urlString.trim().equalsIgnoreCase("")) {
-            log.error("||Notice|| url of fetching pages is null or an empty string");
+            log.info("||Notice|| url of fetching pages is null or an empty string");
             return null;
         } else {
             // do http request
@@ -106,7 +106,7 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
             FacebookPage[] fbPageArray = fbPagesRsp.getDatas();
             for (int i = 0; i < fbPageArray.length; i++) {
                 // fetch all posts under one FacebookPage
-                doCollectAllPostsOfOnePage(fbPageArray[i]);
+                doCollectAllPostsOfOnePage(geoCmdLine, fbPageArray[i]);
             }
         }
     }
@@ -231,16 +231,19 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
     /**
      * Collects all posts of one specific page.
      * 
+     * @param geocmdLine
+     *            an object of class GeoCmdLine
      * @param fbPage
+     *            an object of class FacebookPage
      */
-    private void doCollectAllPostsOfOnePage(FacebookPage fbPage) {
+    private void doCollectAllPostsOfOnePage(GeoCmdLine geoCmdLine, FacebookPage fbPage) {
         if (fbPage == null)
             return;
         FacebookPostsProbe fbPostsProbe = new FacebookPostsProbe(fbPage.getId());
         // geoCmdLine is null as no input argument value is needed
         // inputGeoResponse is null as this is the first query, not next paging
         // query
-        fbPostsProbe.collect(null, null);
+        fbPostsProbe.collect(geoCmdLine, null);
     }
 
 }

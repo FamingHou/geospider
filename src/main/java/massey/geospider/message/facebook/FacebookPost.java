@@ -27,6 +27,20 @@ public class FacebookPost extends FacebookMessage {
         this.createdTime = createdTime;
     }
 
+    /**
+     * @return the message
+     */
+    public String getMessage() {
+        return message;
+    }
+
+    /**
+     * @return the createdTime
+     */
+    public Timestamp getCreatedTime() {
+        return createdTime;
+    }
+
     /*
      * (non-Javadoc)
      * 

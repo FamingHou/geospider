@@ -74,7 +74,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
         FacebookCommentsResponse fbCommentsRsp = (FacebookCommentsResponse) inputGeoResponse;
         String urlString = buildRequestURL(geoCmdLine, fbCommentsRsp);
         if (urlString == null || urlString.trim().equalsIgnoreCase("")) {
-            log.error("||Notice|| url of fetching comments is null or an empty string");
+            log.info("||Notice|| url of fetching comments is null or an empty string");
             return null;
         } else {
             String responseString = HttpHelper.doGet(urlString);
@@ -101,7 +101,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
             for (int i = 0; i < fbCommentArray.length; i++) {
                 // fetch all replies under one FacebookComment.
                 // a reply is still a type of class FacebookComment.
-                doCollectAllRepliessOfOneComment(fbCommentArray[i]);
+                doCollectAllRepliessOfOneComment(geoCmdLine, fbCommentArray[i]);
             }
         }
     }
@@ -109,7 +109,9 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
     @Override
     protected void doNextPageCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("FacebookCommentsProbe#doNextPageCollect()");
-
+        // call collect method recursively to search the next page on comments
+        // level.
+        collect(geoCmdLine, inputGeoResponse);
     }
 
     /**
@@ -214,15 +216,16 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
     /**
      * Fetches all replies of one specific comment.
      * 
+     * @param geoCmdLine
      * @param fbComment
      */
-    private void doCollectAllRepliessOfOneComment(FacebookComment fbComment) {
+    private void doCollectAllRepliessOfOneComment(GeoCmdLine geoCmdLine, FacebookComment fbComment) {
         if (fbComment == null)
             return;
         FacebookRepliesProbe fbCommentsProbe = new FacebookRepliesProbe(fbComment.getId());
         // geoCmdLine is null as no input argument value is needed
         // inputGeoResponse is null as this is the first query, not next paging
         // query
-        fbCommentsProbe.collect(null, null);
+        fbCommentsProbe.collect(geoCmdLine, null);
     }
 }

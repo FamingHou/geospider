@@ -38,7 +38,6 @@ public class FacebookRepliesProbe extends FacebookCommentsProbe {
     protected void doPreCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("FacebookRepliesProbe#doPreCollect()");
         log.info("Fetching all replies of the comment " + commentId);
-
         if (inputGeoResponse == null)
             log.info("The first page of replies searching...");
         else

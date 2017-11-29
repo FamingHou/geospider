@@ -5,6 +5,8 @@ package massey.geospider.probe.facebook;
 
 import java.net.URISyntaxException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.log4j.Logger;
@@ -73,7 +75,7 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
         FacebookPostsResponse fbPostsRsp = (FacebookPostsResponse) inputGeoResponse;
         String urlString = buildRequestURL(geoCmdLine, fbPostsRsp);
         if (urlString == null || urlString.trim().equalsIgnoreCase("")) {
-            log.error("||Notice|| url of fetching posts is null or an empty string");
+            log.info("||Notice|| url of fetching posts is null or an empty string");
             return null;
         } else {
             String responseString = HttpHelper.doGet(urlString);
@@ -86,7 +88,8 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
         log.debug("FacebookPostsProbe#doProcessResponse()");
         // FacebookPosts level
         FacebookPostsResponse fbPostsRsp = (FacebookPostsResponse) inputGeoResponse;
-        // @TODO do filter and persistence
+        List<FacebookPost> fbPostList = doFilterPost(geoCmdLine, fbPostsRsp);
+        doPersistence(fbPostList);
     }
 
     @Override
@@ -98,7 +101,7 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
             FacebookPost[] fbPostArray = fbPostsRsp.getDatas();
             for (int i = 0; i < fbPostArray.length; i++) {
                 // fetch all comments under one FacebookPost
-                doCollectAllCommentsOfOnePost(fbPostArray[i]);
+                doCollectAllCommentsOfOnePost(geoCmdLine, fbPostArray[i]);
             }
 
         }
@@ -107,7 +110,9 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
     @Override
     protected void doNextPageCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("FacebookPostsProbe#doNextPageCollect()");
-
+        // call collect method recursively to search the next page on posts
+        // level.
+        collect(geoCmdLine, inputGeoResponse);
     }
 
     /**
@@ -225,15 +230,51 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
     /**
      * Fetches all comments of one specific post.
      * 
+     * @param geoCmdLine
      * @param fbPost
      */
-    private void doCollectAllCommentsOfOnePost(FacebookPost fbPost) {
+    private void doCollectAllCommentsOfOnePost(GeoCmdLine geoCmdLine, FacebookPost fbPost) {
         if (fbPost == null)
             return;
         FacebookCommentsProbe fbCommentsProbe = new FacebookCommentsProbe(fbPost.getId());
         // geoCmdLine is null as no input argument value is needed
         // inputGeoResponse is null as this is the first query, not next paging
         // query
-        fbCommentsProbe.collect(null, null);
+        fbCommentsProbe.collect(geoCmdLine, null);
+    }
+
+    /**
+     * Only the posts which contain the keyword can be returned
+     * 
+     * @param geoCmdLine
+     *            an object of GeoCmdLine
+     * @param fbPostsRsp
+     *            an object of class FacebookPostsResponse
+     * @return a list of object of class FacebookPost which contains the keyword
+     */
+    private List<FacebookPost> doFilterPost(final GeoCmdLine geoCmdLine, final FacebookPostsResponse fbPostsRsp) {
+        List<FacebookPost> list = new ArrayList<>();
+        if (fbPostsRsp != null) {
+            FacebookPost[] fbPostsArray = fbPostsRsp.getDatas();
+            for (int i = 0; i < fbPostsArray.length; i++) {
+                if (fbPostsArray[i] != null && fbPostsArray[i].getMessage() != null) {
+                    if (fbPostsArray[i].getMessage().contains(geoCmdLine.getKeywordOptionValue())) {
+                        list.add(fbPostsArray[i]);
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Saves objects of class type FacebookPost in fbPostList into database
+     * 
+     * @param fbPostList
+     *            a list which contains objects of class type FacebookPost
+     */
+    private void doPersistence(List<FacebookPost> fbPostList) {
+        // using batch mode for better performance
+        
     }
 }
