@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.log4j.Logger;
@@ -22,6 +23,9 @@ import massey.geospider.message.response.GeoResponse;
 import massey.geospider.message.response.facebook.FacebookError;
 import massey.geospider.message.response.facebook.FacebookPaging;
 import massey.geospider.message.response.facebook.FacebookPostsResponse;
+import massey.geospider.persistence.dao.SocialMediaRecordDAO;
+import massey.geospider.persistence.dao.SocialMediaRecordDAOImpl;
+import massey.geospider.persistence.dto.SocialMediaRecord;
 
 /**
  * 
@@ -258,7 +262,11 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
             FacebookPost[] fbPostsArray = fbPostsRsp.getDatas();
             for (int i = 0; i < fbPostsArray.length; i++) {
                 if (fbPostsArray[i] != null && fbPostsArray[i].getMessage() != null) {
-                    if (fbPostsArray[i].getMessage().contains(geoCmdLine.getKeywordOptionValue())) {
+                    String s1 = fbPostsArray[i].getMessage();
+                    String s2 = geoCmdLine.getKeywordOptionValue();
+                    // CASE_INSENSITIVE
+                    boolean isContain = Pattern.compile(Pattern.quote(s2), Pattern.CASE_INSENSITIVE).matcher(s1).find();
+                    if (isContain) {
                         list.add(fbPostsArray[i]);
                     }
                 }
@@ -274,7 +282,16 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
      *            a list which contains objects of class type FacebookPost
      */
     private void doPersistence(List<FacebookPost> fbPostList) {
-        // using batch mode for better performance
-        
+        // @TODO using batch mode for better performance
+        for (FacebookPost facebookPost : fbPostList) {
+            SocialMediaRecord smRecord = new SocialMediaRecord();
+            smRecord.setVendorRecordId(facebookPost.getId());
+            smRecord.setVendorRecordParentId(facebookPost.getParentId());
+            smRecord.setMessage(facebookPost.getMessage());
+            smRecord.setVendorType(VENDOR_TYPE_FACEBOOK);
+            smRecord.setRecordType(RECORD_TYPE_POST);
+            SocialMediaRecordDAO smrDao = new SocialMediaRecordDAOImpl();
+            smrDao.insertOne(smRecord);
+        }
     }
 }

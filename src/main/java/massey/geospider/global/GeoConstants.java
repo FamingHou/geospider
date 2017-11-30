@@ -24,7 +24,7 @@ public interface GeoConstants {
     public static final String FB_VERSION_PROP_NAME = "FB_VERSION";
     public static final String FB_ACCESS_TOKEN_PROP_NAME = "FB_ACCESS_TOKEN";
     public static final String SEPARATOR = "/";
-    
+
     /**
      * the number of records for each Facebook query, which is shared by page,
      * post and comment for the time being.
@@ -43,6 +43,15 @@ public interface GeoConstants {
      */
     public static final String FB_PAGE_LIMIT_PROP_NAME = "FB_PAGE_LIMIT";
 
+    public static final int RECORD_TYPE_PAGE = 1;
+    public static final int RECORD_TYPE_POST = 2;
+    public static final int RECORD_TYPE_COMMENT = 3;
 
-
+    public static final int VENDOR_TYPE_FACEBOOK = 1;
+    public static final int VENDOR_TYPE_TWITTER = 2;
+    public static final int VENDOR_TYPE_REDDIT = 3;
+    public static final int VENDOR_TYPE_INSTAGRAM = 4;
+    public static final int VENDOR_TYPE_YOUTUBE = 5;
+    public static final int VENDOR_TYPE_FLICKR = 6;
+    
 }

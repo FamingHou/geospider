@@ -23,7 +23,7 @@ public interface SocialMediaRecordDAO {
      * @param smRecord
      *            an object of SocialMediaRecord
      */
-    public void insert(SocialMediaRecord smRecord);
+    public void insertOne(SocialMediaRecord smRecord);
 
     /**
      * Inserts a list of objects of class type SocialMediaRecord into database
@@ -31,6 +31,6 @@ public interface SocialMediaRecordDAO {
      * @param smRecordList
      *            a list of objects of class type SocialMediaRecord
      */
-    public void insert(List<SocialMediaRecord> smRecordList);
+    public void insertList(List<SocialMediaRecord> smRecordList);
 
 }

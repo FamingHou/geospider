@@ -25,7 +25,6 @@ public class SocialMediaRecord {
      * 
      */
     public SocialMediaRecord() {
-        // TODO Auto-generated constructor stub
     }
 
     /**
@@ -49,14 +48,6 @@ public class SocialMediaRecord {
      */
     public int getId() {
         return id;
-    }
-
-    /**
-     * @param id
-     *            the id to set
-     */
-    public void setId(int id) {
-        this.id = id;
     }
 
     /**
@@ -141,12 +132,16 @@ public class SocialMediaRecord {
         return createTime;
     }
 
-    /**
-     * @param createTime
-     *            the createTime to set
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
      */
-    public void setCreateTime(Timestamp createTime) {
-        this.createTime = createTime;
+    @Override
+    public String toString() {
+        return "SocialMediaRecord [id=" + id + ", vendorRecordId=" + vendorRecordId + ", vendorRecordParentId="
+                + vendorRecordParentId + ", message=" + message + ", recordType=" + recordType + ", vendorType="
+                + vendorType + ", createTime=" + createTime + "]";
     }
 
 }

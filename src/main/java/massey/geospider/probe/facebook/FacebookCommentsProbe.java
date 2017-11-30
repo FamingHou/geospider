@@ -5,6 +5,9 @@ package massey.geospider.probe.facebook;
 
 import java.net.URISyntaxException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.log4j.Logger;
@@ -16,10 +19,15 @@ import massey.geospider.boot.GeoCmdLine;
 import massey.geospider.conf.PropReader;
 import massey.geospider.global.GeoConstants;
 import massey.geospider.message.facebook.FacebookComment;
+import massey.geospider.message.facebook.FacebookPost;
 import massey.geospider.message.response.GeoResponse;
 import massey.geospider.message.response.facebook.FacebookCommentsResponse;
 import massey.geospider.message.response.facebook.FacebookError;
 import massey.geospider.message.response.facebook.FacebookPaging;
+import massey.geospider.message.response.facebook.FacebookPostsResponse;
+import massey.geospider.persistence.dao.SocialMediaRecordDAO;
+import massey.geospider.persistence.dao.SocialMediaRecordDAOImpl;
+import massey.geospider.persistence.dto.SocialMediaRecord;
 
 /**
  * 
@@ -87,8 +95,8 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
         log.debug("FacebookCommentsProbe#doProcessResponse()");
         // FacebookComments level
         FacebookCommentsResponse fbCommentsRsp = (FacebookCommentsResponse) inputGeoResponse;
-        // @TODO do filter and persistence
-
+        List<FacebookComment> fbCommentList = doFilterComment(geoCmdLine, fbCommentsRsp);
+        doPersistence(fbCommentList);
     }
 
     @Override
@@ -228,4 +236,56 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
         // query
         fbCommentsProbe.collect(geoCmdLine, null);
     }
+
+    /**
+     * Only the comments which contain the keyword can be returned
+     * 
+     * @param geoCmdLine
+     *            an object of GeoCmdLine
+     * @param fbCommentsRsp
+     *            an object of class FacebookCommentsResponse
+     * @return a list of object of class FacebookComment which contains the
+     *         keyword
+     */
+    private List<FacebookComment> doFilterComment(final GeoCmdLine geoCmdLine,
+            final FacebookCommentsResponse fbCommentsRsp) {
+        List<FacebookComment> list = new ArrayList<>();
+        if (fbCommentsRsp != null) {
+            FacebookComment[] fbCommentsArray = fbCommentsRsp.getDatas();
+            for (int i = 0; i < fbCommentsArray.length; i++) {
+                if (fbCommentsArray[i] != null && fbCommentsArray[i].getMessage() != null) {
+                    String s1 = fbCommentsArray[i].getMessage();
+                    String s2 = geoCmdLine.getKeywordOptionValue();
+                    // CASE_INSENSITIVE
+                    boolean isContain = Pattern.compile(Pattern.quote(s2), Pattern.CASE_INSENSITIVE).matcher(s1).find();
+                    if (isContain) {
+                        list.add(fbCommentsArray[i]);
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Saves objects of class type FacebookComment in fbCommentList into
+     * database
+     * 
+     * @param fbCommentList
+     *            a list which contains objects of class type FacebookPost
+     */
+    private void doPersistence(List<FacebookComment> fbCommentList) {
+        // @TODO using batch mode for better performance
+        for (FacebookComment facebookPost : fbCommentList) {
+            SocialMediaRecord smRecord = new SocialMediaRecord();
+            smRecord.setVendorRecordId(facebookPost.getId());
+            smRecord.setVendorRecordParentId(facebookPost.getParentId());
+            smRecord.setMessage(facebookPost.getMessage());
+            smRecord.setVendorType(VENDOR_TYPE_FACEBOOK);
+            smRecord.setRecordType(RECORD_TYPE_COMMENT);
+            SocialMediaRecordDAO smrDao = new SocialMediaRecordDAOImpl();
+            smrDao.insertOne(smRecord);
+        }
+    }
+
 }

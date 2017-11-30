@@ -27,6 +27,44 @@ public class FacebookComment extends FacebookMessage {
         this.createdTime = createdTime;
     }
 
+    
+    
+    /**
+     * @return the message
+     */
+    public String getMessage() {
+        return message;
+    }
+
+
+
+    /**
+     * @param message the message to set
+     */
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+
+
+    /**
+     * @return the createdTime
+     */
+    public Timestamp getCreatedTime() {
+        return createdTime;
+    }
+
+
+
+    /**
+     * @param createdTime the createdTime to set
+     */
+    public void setCreatedTime(Timestamp createdTime) {
+        this.createdTime = createdTime;
+    }
+
+
+
     /*
      * (non-Javadoc)
      * 
