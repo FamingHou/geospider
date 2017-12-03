@@ -19,6 +19,7 @@ public class SocialMediaRecord {
     private String message;
     private int recordType;
     private int vendorType;
+    private Timestamp vendorRecordCreatedTime;
     private Timestamp createTime;
 
     /**
@@ -33,14 +34,16 @@ public class SocialMediaRecord {
      * @param message
      * @param recordType
      * @param vendorType
+     * @param vendorRecordCreatedTime
      */
     public SocialMediaRecord(String vendorRecordId, String vendorRecordParentId, String message, int recordType,
-            int vendorType) {
+            int vendorType, Timestamp vendorRecordCreatedTime) {
         this.vendorRecordId = vendorRecordId;
         this.vendorRecordParentId = vendorRecordParentId;
         this.message = message;
         this.recordType = recordType;
         this.vendorType = vendorType;
+        this.vendorRecordCreatedTime = vendorRecordCreatedTime;
     }
 
     /**
@@ -132,6 +135,21 @@ public class SocialMediaRecord {
         return createTime;
     }
 
+    /**
+     * @return the vendorRecordCreatedTime
+     */
+    public Timestamp getVendorRecordCreatedTime() {
+        return vendorRecordCreatedTime;
+    }
+
+    /**
+     * @param vendorRecordCreatedTime
+     *            the vendorRecordCreatedTime to set
+     */
+    public void setVendorRecordCreatedTime(Timestamp vendorRecordCreatedTime) {
+        this.vendorRecordCreatedTime = vendorRecordCreatedTime;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -141,7 +159,8 @@ public class SocialMediaRecord {
     public String toString() {
         return "SocialMediaRecord [id=" + id + ", vendorRecordId=" + vendorRecordId + ", vendorRecordParentId="
                 + vendorRecordParentId + ", message=" + message + ", recordType=" + recordType + ", vendorType="
-                + vendorType + ", createTime=" + createTime + "]";
+                + vendorType + ", vendorRecordCreatedTime=" + vendorRecordCreatedTime + ", createTime=" + createTime
+                + "]";
     }
 
 }

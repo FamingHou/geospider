@@ -8,9 +8,8 @@
     <insert id="insertOne" parameterType="SocialMediaRecord">
         INSERT INTO
         social_media_record (vendor_record_id, vendor_record_parent_id,
-        message, record_type, vendor_type) VALUES ( #{vendorRecordId},
-        #{vendorRecordParentId}, #{message},
-        #{recordType},
-        #{vendorType});
+        message, record_type, vendor_type, vendor_record_created_time) VALUES (#{vendorRecordId},
+        #{vendorRecordParentId}, #{message}, #{recordType},
+        #{vendorType}, #{vendorRecordCreatedTime});
     </insert>
 </mapper>

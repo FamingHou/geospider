@@ -19,15 +19,14 @@ import massey.geospider.boot.GeoCmdLine;
 import massey.geospider.conf.PropReader;
 import massey.geospider.global.GeoConstants;
 import massey.geospider.message.facebook.FacebookComment;
-import massey.geospider.message.facebook.FacebookPost;
 import massey.geospider.message.response.GeoResponse;
 import massey.geospider.message.response.facebook.FacebookCommentsResponse;
 import massey.geospider.message.response.facebook.FacebookError;
 import massey.geospider.message.response.facebook.FacebookPaging;
-import massey.geospider.message.response.facebook.FacebookPostsResponse;
 import massey.geospider.persistence.dao.SocialMediaRecordDAO;
 import massey.geospider.persistence.dao.SocialMediaRecordDAOImpl;
 import massey.geospider.persistence.dto.SocialMediaRecord;
+import massey.geospider.util.DateHelper;
 
 /**
  * 
@@ -212,11 +211,12 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
         int n = dataArray.length();
         FacebookComment[] postArray = new FacebookComment[n];
         for (int i = 0; i < n; ++i) {
-            JSONObject postObj = dataArray.getJSONObject(i);
-            String id = postObj.isNull("id") ? "" : postObj.getString("id");
-            String message = postObj.isNull("message") ? "" : postObj.getString("message");
-            Timestamp createdTime = null; // @TODO
-            postArray[i] = new FacebookComment(id, postId, message, createdTime);
+            JSONObject commentObj = dataArray.getJSONObject(i);
+            String id = commentObj.isNull("id") ? "" : commentObj.getString("id");
+            String message = commentObj.isNull("message") ? "" : commentObj.getString("message");
+            String createdTime = commentObj.isNull("created_time") ? "" : commentObj.getString("created_time");
+            Timestamp vendorRecordCreatedTime = DateHelper.parse(createdTime, DATETIME_FORMAT_FB);
+            postArray[i] = new FacebookComment(id, postId, message, vendorRecordCreatedTime);
         }
         return postArray;
     }
@@ -276,13 +276,14 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
      */
     private void doPersistence(List<FacebookComment> fbCommentList) {
         // @TODO using batch mode for better performance
-        for (FacebookComment facebookPost : fbCommentList) {
+        for (FacebookComment facebookComment : fbCommentList) {
             SocialMediaRecord smRecord = new SocialMediaRecord();
-            smRecord.setVendorRecordId(facebookPost.getId());
-            smRecord.setVendorRecordParentId(facebookPost.getParentId());
-            smRecord.setMessage(facebookPost.getMessage());
+            smRecord.setVendorRecordId(facebookComment.getId());
+            smRecord.setVendorRecordParentId(facebookComment.getParentId());
+            smRecord.setMessage(facebookComment.getMessage());
             smRecord.setVendorType(VENDOR_TYPE_FACEBOOK);
             smRecord.setRecordType(RECORD_TYPE_COMMENT);
+            smRecord.setVendorRecordCreatedTime(facebookComment.getCreatedTime());
             SocialMediaRecordDAO smrDao = new SocialMediaRecordDAOImpl();
             smrDao.insertOne(smRecord);
         }

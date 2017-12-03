@@ -26,6 +26,7 @@ import massey.geospider.message.response.facebook.FacebookPostsResponse;
 import massey.geospider.persistence.dao.SocialMediaRecordDAO;
 import massey.geospider.persistence.dao.SocialMediaRecordDAOImpl;
 import massey.geospider.persistence.dto.SocialMediaRecord;
+import massey.geospider.util.DateHelper;
 
 /**
  * 
@@ -225,8 +226,9 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
             JSONObject postObj = dataArray.getJSONObject(i);
             String id = postObj.isNull("id") ? "" : postObj.getString("id");
             String message = postObj.isNull("message") ? "" : postObj.getString("message");
-            Timestamp createdTime = null; // @TODO
-            postArray[i] = new FacebookPost(id, pageId, message, createdTime);
+            String createdTime = postObj.isNull("created_time") ? "" : postObj.getString("created_time");
+            Timestamp vendorRecordCreatedTime = DateHelper.parse(createdTime, DATETIME_FORMAT_FB);
+            postArray[i] = new FacebookPost(id, pageId, message, vendorRecordCreatedTime);
         }
         return postArray;
     }
@@ -290,6 +292,7 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
             smRecord.setMessage(facebookPost.getMessage());
             smRecord.setVendorType(VENDOR_TYPE_FACEBOOK);
             smRecord.setRecordType(RECORD_TYPE_POST);
+            smRecord.setVendorRecordCreatedTime(facebookPost.getCreatedTime());
             SocialMediaRecordDAO smrDao = new SocialMediaRecordDAOImpl();
             smrDao.insertOne(smRecord);
         }

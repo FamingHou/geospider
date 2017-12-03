@@ -54,4 +54,6 @@ public interface GeoConstants {
     public static final int VENDOR_TYPE_YOUTUBE = 5;
     public static final int VENDOR_TYPE_FLICKR = 6;
     
+    public static final String DATETIME_FORMAT_FB = "yyyy-MM-dd'T'HH:mm:ssZ";
+    
 }
