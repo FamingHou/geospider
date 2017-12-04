@@ -16,17 +16,15 @@ public class FacebookRepliesProbe extends FacebookCommentsProbe {
 
     private static final Logger log = Logger.getLogger(FacebookRepliesProbe.class);
 
-    private String commentId;
-
     /**
-     * Override the postId as the commentId
+     * Sets parentId as a commentId
      * 
      * @param commentId
      */
     public FacebookRepliesProbe(String commentId) {
-        super(commentId); // set super.postId as commentId to reuse the same
+        super(commentId); // set super.parentId as commentId to reuse the same
                           // processing logic of class FacebookCommentsProbe
-        this.commentId = commentId;
+        this.parentId = commentId;
     }
 
     /*
@@ -37,11 +35,20 @@ public class FacebookRepliesProbe extends FacebookCommentsProbe {
     @Override
     protected void doPreCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("FacebookRepliesProbe#doPreCollect()");
-        log.info("Fetching all replies of the comment " + commentId);
+        log.info("Fetching all replies of the comment " + parentId);
         if (inputGeoResponse == null)
             log.info("The first page of replies searching...");
         else
             log.info("The next page of replies searching...");
     }
 
+    /**
+     * Returns 4 which means this is a reply
+     */
+    @Override
+    protected int getRecordType() {
+        return RECORD_TYPE_REPLY;
+    }
+
+    
 }

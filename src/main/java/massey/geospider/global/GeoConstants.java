@@ -46,6 +46,7 @@ public interface GeoConstants {
     public static final int RECORD_TYPE_PAGE = 1;
     public static final int RECORD_TYPE_POST = 2;
     public static final int RECORD_TYPE_COMMENT = 3;
+    public static final int RECORD_TYPE_REPLY = 4;
 
     public static final int VENDOR_TYPE_FACEBOOK = 1;
     public static final int VENDOR_TYPE_TWITTER = 2;

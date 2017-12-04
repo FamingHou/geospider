@@ -240,7 +240,6 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
         if (fbPage == null)
             return;
         FacebookPostsProbe fbPostsProbe = new FacebookPostsProbe(fbPage.getId());
-        // geoCmdLine is null as no input argument value is needed
         // inputGeoResponse is null as this is the first query, not next paging
         // query
         fbPostsProbe.collect(geoCmdLine, null);

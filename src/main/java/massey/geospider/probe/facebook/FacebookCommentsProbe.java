@@ -52,19 +52,20 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
 
     private static final Logger log = Logger.getLogger(FacebookCommentsProbe.class);
 
-    protected String postId;
+    /** it could be a postId or a commentId */
+    protected String parentId;
 
     /**
      * 
      */
     public FacebookCommentsProbe(String postId) {
-        this.postId = postId;
+        this.parentId = postId;
     }
 
     @Override
     protected void doPreCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("FacebookCommentsProbe#doPreCollect()");
-        log.info("Fetching all comments of the post " + postId);
+        log.info("Fetching all comments of the post " + parentId);
         if (inputGeoResponse == null)
             log.info("The first page of comments searching...");
         else
@@ -143,7 +144,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
                 StringBuilder sb = new StringBuilder();
                 sb.append(PropReader.get(FB_DOMAIN_NAME_PROP_NAME)).append(SEPARATOR);
                 sb.append(PropReader.get(FB_VERSION_PROP_NAME)).append(SEPARATOR);
-                sb.append(postId).append(SEPARATOR);
+                sb.append(parentId).append(SEPARATOR);
                 sb.append("comments");
                 // use URIBuilder to solve URISyntax issues
                 URIBuilder builder = new URIBuilder(sb.toString());
@@ -216,7 +217,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
             String message = commentObj.isNull("message") ? "" : commentObj.getString("message");
             String createdTime = commentObj.isNull("created_time") ? "" : commentObj.getString("created_time");
             Timestamp vendorRecordCreatedTime = DateHelper.parse(createdTime, DATETIME_FORMAT_FB);
-            postArray[i] = new FacebookComment(id, postId, message, vendorRecordCreatedTime);
+            postArray[i] = new FacebookComment(id, parentId, message, vendorRecordCreatedTime);
         }
         return postArray;
     }
@@ -230,11 +231,10 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
     private void doCollectAllRepliessOfOneComment(GeoCmdLine geoCmdLine, FacebookComment fbComment) {
         if (fbComment == null)
             return;
-        FacebookRepliesProbe fbCommentsProbe = new FacebookRepliesProbe(fbComment.getId());
-        // geoCmdLine is null as no input argument value is needed
+        FacebookRepliesProbe fbRepliesProbe = new FacebookRepliesProbe(fbComment.getId());
         // inputGeoResponse is null as this is the first query, not next paging
         // query
-        fbCommentsProbe.collect(geoCmdLine, null);
+        fbRepliesProbe.collect(geoCmdLine, null);
     }
 
     /**
@@ -282,11 +282,18 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
             smRecord.setVendorRecordParentId(facebookComment.getParentId());
             smRecord.setMessage(facebookComment.getMessage());
             smRecord.setVendorType(VENDOR_TYPE_FACEBOOK);
-            smRecord.setRecordType(RECORD_TYPE_COMMENT);
+            smRecord.setRecordType(getRecordType());
             smRecord.setVendorRecordCreatedTime(facebookComment.getCreatedTime());
             SocialMediaRecordDAO smrDao = new SocialMediaRecordDAOImpl();
             smrDao.insertOne(smRecord);
         }
     }
 
+    /**
+     * 
+     * @return 3 which means this is a comment
+     */
+    protected int getRecordType() {
+        return RECORD_TYPE_COMMENT;
+    }
 }
