@@ -13,6 +13,7 @@ public class FacebookPost extends FacebookMessage {
 
     private String message;
     private Timestamp createdTime;
+    private FacebookPlace fbPlace;
 
     /**
      * 
@@ -20,11 +21,13 @@ public class FacebookPost extends FacebookMessage {
      * @param parentId
      * @param message
      * @param createdTime
+     * @param fbPlace
      */
-    public FacebookPost(String id, String parentId, String message, Timestamp createdTime) {
+    public FacebookPost(String id, String parentId, String message, Timestamp createdTime, FacebookPlace fbPlace) {
         super(id, parentId);
         this.message = message;
         this.createdTime = createdTime;
+        this.fbPlace = fbPlace;
     }
 
     /**
@@ -41,6 +44,37 @@ public class FacebookPost extends FacebookMessage {
         return createdTime;
     }
 
+    /**
+     * @return the fbPlace
+     */
+    public FacebookPlace getFbPlace() {
+        return fbPlace;
+    }
+
+    /**
+     * @param fbPlace
+     *            the fbPlace to set
+     */
+    public void setFbPlace(FacebookPlace fbPlace) {
+        this.fbPlace = fbPlace;
+    }
+
+    /**
+     * @param message
+     *            the message to set
+     */
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    /**
+     * @param createdTime
+     *            the createdTime to set
+     */
+    public void setCreatedTime(Timestamp createdTime) {
+        this.createdTime = createdTime;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -48,8 +82,8 @@ public class FacebookPost extends FacebookMessage {
      */
     @Override
     public String toString() {
-        return "FacebookPost [message=" + message + ", createdTime=" + createdTime + ", toString()=" + super.toString()
-                + "]";
+        return "FacebookPost [message=" + message + ", createdTime=" + createdTime + ", fbPlace=" + fbPlace
+                + ", toString()=" + super.toString() + "]";
     }
 
 }

@@ -18,6 +18,8 @@ import massey.geospider.api.http.HttpHelper;
 import massey.geospider.boot.GeoCmdLine;
 import massey.geospider.conf.PropReader;
 import massey.geospider.global.GeoConstants;
+import massey.geospider.message.facebook.FacebookLocation;
+import massey.geospider.message.facebook.FacebookPlace;
 import massey.geospider.message.facebook.FacebookPost;
 import massey.geospider.message.response.GeoResponse;
 import massey.geospider.message.response.facebook.FacebookError;
@@ -125,7 +127,8 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
      * 
      * <pre>
      * The URL is
-     * https://graph.facebook.com/v2.11/{<b><i>PAGE_ID</i></b>}/posts?access_token={<b><i>YOUR_ACCESS_TOKEN</i></b>}&pretty=0&limit=25
+     * https://graph.facebook.com/v2.11/{<b><i>PAGE_ID</i></b>}/posts?
+     * fields=id,message,created_time,place&access_token={<b><i>YOUR_ACCESS_TOKEN</i></b>}&pretty=0&limit=25
      * </pre>
      * 
      * @param geoCmdLine
@@ -146,6 +149,8 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
                 sb.append("posts");
                 // using URIBuilder to solve URISyntax issues
                 URIBuilder builder = new URIBuilder(sb.toString());
+                // Task_20171201_3 add field place to collect geo_location
+                builder.addParameter("fields", "id,message,created_time,place");
                 builder.addParameter("access_token", PropReader.get(FB_ACCESS_TOKEN_PROP_NAME));
                 builder.addParameter("pretty", "0");
                 builder.addParameter("limit", PropReader.get(FB_PAGE_LIMIT_PROP_NAME));
@@ -228,7 +233,8 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
             String message = postObj.isNull("message") ? "" : postObj.getString("message");
             String createdTime = postObj.isNull("created_time") ? "" : postObj.getString("created_time");
             Timestamp vendorRecordCreatedTime = DateHelper.parse(createdTime, DATETIME_FORMAT_FB);
-            postArray[i] = new FacebookPost(id, pageId, message, vendorRecordCreatedTime);
+            FacebookPlace fbPlace = createFBPlace(postObj);
+            postArray[i] = new FacebookPost(id, pageId, message, vendorRecordCreatedTime, fbPlace);
         }
         return postArray;
     }
@@ -292,8 +298,59 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
             smRecord.setVendorType(VENDOR_TYPE_FACEBOOK);
             smRecord.setRecordType(RECORD_TYPE_POST);
             smRecord.setVendorRecordCreatedTime(facebookPost.getCreatedTime());
+            if (facebookPost.getFbPlace() != null) {
+                FacebookPlace fbPlace = facebookPost.getFbPlace();
+                smRecord.setPlaceId(fbPlace.getId());
+                smRecord.setPlaceName(fbPlace.getName());
+                if (fbPlace.getLocation() != null) {
+                    FacebookLocation fbLoc = fbPlace.getLocation();
+                    smRecord.setPlaceCity(fbLoc.getCity());
+                    smRecord.setPlaceCountry(fbLoc.getCountry());
+                    smRecord.setPlaceZip(fbLoc.getZip());
+                    smRecord.setPlaceLatitude(fbLoc.getLatitude());
+                    smRecord.setPlaceLongitude(fbLoc.getLongitude());
+                }
+            }
             SocialMediaRecordDAO smrDao = new SocialMediaRecordDAOImpl();
             smrDao.insertOne(smRecord);
         }
+    }
+
+    /**
+     * <pre>
+     *       "place": {
+            "name": "Oaxaca City, Mexico",
+            "location": {
+              "city": "Oaxaca de Juárez",
+              "country": "Mexico",
+              "latitude": 17.05,
+              "longitude": -96.7167,
+              "zip": "68000"
+            },
+            "id": "108148499213006"
+          }
+     * </pre>
+     * 
+     * @param postObj
+     * @return an object of class FacebookPlace
+     */
+    private FacebookPlace createFBPlace(JSONObject postObj) {
+        FacebookPlace fbPlace = new FacebookPlace();
+        JSONObject placeObj = postObj.isNull("place") ? null : postObj.getJSONObject("place");
+        if (placeObj != null) {
+            fbPlace.setId(placeObj.isNull("id") ? "" : placeObj.getString("id"));
+            fbPlace.setName(placeObj.isNull("name") ? "" : placeObj.getString("name"));
+            JSONObject locObj = placeObj.getJSONObject("location");
+            if (locObj != null) {
+                FacebookLocation fbLoc = new FacebookLocation();
+                fbLoc.setCity(locObj.isNull("city") ? "" : locObj.getString("city"));
+                fbLoc.setCountry(locObj.isNull("country") ? "" : locObj.getString("country"));
+                fbLoc.setLatitude(locObj.isNull("latitude") ? null : locObj.getDouble("latitude"));
+                fbLoc.setLongitude(locObj.isNull("longitude") ? null : locObj.getDouble("longitude"));
+                fbLoc.setZip(locObj.isNull("zip") ? "" : locObj.getString("zip"));
+                fbPlace.setLocation(fbLoc);
+            }
+        }
+        return fbPlace;
     }
 }

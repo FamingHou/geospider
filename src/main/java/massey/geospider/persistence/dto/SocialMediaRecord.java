@@ -21,6 +21,13 @@ public class SocialMediaRecord {
     private int vendorType;
     private Timestamp vendorRecordCreatedTime;
     private Timestamp createTime;
+    private String placeId;
+    private String placeName;
+    private String placeCity;
+    private String placeCountry;
+    private String placeZip;
+    private double placeLatitude;
+    private double placeLongitude;
 
     /**
      * 
@@ -28,23 +35,24 @@ public class SocialMediaRecord {
     public SocialMediaRecord() {
     }
 
-    /**
-     * @param vendorRecordId
-     * @param vendorRecordParentId
-     * @param message
-     * @param recordType
-     * @param vendorType
-     * @param vendorRecordCreatedTime
-     */
-    public SocialMediaRecord(String vendorRecordId, String vendorRecordParentId, String message, int recordType,
-            int vendorType, Timestamp vendorRecordCreatedTime) {
-        this.vendorRecordId = vendorRecordId;
-        this.vendorRecordParentId = vendorRecordParentId;
-        this.message = message;
-        this.recordType = recordType;
-        this.vendorType = vendorType;
-        this.vendorRecordCreatedTime = vendorRecordCreatedTime;
-    }
+    // /**
+    // * @param vendorRecordId
+    // * @param vendorRecordParentId
+    // * @param message
+    // * @param recordType
+    // * @param vendorType
+    // * @param vendorRecordCreatedTime
+    // */
+    // public SocialMediaRecord(String vendorRecordId, String
+    // vendorRecordParentId, String message, int recordType,
+    // int vendorType, Timestamp vendorRecordCreatedTime) {
+    // this.vendorRecordId = vendorRecordId;
+    // this.vendorRecordParentId = vendorRecordParentId;
+    // this.message = message;
+    // this.recordType = recordType;
+    // this.vendorType = vendorType;
+    // this.vendorRecordCreatedTime = vendorRecordCreatedTime;
+    // }
 
     /**
      * @return the id
@@ -150,6 +158,111 @@ public class SocialMediaRecord {
         this.vendorRecordCreatedTime = vendorRecordCreatedTime;
     }
 
+    /**
+     * @return the placeId
+     */
+    public String getPlaceId() {
+        return placeId;
+    }
+
+    /**
+     * @param placeId
+     *            the placeId to set
+     */
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
+    }
+
+    /**
+     * @return the placeName
+     */
+    public String getPlaceName() {
+        return placeName;
+    }
+
+    /**
+     * @param placeName
+     *            the placeName to set
+     */
+    public void setPlaceName(String placeName) {
+        this.placeName = placeName;
+    }
+
+    /**
+     * @return the placeCity
+     */
+    public String getPlaceCity() {
+        return placeCity;
+    }
+
+    /**
+     * @param placeCity
+     *            the placeCity to set
+     */
+    public void setPlaceCity(String placeCity) {
+        this.placeCity = placeCity;
+    }
+
+    /**
+     * @return the placeCountry
+     */
+    public String getPlaceCountry() {
+        return placeCountry;
+    }
+
+    /**
+     * @param placeCountry
+     *            the placeCountry to set
+     */
+    public void setPlaceCountry(String placeCountry) {
+        this.placeCountry = placeCountry;
+    }
+
+    /**
+     * @return the placeZip
+     */
+    public String getPlaceZip() {
+        return placeZip;
+    }
+
+    /**
+     * @param placeZip
+     *            the placeZip to set
+     */
+    public void setPlaceZip(String placeZip) {
+        this.placeZip = placeZip;
+    }
+
+    /**
+     * @return the placeLatitude
+     */
+    public double getPlaceLatitude() {
+        return placeLatitude;
+    }
+
+    /**
+     * @param placeLatitude
+     *            the placeLatitude to set
+     */
+    public void setPlaceLatitude(double placeLatitude) {
+        this.placeLatitude = placeLatitude;
+    }
+
+    /**
+     * @return the placeLongitude
+     */
+    public double getPlaceLongitude() {
+        return placeLongitude;
+    }
+
+    /**
+     * @param placeLongitude
+     *            the placeLongitude to set
+     */
+    public void setPlaceLongitude(double placeLongitude) {
+        this.placeLongitude = placeLongitude;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -160,7 +273,9 @@ public class SocialMediaRecord {
         return "SocialMediaRecord [id=" + id + ", vendorRecordId=" + vendorRecordId + ", vendorRecordParentId="
                 + vendorRecordParentId + ", message=" + message + ", recordType=" + recordType + ", vendorType="
                 + vendorType + ", vendorRecordCreatedTime=" + vendorRecordCreatedTime + ", createTime=" + createTime
-                + "]";
+                + ", placeId=" + placeId + ", placeName=" + placeName + ", placeCity=" + placeCity + ", placeCountry="
+                + placeCountry + ", placeZip=" + placeZip + ", placeLatitude=" + placeLatitude + ", placeLongitude="
+                + placeLongitude + "]";
     }
 
 }

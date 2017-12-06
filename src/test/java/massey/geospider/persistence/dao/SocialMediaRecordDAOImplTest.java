@@ -71,7 +71,20 @@ public class SocialMediaRecordDAOImplTest extends TestCase {
         Date date = dateFormat.parse("01/01/2007");
         long time = date.getTime();
         Timestamp ts = new Timestamp(time);
-        SocialMediaRecord smRecord = new SocialMediaRecord("444", "555", "test message with vendor_record_created_time", 1, 2, ts);
+        SocialMediaRecord smRecord = new SocialMediaRecord();
+        smRecord.setVendorRecordId("111");
+        smRecord.setVendorRecordParentId("222");
+        smRecord.setMessage("test message with vendor_record_created_time");
+        smRecord.setRecordType(1);
+        smRecord.setVendorType(2);
+        smRecord.setPlaceId("108148499213006");
+        smRecord.setPlaceName("Oaxaca City, Mexico");
+        smRecord.setPlaceCity("Oaxaca de Juárez");
+        smRecord.setPlaceCountry("Mexico");
+        smRecord.setPlaceZip("68000");
+        smRecord.setPlaceLatitude(17.05);
+        smRecord.setPlaceLongitude(-96.7167);
+        smRecord.setVendorRecordCreatedTime(ts);
 
         try {
             session = factory.openSession();
