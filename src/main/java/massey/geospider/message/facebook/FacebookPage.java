@@ -14,24 +14,20 @@ public class FacebookPage extends FacebookMessage {
     /**
      * 
      * @param id
-     * @param parentId
+     * @param parent
      * @param name
      */
-    public FacebookPage(String id, String parentId, String name) {
-        super(id, parentId);
+    public FacebookPage(String id, FacebookMessage parent, String name) {
+        super(id, parent);
         this.name = name;
     }
 
-    
-    
     /**
      * @return the name
      */
     public String getName() {
         return name;
     }
-
-
 
     /*
      * (non-Javadoc)

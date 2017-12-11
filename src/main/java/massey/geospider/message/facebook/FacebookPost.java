@@ -18,13 +18,13 @@ public class FacebookPost extends FacebookMessage {
     /**
      * 
      * @param id
-     * @param parentId
+     * @param parent
      * @param message
      * @param createdTime
      * @param fbPlace
      */
-    public FacebookPost(String id, String parentId, String message, Timestamp createdTime, FacebookPlace fbPlace) {
-        super(id, parentId);
+    public FacebookPost(String id, FacebookMessage parent, String message, Timestamp createdTime, FacebookPlace fbPlace) {
+        super(id, parent);
         this.message = message;
         this.createdTime = createdTime;
         this.fbPlace = fbPlace;

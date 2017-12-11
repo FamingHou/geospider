@@ -14,6 +14,7 @@ import massey.geospider.api.http.HttpHelper;
 import massey.geospider.boot.GeoCmdLine;
 import massey.geospider.conf.PropReader;
 import massey.geospider.global.GeoConstants;
+import massey.geospider.message.facebook.FacebookMessage;
 import massey.geospider.message.facebook.FacebookPage;
 import massey.geospider.message.response.GeoResponse;
 import massey.geospider.message.response.facebook.FacebookError;
@@ -221,9 +222,9 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
         for (int i = 0; i < n; ++i) {
             JSONObject pageObj = dataArray.getJSONObject(i);
             String id = pageObj.isNull("id") ? "" : pageObj.getString("id");
-            String parentId = "_"; // FacebookPage object has no parentId.
+            FacebookMessage parent = null; // FacebookPage object has no parent.
             String name = pageObj.isNull("name") ? "" : pageObj.getString("name");
-            pageArray[i] = new FacebookPage(id, parentId, name);
+            pageArray[i] = new FacebookPage(id, parent, name);
         }
         return pageArray;
     }
@@ -239,7 +240,7 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
     private void doCollectAllPostsOfOnePage(GeoCmdLine geoCmdLine, FacebookPage fbPage) {
         if (fbPage == null)
             return;
-        FacebookPostsProbe fbPostsProbe = new FacebookPostsProbe(fbPage.getId());
+        FacebookPostsProbe fbPostsProbe = new FacebookPostsProbe(fbPage);
         // inputGeoResponse is null as this is the first query, not next paging
         // query
         fbPostsProbe.collect(geoCmdLine, null);

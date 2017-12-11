@@ -17,18 +17,16 @@ public class FacebookComment extends FacebookMessage {
     /**
      * 
      * @param id
-     * @param parentId
+     * @param parent
      * @param message
      * @param createdTime
      */
-    public FacebookComment(String id, String parentId, String message, Timestamp createdTime) {
-        super(id, parentId);
+    public FacebookComment(String id, FacebookMessage parent, String message, Timestamp createdTime) {
+        super(id, parent);
         this.message = message;
         this.createdTime = createdTime;
     }
 
-    
-    
     /**
      * @return the message
      */
@@ -36,16 +34,13 @@ public class FacebookComment extends FacebookMessage {
         return message;
     }
 
-
-
     /**
-     * @param message the message to set
+     * @param message
+     *            the message to set
      */
     public void setMessage(String message) {
         this.message = message;
     }
-
-
 
     /**
      * @return the createdTime
@@ -54,16 +49,13 @@ public class FacebookComment extends FacebookMessage {
         return createdTime;
     }
 
-
-
     /**
-     * @param createdTime the createdTime to set
+     * @param createdTime
+     *            the createdTime to set
      */
     public void setCreatedTime(Timestamp createdTime) {
         this.createdTime = createdTime;
     }
-
-
 
     /*
      * (non-Javadoc)
