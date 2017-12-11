@@ -19,6 +19,8 @@ import massey.geospider.boot.GeoCmdLine;
 import massey.geospider.conf.PropReader;
 import massey.geospider.global.GeoConstants;
 import massey.geospider.message.facebook.FacebookComment;
+import massey.geospider.message.facebook.FacebookMessage;
+import massey.geospider.message.facebook.FacebookPage;
 import massey.geospider.message.response.GeoResponse;
 import massey.geospider.message.response.facebook.FacebookCommentsResponse;
 import massey.geospider.message.response.facebook.FacebookError;
@@ -53,19 +55,21 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
     private static final Logger log = Logger.getLogger(FacebookCommentsProbe.class);
 
     /** it could be a postId or a commentId */
-    protected String parentId;
+    // protected String parentId;
+    /** It could be a FacebookPost or a FacebookComment */
+    protected FacebookMessage fbParent;
 
     /**
      * 
      */
-    public FacebookCommentsProbe(String postId) {
-        this.parentId = postId;
+    public FacebookCommentsProbe(FacebookMessage fbParent) {
+        this.fbParent = fbParent;
     }
 
     @Override
     protected void doPreCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("FacebookCommentsProbe#doPreCollect()");
-        log.info("Fetching all comments of the post " + parentId);
+        log.info("Fetching all comments of the post " + fbParent.getId());
         if (inputGeoResponse == null)
             log.info("The first page of comments searching...");
         else
@@ -144,7 +148,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
                 StringBuilder sb = new StringBuilder();
                 sb.append(PropReader.get(FB_DOMAIN_NAME_PROP_NAME)).append(SEPARATOR);
                 sb.append(PropReader.get(FB_VERSION_PROP_NAME)).append(SEPARATOR);
-                sb.append(parentId).append(SEPARATOR);
+                sb.append(fbParent.getId()).append(SEPARATOR);
                 sb.append("comments");
                 // use URIBuilder to solve URISyntax issues
                 URIBuilder builder = new URIBuilder(sb.toString());
@@ -217,7 +221,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
             String message = commentObj.isNull("message") ? "" : commentObj.getString("message");
             String createdTime = commentObj.isNull("created_time") ? "" : commentObj.getString("created_time");
             Timestamp vendorRecordCreatedTime = DateHelper.parse(createdTime, DATETIME_FORMAT_FB);
-            postArray[i] = new FacebookComment(id, parentId, message, vendorRecordCreatedTime);
+            postArray[i] = new FacebookComment(id, fbParent, message, vendorRecordCreatedTime);
         }
         return postArray;
     }
@@ -231,10 +235,41 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
     private void doCollectAllRepliessOfOneComment(GeoCmdLine geoCmdLine, FacebookComment fbComment) {
         if (fbComment == null)
             return;
-        FacebookRepliesProbe fbRepliesProbe = new FacebookRepliesProbe(fbComment.getId());
+        FacebookRepliesProbe fbRepliesProbe = new FacebookRepliesProbe(fbComment);
         // inputGeoResponse is null as this is the first query, not next paging
         // query
         fbRepliesProbe.collect(geoCmdLine, null);
+    }
+
+    /**
+     * Only the comments which contain the keyword and geoplaces can be returned
+     * 
+     * @param geoCmdLine
+     *            an object of GeoCmdLine
+     * @param fbCommentsRsp
+     *            an object of class FacebookCommentsResponse
+     * @return a list of object of class FacebookComment which contains the
+     *         keyword
+     */
+    protected List<FacebookComment> doFilterComment(final GeoCmdLine geoCmdLine,
+            final FacebookCommentsResponse fbCommentsRsp) {
+        // get the reference of FacebookPage of current FacebookPost object.
+        FacebookPage fbPage = (FacebookPage) fbParent.getParent();
+        if (fbCommentsRsp != null && fbCommentsRsp.getDatas() != null) {
+            // append fbCommentsRsp.getDatas() into SizeOfCommentsInTotal
+            fbPage.setSizeOfCommentsInTotal(fbPage.getSizeOfCommentsInTotal() + fbCommentsRsp.getDatas().length);
+        }
+        // filter keyword
+        List<FacebookComment> hasKeywordCommentList = doFilterKeyword(geoCmdLine, fbCommentsRsp);
+        // append hasKeywordCommentList size into SizeOfCommentsHasKeyword
+        fbPage.setSizeOfCommentsHasKeyword(fbPage.getSizeOfCommentsHasKeyword() + hasKeywordCommentList.size());
+        // filter geoplaces
+        List<FacebookComment> hasKeywordAndGeoCommentList = doFilterGeo(hasKeywordCommentList);
+        // append hasKeywordAndGeoCommentList size into
+        // SizeOfCommentsHasKeywordAndGeo
+        fbPage.setSizeOfCommentsHasKeywordAndGeo(
+                fbPage.getSizeOfCommentsHasKeywordAndGeo() + hasKeywordAndGeoCommentList.size());
+        return hasKeywordAndGeoCommentList;
     }
 
     /**
@@ -244,12 +279,12 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
      *            an object of GeoCmdLine
      * @param fbCommentsRsp
      *            an object of class FacebookCommentsResponse
-     * @return a list of object of class FacebookComment which contains the
+     * @return a list of object of class Facebookcomment which contains the
      *         keyword
      */
-    private List<FacebookComment> doFilterComment(final GeoCmdLine geoCmdLine,
+    protected List<FacebookComment> doFilterKeyword(final GeoCmdLine geoCmdLine,
             final FacebookCommentsResponse fbCommentsRsp) {
-        List<FacebookComment> list = new ArrayList<>();
+        List<FacebookComment> hasKeywordlist = new ArrayList<>();
         if (fbCommentsRsp != null) {
             FacebookComment[] fbCommentsArray = fbCommentsRsp.getDatas();
             for (int i = 0; i < fbCommentsArray.length; i++) {
@@ -259,12 +294,27 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
                     // CASE_INSENSITIVE
                     boolean isContain = Pattern.compile(Pattern.quote(s2), Pattern.CASE_INSENSITIVE).matcher(s1).find();
                     if (isContain) {
-                        list.add(fbCommentsArray[i]);
+                        hasKeywordlist.add(fbCommentsArray[i]);
                     }
                 }
             }
         }
-        return list;
+        return hasKeywordlist;
+    }
+
+    /**
+     * Only the comments which contain valid geoplace(s) can be returned
+     * 
+     * @param fbCommentList
+     * @return
+     */
+    protected List<FacebookComment> doFilterGeo(List<FacebookComment> fbCommentList) {
+        List<FacebookComment> hasGeoList = new ArrayList<>();
+        for (FacebookComment fbComment : fbCommentList) {
+            if (super.hasGeoPlace(fbComment))
+                hasGeoList.add(fbComment);
+        }
+        return hasGeoList;
     }
 
     /**
@@ -279,7 +329,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
         for (FacebookComment facebookComment : fbCommentList) {
             SocialMediaRecord smRecord = new SocialMediaRecord();
             smRecord.setVendorRecordId(facebookComment.getId());
-            smRecord.setVendorRecordParentId(facebookComment.getParentId());
+            smRecord.setVendorRecordParentId(facebookComment.getParent().getId());
             smRecord.setMessage(facebookComment.getMessage());
             smRecord.setVendorType(VENDOR_TYPE_FACEBOOK);
             smRecord.setRecordType(getRecordType());

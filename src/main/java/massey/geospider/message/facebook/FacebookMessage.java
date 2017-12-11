@@ -11,33 +11,33 @@ import massey.geospider.message.GeoMessage;
  */
 public abstract class FacebookMessage extends GeoMessage {
 
-    /** the id of page, post or comment */
+    /** The id of page, post or comment */
     private String id;
+    /** The message of a page, post , comment or reply */
+    protected String message;
+
     /**
-     * if this object has no parentId, then parentId will be saved as char '_':
+     * The parent message object of current message object:
      * <ul>
-     * <li>the parentId of a pageId is '_' which means pageId has no parentId
-     * </li>
-     * <li>the parentId of a postId is a pageId</li>
-     * <li>the parentId of a commentId could be a postId</li>
-     * <li>the parentId of a commentId could be a commendId which means this
-     * comment is a reply of another comment</li>
+     * <li>parent is null if this object is an object of class FacebookPage</li>
+     * <li>parent is an object of class FacebookPage if this object is an object
+     * of class FacebookPost</li>
+     * <li>parent is an object of class FacebookPost or FacebookComment if this
+     * object is an object of class FacebookComment</li>
      * </ul>
      */
-    private String parentId;
+    private FacebookMessage parent;
 
     /**
      * 
      * @param id
      * @param parentId
      */
-    public FacebookMessage(String id, String parentId) {
+    public FacebookMessage(String id, FacebookMessage parent) {
         this.id = id;
-        this.parentId = parentId;
+        this.parent = parent;
     }
 
-    
-    
     /**
      * @return the id
      */
@@ -45,16 +45,35 @@ public abstract class FacebookMessage extends GeoMessage {
         return id;
     }
 
-
-
     /**
-     * @return the parentId
+     * @return the parent
      */
-    public String getParentId() {
-        return parentId;
+    public FacebookMessage getParent() {
+        return parent;
     }
 
+    /**
+     * @param parent
+     *            the parent to set
+     */
+    public void setParent(FacebookMessage parent) {
+        this.parent = parent;
+    }
 
+    /**
+     * @return the message
+     */
+    public String getMessage() {
+        return message;
+    }
+
+    /**
+     * @param message
+     *            the message to set
+     */
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
     /*
      * (non-Javadoc)
@@ -63,7 +82,8 @@ public abstract class FacebookMessage extends GeoMessage {
      */
     @Override
     public String toString() {
-        return "FacebookMessage [id=" + id + ", parentId=" + parentId + ", toString()=" + super.toString() + "]";
+        return "FacebookMessage [id=" + id + ", message=" + message + ", parent=" + parent + ", toString()="
+                + super.toString() + "]";
     }
 
 }

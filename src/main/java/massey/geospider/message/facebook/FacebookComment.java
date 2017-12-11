@@ -4,6 +4,8 @@
 package massey.geospider.message.facebook;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Frank Hou (faming.hou@gmail.com)
@@ -11,41 +13,20 @@ import java.sql.Timestamp;
  */
 public class FacebookComment extends FacebookMessage {
 
-    private String message;
     private Timestamp createdTime;
 
     /**
      * 
      * @param id
-     * @param parentId
+     * @param parent
      * @param message
      * @param createdTime
      */
-    public FacebookComment(String id, String parentId, String message, Timestamp createdTime) {
-        super(id, parentId);
+    public FacebookComment(String id, FacebookMessage parent, String message, Timestamp createdTime) {
+        super(id, parent);
         this.message = message;
         this.createdTime = createdTime;
     }
-
-    
-    
-    /**
-     * @return the message
-     */
-    public String getMessage() {
-        return message;
-    }
-
-
-
-    /**
-     * @param message the message to set
-     */
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-
 
     /**
      * @return the createdTime
@@ -54,16 +35,13 @@ public class FacebookComment extends FacebookMessage {
         return createdTime;
     }
 
-
-
     /**
-     * @param createdTime the createdTime to set
+     * @param createdTime
+     *            the createdTime to set
      */
     public void setCreatedTime(Timestamp createdTime) {
         this.createdTime = createdTime;
     }
-
-
 
     /*
      * (non-Javadoc)
@@ -72,8 +50,7 @@ public class FacebookComment extends FacebookMessage {
      */
     @Override
     public String toString() {
-        return "FacebookComment [message=" + message + ", createdTime=" + createdTime + ", toString()="
-                + super.toString() + "]";
+        return "FacebookComment [createdTime=" + createdTime + ", toString()=" + super.toString() + "]";
     }
 
 }

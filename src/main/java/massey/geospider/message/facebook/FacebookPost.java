@@ -11,30 +11,23 @@ import java.sql.Timestamp;
  */
 public class FacebookPost extends FacebookMessage {
 
-    private String message;
     private Timestamp createdTime;
     private FacebookPlace fbPlace;
 
     /**
      * 
      * @param id
-     * @param parentId
+     * @param parent
      * @param message
      * @param createdTime
      * @param fbPlace
      */
-    public FacebookPost(String id, String parentId, String message, Timestamp createdTime, FacebookPlace fbPlace) {
-        super(id, parentId);
+    public FacebookPost(String id, FacebookMessage parent, String message, Timestamp createdTime,
+            FacebookPlace fbPlace) {
+        super(id, parent);
         this.message = message;
         this.createdTime = createdTime;
         this.fbPlace = fbPlace;
-    }
-
-    /**
-     * @return the message
-     */
-    public String getMessage() {
-        return message;
     }
 
     /**
@@ -60,14 +53,6 @@ public class FacebookPost extends FacebookMessage {
     }
 
     /**
-     * @param message
-     *            the message to set
-     */
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    /**
      * @param createdTime
      *            the createdTime to set
      */
@@ -82,8 +67,8 @@ public class FacebookPost extends FacebookMessage {
      */
     @Override
     public String toString() {
-        return "FacebookPost [message=" + message + ", createdTime=" + createdTime + ", fbPlace=" + fbPlace
-                + ", toString()=" + super.toString() + "]";
+        return "FacebookPost [createdTime=" + createdTime + ", fbPlace=" + fbPlace + ", toString()=" + super.toString()
+                + "]";
     }
 
 }

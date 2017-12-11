@@ -14,6 +14,7 @@ import massey.geospider.api.http.HttpHelper;
 import massey.geospider.boot.GeoCmdLine;
 import massey.geospider.conf.PropReader;
 import massey.geospider.global.GeoConstants;
+import massey.geospider.message.facebook.FacebookMessage;
 import massey.geospider.message.facebook.FacebookPage;
 import massey.geospider.message.response.GeoResponse;
 import massey.geospider.message.response.facebook.FacebookError;
@@ -44,6 +45,9 @@ import massey.geospider.message.response.facebook.FacebookPaging;
 public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoConstants {
 
     private static final Logger log = Logger.getLogger(FacebookPagesProbe.class);
+
+    /** The current FacebookPage object which is being processed */
+    private FacebookPage currentPage;
 
     /**
      * 
@@ -105,15 +109,20 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
         if (fbPagesRsp != null) {
             FacebookPage[] fbPageArray = fbPagesRsp.getDatas();
             for (int i = 0; i < fbPageArray.length; i++) {
+                currentPage = fbPageArray[i];
+                log.info("fetch all posts of the page ===> " + currentPage.getId());
                 // fetch all posts under one FacebookPage
-                doCollectAllPostsOfOnePage(geoCmdLine, fbPageArray[i]);
+                doCollectAllPostsOfOnePage(geoCmdLine, currentPage);
+                // statistics Task_20171201_2
+                doStatistics(currentPage);
             }
         }
     }
 
     @Override
     protected void doNextPageCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
-        log.debug("FacebookPagesProbe#doNextPageCollect()");
+        log.debug("FacebookPagesProbe#doNextPageCollect(): previousPageId = " + currentPage == null ? "null"
+                : currentPage.getId());
         // call collect method recursively to search the next page on pages
         // level.
         collect(geoCmdLine, inputGeoResponse);
@@ -221,9 +230,9 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
         for (int i = 0; i < n; ++i) {
             JSONObject pageObj = dataArray.getJSONObject(i);
             String id = pageObj.isNull("id") ? "" : pageObj.getString("id");
-            String parentId = "_"; // FacebookPage object has no parentId.
+            FacebookMessage parent = null; // FacebookPage object has no parent.
             String name = pageObj.isNull("name") ? "" : pageObj.getString("name");
-            pageArray[i] = new FacebookPage(id, parentId, name);
+            pageArray[i] = new FacebookPage(id, parent, name);
         }
         return pageArray;
     }
@@ -239,10 +248,33 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
     private void doCollectAllPostsOfOnePage(GeoCmdLine geoCmdLine, FacebookPage fbPage) {
         if (fbPage == null)
             return;
-        FacebookPostsProbe fbPostsProbe = new FacebookPostsProbe(fbPage.getId());
+        FacebookPostsProbe fbPostsProbe = new FacebookPostsProbe(fbPage);
         // inputGeoResponse is null as this is the first query, not next paging
         // query
         fbPostsProbe.collect(geoCmdLine, null);
+    }
+
+    /**
+     * Inserts statistics information of a FacebookPage into database
+     * 
+     * @param fbPage
+     *            a FacebookPage object
+     */
+    private void doStatistics(FacebookPage fbPage) {
+        log.info("start Statistics:==> pageId = " + fbPage.getId());
+        log.info("pageName = " + fbPage.getName());
+
+        log.info("PostsInTotal:" + fbPage.getSizeOfPostsInTotal());
+        log.info("PostsHasKeyword:" + fbPage.getSizeOfPostsHasKeyword());
+        log.info("PostsHasKeywordAndGeo:" + fbPage.getSizeOfPostsHasKeywordAndGeo());
+
+        log.info("CommentsInTotal:" + fbPage.getSizeOfCommentsInTotal());
+        log.info("CommentsHasKeyword:" + fbPage.getSizeOfCommentsHasKeyword());
+        log.info("CommentsHasKeywordAndGeo:" + fbPage.getSizeOfCommentsHasKeywordAndGeo());
+
+        log.info("RepliesInTotal:" + fbPage.getSizeOfRepliesInTotal());
+        log.info("RepliesHasKeyword:" + fbPage.getSizeOfRepliesHasKeyword());
+        log.info("RepliesHasKeywordAndGeo:" + fbPage.getSizeOfRepliesHasKeywordAndGeo());
     }
 
 }

@@ -19,23 +19,6 @@ public abstract class AbstractProbe implements Probe {
 
     private static final Logger log = Logger.getLogger(AbstractProbe.class);
 
-    /*
-     * 
-     * @see massey.geospider.probe.Probe#collect(org.apache.commons.cli.Options)
-     */
-    @Override
-    public void collect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
-        doPreCollect(geoCmdLine, inputGeoResponse);
-        GeoResponse geoResponse = doRequest(geoCmdLine, inputGeoResponse);
-        if (geoResponse != null) {
-            doProcessResponse(geoCmdLine, geoResponse);
-            doPostCollect(geoCmdLine, geoResponse);
-            doNextPageCollect(geoCmdLine, geoResponse);
-        } else {
-            log.info("geoResponse is null, which means this is the last page or the request url is invalid.");
-        }
-    }
-
     /**
      * Does preparation work for this collecting task
      * 

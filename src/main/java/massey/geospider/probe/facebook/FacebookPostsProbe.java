@@ -19,6 +19,7 @@ import massey.geospider.boot.GeoCmdLine;
 import massey.geospider.conf.PropReader;
 import massey.geospider.global.GeoConstants;
 import massey.geospider.message.facebook.FacebookLocation;
+import massey.geospider.message.facebook.FacebookPage;
 import massey.geospider.message.facebook.FacebookPlace;
 import massey.geospider.message.facebook.FacebookPost;
 import massey.geospider.message.response.GeoResponse;
@@ -53,19 +54,22 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
 
     private static final Logger log = Logger.getLogger(FacebookPostsProbe.class);
 
-    private String pageId;
+    /** The parent Facebook page */
+    private FacebookPage fbPage;
+    /** The current facebookPost which is being processed */
+    private FacebookPost currentPost;
 
     /**
      * 
      */
-    public FacebookPostsProbe(String pageId) {
-        this.pageId = pageId;
+    public FacebookPostsProbe(FacebookPage fbPage) {
+        this.fbPage = fbPage;
     }
 
     @Override
     protected void doPreCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("FacebookPostsProbe#doPreCollect()");
-        log.info("Fetching all posts of the page " + pageId);
+        log.info("Fetching all posts of the page " + fbPage.getId());
         if (inputGeoResponse == null)
             log.info("The first page of posts searching...");
         else
@@ -107,8 +111,10 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
         if (fbPostsRsp != null) {
             FacebookPost[] fbPostArray = fbPostsRsp.getDatas();
             for (int i = 0; i < fbPostArray.length; i++) {
+                currentPost = fbPostArray[i];
+                log.info("fetch all comments of the post ===> " + currentPost.getId());
                 // fetch all comments under one FacebookPost
-                doCollectAllCommentsOfOnePost(geoCmdLine, fbPostArray[i]);
+                doCollectAllCommentsOfOnePost(geoCmdLine, currentPost);
             }
 
         }
@@ -116,7 +122,8 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
 
     @Override
     protected void doNextPageCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
-        log.debug("FacebookPostsProbe#doNextPageCollect()");
+        log.debug("FacebookPostsProbe#doNextPageCollect(): currentPostId = " + currentPost == null ? "null"
+                : currentPost.getId());
         // call collect method recursively to search the next page on posts
         // level.
         collect(geoCmdLine, inputGeoResponse);
@@ -145,7 +152,7 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
                 StringBuilder sb = new StringBuilder();
                 sb.append(PropReader.get(FB_DOMAIN_NAME_PROP_NAME)).append(SEPARATOR);
                 sb.append(PropReader.get(FB_VERSION_PROP_NAME)).append(SEPARATOR);
-                sb.append(pageId).append(SEPARATOR);
+                sb.append(fbPage.getId()).append(SEPARATOR);
                 sb.append("posts");
                 // using URIBuilder to solve URISyntax issues
                 URIBuilder builder = new URIBuilder(sb.toString());
@@ -234,7 +241,7 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
             String createdTime = postObj.isNull("created_time") ? "" : postObj.getString("created_time");
             Timestamp vendorRecordCreatedTime = DateHelper.parse(createdTime, DATETIME_FORMAT_FB);
             FacebookPlace fbPlace = createFBPlace(postObj);
-            postArray[i] = new FacebookPost(id, pageId, message, vendorRecordCreatedTime, fbPlace);
+            postArray[i] = new FacebookPost(id, fbPage, message, vendorRecordCreatedTime, fbPlace);
         }
         return postArray;
     }
@@ -248,10 +255,38 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
     private void doCollectAllCommentsOfOnePost(GeoCmdLine geoCmdLine, FacebookPost fbPost) {
         if (fbPost == null)
             return;
-        FacebookCommentsProbe fbCommentsProbe = new FacebookCommentsProbe(fbPost.getId());
+        FacebookCommentsProbe fbCommentsProbe = new FacebookCommentsProbe(fbPost);
         // inputGeoResponse is null as this is the first query, not next paging
         // query
         fbCommentsProbe.collect(geoCmdLine, null);
+    }
+
+    /**
+     * Only the posts which contain the keyword and GeoPlace can be returned
+     * 
+     * @param geoCmdLine
+     *            an object of GeoCmdLine
+     * @param fbPostsRsp
+     *            an object of class FacebookPostsResponse
+     * @return a list of object of class FacebookPost which contains the keyword
+     *         and GeoPlace
+     */
+    private List<FacebookPost> doFilterPost(final GeoCmdLine geoCmdLine, final FacebookPostsResponse fbPostsRsp) {
+        if (fbPostsRsp != null && fbPostsRsp.getDatas() != null) {
+            // append the size of fbPostsRsp.getDatas() into SizeOfPostsInTotal
+            fbPage.setSizeOfPostsInTotal(fbPage.getSizeOfPostsInTotal() + fbPostsRsp.getDatas().length);
+        }
+        // filter keyword
+        List<FacebookPost> hasKeywordPostList = doFilterKeyword(geoCmdLine, fbPostsRsp);
+        // append the size of hasKeywordPostList into SizeOfPostsHasKeyword
+        fbPage.setSizeOfPostsHasKeyword(fbPage.getSizeOfPostsHasKeyword() + hasKeywordPostList.size());
+        // filter geoplaces
+        List<FacebookPost> hasKeywordAndGeoPostList = doFilterGeo(hasKeywordPostList);
+        // append the size of hasKeywordAndGeoPostList into
+        // SizeOfPostsHasKeywordAndGeo
+        fbPage.setSizeOfPostsHasKeywordAndGeo(
+                fbPage.getSizeOfPostsHasKeywordAndGeo() + hasKeywordAndGeoPostList.size());
+        return hasKeywordAndGeoPostList;
     }
 
     /**
@@ -263,8 +298,8 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
      *            an object of class FacebookPostsResponse
      * @return a list of object of class FacebookPost which contains the keyword
      */
-    private List<FacebookPost> doFilterPost(final GeoCmdLine geoCmdLine, final FacebookPostsResponse fbPostsRsp) {
-        List<FacebookPost> list = new ArrayList<>();
+    private List<FacebookPost> doFilterKeyword(final GeoCmdLine geoCmdLine, final FacebookPostsResponse fbPostsRsp) {
+        List<FacebookPost> hasKeywordlist = new ArrayList<>();
         if (fbPostsRsp != null) {
             FacebookPost[] fbPostsArray = fbPostsRsp.getDatas();
             for (int i = 0; i < fbPostsArray.length; i++) {
@@ -274,12 +309,27 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
                     // CASE_INSENSITIVE
                     boolean isContain = Pattern.compile(Pattern.quote(s2), Pattern.CASE_INSENSITIVE).matcher(s1).find();
                     if (isContain) {
-                        list.add(fbPostsArray[i]);
+                        hasKeywordlist.add(fbPostsArray[i]);
                     }
                 }
             }
         }
-        return list;
+        return hasKeywordlist;
+    }
+
+    /**
+     * Only the posts which contain valid geoplace(s) can be returned
+     * 
+     * @param fbPostList
+     * @return
+     */
+    private List<FacebookPost> doFilterGeo(List<FacebookPost> fbPostList) {
+        List<FacebookPost> hasGeoList = new ArrayList<>();
+        for (FacebookPost fbPost : fbPostList) {
+            if (super.hasGeoPlace(fbPost))
+                hasGeoList.add(fbPost);
+        }
+        return hasGeoList;
     }
 
     /**
@@ -293,7 +343,7 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
         for (FacebookPost facebookPost : fbPostList) {
             SocialMediaRecord smRecord = new SocialMediaRecord();
             smRecord.setVendorRecordId(facebookPost.getId());
-            smRecord.setVendorRecordParentId(facebookPost.getParentId());
+            smRecord.setVendorRecordParentId(facebookPost.getParent().getId());
             smRecord.setMessage(facebookPost.getMessage());
             smRecord.setVendorType(VENDOR_TYPE_FACEBOOK);
             smRecord.setRecordType(RECORD_TYPE_POST);

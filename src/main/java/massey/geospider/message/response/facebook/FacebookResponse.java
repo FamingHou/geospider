@@ -57,4 +57,30 @@ public abstract class FacebookResponse extends GeoResponse {
         return paging;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see massey.geospider.message.response.GeoResponse#isDatasEmpty()
+     */
+    @Override
+    public boolean isDatasEmpty() {
+        if (datas != null && datas.length != 0)
+            return true;
+        else
+            return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see massey.geospider.message.response.GeoResponse#hasNextPagingURL()
+     */
+    @Override
+    public boolean hasNextPagingURL() {
+        if (paging != null && paging.getNextURL() != null)
+            return true;
+        else
+            return false;
+    }
+
 }
