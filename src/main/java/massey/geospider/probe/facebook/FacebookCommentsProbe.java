@@ -54,8 +54,6 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
 
     private static final Logger log = Logger.getLogger(FacebookCommentsProbe.class);
 
-    /** it could be a postId or a commentId */
-    // protected String parentId;
     /** It could be a FacebookPost or a FacebookComment */
     protected FacebookMessage fbParent;
 

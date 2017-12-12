@@ -72,7 +72,7 @@ public class FacebookRepliesProbe extends FacebookCommentsProbe {
      */
     protected List<FacebookComment> doFilterComment(final GeoCmdLine geoCmdLine,
             final FacebookCommentsResponse fbRepliesRsp) {
-        // the method name is jsut used to override parent method, actually it
+        // the method name is just used to override parent method, actually it
         // is the method doFliterReply.
         // get the reference of FacebookPage of current FacebookComment object.
         // current object is a Comment, fbParent.getParent() is a Post,

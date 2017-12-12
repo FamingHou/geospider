@@ -4,8 +4,6 @@
 package massey.geospider.message.facebook;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Frank Hou (faming.hou@gmail.com)
@@ -26,6 +24,21 @@ public class FacebookComment extends FacebookMessage {
         super(id, parent);
         this.message = message;
         this.createdTime = createdTime;
+    }
+
+    /**
+     * @return the message
+     */
+    public String getMessage() {
+        return message;
+    }
+
+    /**
+     * @param message
+     *            the message to set
+     */
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     /**

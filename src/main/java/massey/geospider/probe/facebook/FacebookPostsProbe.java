@@ -54,10 +54,10 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
 
     private static final Logger log = Logger.getLogger(FacebookPostsProbe.class);
 
-    /** The parent Facebook page */
-    private FacebookPage fbPage;
     /** The current facebookPost which is being processed */
     private FacebookPost currentPost;
+    /** The parent Facebook page */
+    private FacebookPage fbPage;
 
     /**
      * 
