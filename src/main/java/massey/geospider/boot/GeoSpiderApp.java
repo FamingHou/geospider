@@ -14,17 +14,19 @@ public class GeoSpiderApp {
     private static final Logger log = Logger.getLogger(GeoSpiderApp.class);
 
     public static void main(String[] args) {
-        log.info("========================================");
-        log.info("|| Geospider is going to work...      ||");
-        log.info("========================================");
 
         GeoCmdLine geoCmdLine = GeoCmdLineBuilder.build(args);
-        if (geoCmdLine != null)
+        if (geoCmdLine != null) {
+            log.info("========================================");
+            log.info("|| Geospider is going to work...      ||");
+            log.info("========================================");
+
             GeoController.getSingleton().dispatch(geoCmdLine);
 
-        log.info("================");
-        log.info("|| All done!  ||");
-        log.info("================");
+            log.info("================");
+            log.info("|| All done!  ||");
+            log.info("================");
+        }
     }
 
 }
