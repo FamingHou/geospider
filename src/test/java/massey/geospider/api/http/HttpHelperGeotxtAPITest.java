@@ -3,41 +3,43 @@
  */
 package massey.geospider.api.http;
 
-import static org.junit.Assert.fail;
-
 import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+
+import junit.framework.TestCase;
 
 /**
  * @author Frank Hou (faming.hou@gmail.com)
  *
  */
-public class HttpHelperGeotxtAPITest {
+public class HttpHelperGeotxtAPITest extends TestCase {
 
     /**
-     * @throws java.lang.Exception
+     * @param name
      */
-    @Before
-    public void setUp() throws Exception {
+    public HttpHelperGeotxtAPITest(String name) {
+        super(name);
     }
 
-    /**
-     * @throws java.lang.Exception
+    /*
+     * (non-Javadoc)
+     * 
+     * @see junit.framework.TestCase#setUp()
      */
-    @After
-    public void tearDown() throws Exception {
+    protected void setUp() throws Exception {
+        super.setUp();
     }
 
-    @Test
-    public final void test() {
-        fail("Not yet implemented"); // TODO
+    /*
+     * (non-Javadoc)
+     * 
+     * @see junit.framework.TestCase#tearDown()
+     */
+    protected void tearDown() throws Exception {
+        super.tearDown();
     }
 
-    @Test
     public void testDoRequestGeoTxtOrgAPI() throws Exception {
         // String message = "I am here";
         String message = "I am living in Auckland";
