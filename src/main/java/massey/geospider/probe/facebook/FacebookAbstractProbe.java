@@ -117,30 +117,32 @@ public abstract class FacebookAbstractProbe extends AbstractProbe {
      * @return true - if fbMessage has valid geoplaces; false -otherwise
      */
     protected boolean hasGeoPlace(FacebookMessage fbMessage) {
-        try {
-            String msg = fbMessage.getMessage();
-            StringBuilder sb = new StringBuilder();
-            sb.append("http://geotxt.org/v2/api/geotxt.json");
-            // using URIBuilder to solve URISyntax issues
-            URIBuilder builder = new URIBuilder(sb.toString());
-            builder.addParameter("m", "stanfords");
-            builder.addParameter("q", msg);
-
-            String responseString = HttpHelper.doGet(builder.toString());
-            try {
-                JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
-                if (jsonObj != null && !jsonObj.isNull("features")) {
-                    JSONArray dataArray = jsonObj.getJSONArray("features");
-                    int len = dataArray.length();
-                    if (len > 0)
-                        return true;
-                }
-            } catch (JSONException e) {
-                log.error(e, e);
-            }
-        } catch (URISyntaxException e) {
-            log.error(e, e);
-        }
-        return false;
+//        try {
+//            String msg = fbMessage.getMessage();
+//            StringBuilder sb = new StringBuilder();
+//            sb.append("http://geotxt.org/v2/api/geotxt.json");
+//            // using URIBuilder to solve URISyntax issues
+//            URIBuilder builder = new URIBuilder(sb.toString());
+//            builder.addParameter("m", "stanfords");
+//            builder.addParameter("q", msg);
+//
+//            String responseString = HttpHelper.doGet(builder.toString());
+//            try {
+//                JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
+//                if (jsonObj != null && !jsonObj.isNull("features")) {
+//                    JSONArray dataArray = jsonObj.getJSONArray("features");
+//                    int len = dataArray.length();
+//                    if (len > 0)
+//                        return true;
+//                }
+//            } catch (JSONException e) {
+//                log.error(e, e);
+//            }
+//        } catch (URISyntaxException e) {
+//            log.error(e, e);
+//        }
+//        return false;
+        // only for performance test
+        return true;
     }
 }
