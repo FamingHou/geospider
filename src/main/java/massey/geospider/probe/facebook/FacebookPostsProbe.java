@@ -391,7 +391,7 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
         if (placeObj != null) {
             fbPlace.setId(placeObj.isNull("id") ? "" : placeObj.getString("id"));
             fbPlace.setName(placeObj.isNull("name") ? "" : placeObj.getString("name"));
-            JSONObject locObj = placeObj.getJSONObject("location");
+            JSONObject locObj = placeObj.isNull("location") ? null : placeObj.getJSONObject("location");
             if (locObj != null) {
                 FacebookLocation fbLoc = new FacebookLocation();
                 fbLoc.setCity(locObj.isNull("city") ? "" : locObj.getString("city"));
