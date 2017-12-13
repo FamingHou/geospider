@@ -20,6 +20,10 @@ import massey.geospider.message.response.GeoResponse;
 import massey.geospider.message.response.facebook.FacebookError;
 import massey.geospider.message.response.facebook.FacebookPagesResponse;
 import massey.geospider.message.response.facebook.FacebookPaging;
+import massey.geospider.persistence.dao.StatsPageDAO;
+import massey.geospider.persistence.dao.StatsPageDAOImpl;
+import massey.geospider.persistence.dto.StatsPage;
+import massey.geospider.util.JSONHelper;
 
 /**
  * 
@@ -182,7 +186,7 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
      * @return an object of class type FacebookPagesResponse
      */
     private FacebookPagesResponse createFacebookPagesResponse(String responseString) {
-        if (responseString == null)
+        if (!JSONHelper.isValidJson(responseString))
             return null;
         JSONObject jsonObj = new JSONObject(responseString);
         FacebookPage[] datas = parseDatas(jsonObj);
@@ -275,6 +279,25 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
         log.info("RepliesInTotal:" + fbPage.getSizeOfRepliesInTotal());
         log.info("RepliesHasKeyword:" + fbPage.getSizeOfRepliesHasKeyword());
         log.info("RepliesHasKeywordAndGeo:" + fbPage.getSizeOfRepliesHasKeywordAndGeo());
+
+        StatsPage statsPage = new StatsPage();
+        statsPage.setPageId(fbPage.getId());
+        statsPage.setPageName(fbPage.getName());
+
+        statsPage.setSizeOfPostsInTotal(fbPage.getSizeOfPostsInTotal());
+        statsPage.setSizeOfPostsHasKeyword(fbPage.getSizeOfPostsHasKeyword());
+        statsPage.setSizeOfPostsHasKeywordAndGeo(fbPage.getSizeOfPostsHasKeywordAndGeo());
+
+        statsPage.setSizeOfCommentsInTotal(fbPage.getSizeOfCommentsInTotal());
+        statsPage.setSizeOfCommentsHasKeyword(fbPage.getSizeOfCommentsHasKeyword());
+        statsPage.setSizeOfCommentsHasKeywordAndGeo(fbPage.getSizeOfCommentsHasKeywordAndGeo());
+
+        statsPage.setSizeOfRepliesInTotal(fbPage.getSizeOfRepliesInTotal());
+        statsPage.setSizeOfRepliesHasKeyword(fbPage.getSizeOfRepliesHasKeyword());
+        statsPage.setSizeOfRepliesHasKeywordAndGeo(fbPage.getSizeOfRepliesHasKeywordAndGeo());
+
+        StatsPageDAO spDao = new StatsPageDAOImpl();
+        spDao.insertOne(statsPage);
     }
 
 }

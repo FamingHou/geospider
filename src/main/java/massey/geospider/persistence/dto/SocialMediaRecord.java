@@ -13,7 +13,7 @@ import java.sql.Timestamp;
  */
 public class SocialMediaRecord {
 
-    private int id;
+    private long id;
     private String vendorRecordId;
     private String vendorRecordParentId;
     private String message;
@@ -57,7 +57,7 @@ public class SocialMediaRecord {
     /**
      * @return the id
      */
-    public int getId() {
+    public long getId() {
         return id;
     }
 

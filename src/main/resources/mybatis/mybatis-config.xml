@@ -8,6 +8,8 @@
     <typeAliases>
         <typeAlias alias="SocialMediaRecord"
             type="massey.geospider.persistence.dto.SocialMediaRecord" />
+        <typeAlias alias="StatsPage"
+            type="massey.geospider.persistence.dto.StatsPage" />
     </typeAliases>
 
     <environments default="geospider">
@@ -25,6 +27,7 @@
 
     <mappers>
         <mapper resource="mybatis/social-media-record-mapper.xml" />
+        <mapper resource="mybatis/stats-page-mapper.xml" />
     </mappers>
 
 </configuration>

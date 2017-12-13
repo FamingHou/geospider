@@ -30,6 +30,7 @@ import massey.geospider.persistence.dao.SocialMediaRecordDAO;
 import massey.geospider.persistence.dao.SocialMediaRecordDAOImpl;
 import massey.geospider.persistence.dto.SocialMediaRecord;
 import massey.geospider.util.DateHelper;
+import massey.geospider.util.JSONHelper;
 
 /**
  * 
@@ -183,7 +184,7 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
      * @return an object of class type FacebookPostsResponse
      */
     private FacebookPostsResponse createFacebookPostsResponse(String responseString) {
-        if (responseString == null)
+        if (!JSONHelper.isValidJson(responseString))
             return null;
         JSONObject jsonObj = new JSONObject(responseString);
         FacebookPost[] datas = parseDatas(jsonObj);

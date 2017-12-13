@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="StatsPageMapper">
+
+    <insert id="insertOne" parameterType="StatsPage">
+        INSERT INTO
+        stats_page
+        (page_id, page_name,
+        size_of_posts_in_total,
+        size_of_posts_has_keyword, size_of_posts_has_keyword_and_geo,
+        size_of_comments_in_total, size_of_comments_has_keyword,
+        size_of_comments_has_keyword_and_geo,
+        size_of_replies_in_total,
+        size_of_replies_has_keyword,
+        size_of_replies_has_keyword_and_geo)
+        VALUES (#{pageId},
+        #{pageName}, #{sizeOfPostsInTotal},
+        #{sizeOfPostsHasKeyword},
+        #{sizeOfPostsHasKeywordAndGeo}, #{sizeOfCommentsInTotal},
+        #{sizeOfCommentsHasKeyword},
+        #{sizeOfCommentsHasKeywordAndGeo},
+        #{sizeOfRepliesInTotal}, #{sizeOfRepliesHasKeyword},
+        #{sizeOfRepliesHasKeywordAndGeo});
+    </insert>
+
+</mapper>
