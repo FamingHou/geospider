@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import massey.geospider.api.http.HttpHelper;
@@ -126,12 +127,16 @@ public abstract class FacebookAbstractProbe extends AbstractProbe {
             builder.addParameter("q", msg);
 
             String responseString = HttpHelper.doGet(builder.toString());
-            JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
-            if (jsonObj != null && !jsonObj.isNull("features")) {
-                JSONArray dataArray = jsonObj.getJSONArray("features");
-                int len = dataArray.length();
-                if (len > 0)
-                    return true;
+            try {
+                JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
+                if (jsonObj != null && !jsonObj.isNull("features")) {
+                    JSONArray dataArray = jsonObj.getJSONArray("features");
+                    int len = dataArray.length();
+                    if (len > 0)
+                        return true;
+                }
+            } catch (JSONException e) {
+                log.error(e, e);
             }
         } catch (URISyntaxException e) {
             log.error(e, e);

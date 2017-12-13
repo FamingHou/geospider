@@ -184,8 +184,6 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
      * @return an object of class type FacebookPostsResponse
      */
     private FacebookPostsResponse createFacebookPostsResponse(String responseString) {
-        if (!JSONHelper.isValidJson(responseString))
-            return null;
         JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
         FacebookPost[] datas = parseDatas(jsonObj);
         FacebookError error = parseError(jsonObj);
