@@ -20,6 +20,7 @@ import massey.geospider.message.response.GeoResponse;
 import massey.geospider.message.response.facebook.FacebookError;
 import massey.geospider.message.response.facebook.FacebookPagesResponse;
 import massey.geospider.message.response.facebook.FacebookPaging;
+import massey.geospider.util.JSONHelper;
 
 /**
  * 
@@ -182,7 +183,7 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
      * @return an object of class type FacebookPagesResponse
      */
     private FacebookPagesResponse createFacebookPagesResponse(String responseString) {
-        if (responseString == null)
+        if (!JSONHelper.isValidJson(responseString))
             return null;
         JSONObject jsonObj = new JSONObject(responseString);
         FacebookPage[] datas = parseDatas(jsonObj);
