@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import junit.framework.TestCase;
+import massey.geospider.util.JSONHelper;
 
 /**
  * @author Frank Hou (faming.hou@gmail.com)
@@ -53,7 +54,7 @@ public class HttpHelperGeotxtAPITest extends TestCase {
 
         String responseString = HttpHelper.doGet(builder.toString());
 
-        JSONObject jsonObj = new JSONObject(responseString);
+        JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
         if (jsonObj == null || jsonObj.isNull("features"))
             return;
         JSONArray dataArray = jsonObj.getJSONArray("features");

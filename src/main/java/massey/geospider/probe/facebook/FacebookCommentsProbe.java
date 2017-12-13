@@ -178,7 +178,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
     private FacebookCommentsResponse createFacebookCommentsResponse(String responseString) {
         if (!JSONHelper.isValidJson(responseString))
             return null;
-        JSONObject jsonObj = new JSONObject(responseString);
+        JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
         FacebookComment[] datas = parseDatas(jsonObj);
         FacebookError error = parseError(jsonObj);
         FacebookPaging paging = parsePaging(jsonObj);

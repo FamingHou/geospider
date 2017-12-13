@@ -48,4 +48,20 @@ public class JSONHelper {
         return true;
     }
 
+    /**
+     * Creates a new JSONObject object. This method should be called everywhere
+     * which wants to create a new JSONObject to avoid RuntimeException which
+     * will halt the main process.
+     * 
+     * @param jsonString
+     *            an input String to be parsed into JSONObject
+     * @return null if jsonString is invalid JSON String, a new JSONObject
+     *         otherwise.
+     */
+    public static JSONObject createAJSONObject(String jsonString) {
+        if (!isValidJson(jsonString))
+            return null;
+        return new JSONObject(jsonString);
+    }
+
 }

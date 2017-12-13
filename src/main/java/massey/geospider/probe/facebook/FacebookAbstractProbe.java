@@ -17,6 +17,7 @@ import massey.geospider.message.response.GeoResponse;
 import massey.geospider.message.response.facebook.FacebookError;
 import massey.geospider.message.response.facebook.FacebookPaging;
 import massey.geospider.probe.AbstractProbe;
+import massey.geospider.util.JSONHelper;
 
 /**
  * 
@@ -125,7 +126,7 @@ public abstract class FacebookAbstractProbe extends AbstractProbe {
             builder.addParameter("q", msg);
 
             String responseString = HttpHelper.doGet(builder.toString());
-            JSONObject jsonObj = new JSONObject(responseString);
+            JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
             if (jsonObj != null && !jsonObj.isNull("features")) {
                 JSONArray dataArray = jsonObj.getJSONArray("features");
                 int len = dataArray.length();
