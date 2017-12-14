@@ -59,6 +59,8 @@ public class StatsPageDAOImplTest extends TestCase {
         reader.close();
 
         StatsPage statsPage = new StatsPage();
+        statsPage.setKeyword("earthquaketest");
+        statsPage.setVendorType(1);
         statsPage.setPageId("111");
         statsPage.setPageName("test page name 111");
         statsPage.setSizeOfPostsInTotal(200);

@@ -118,7 +118,7 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
                 // fetch all posts under one FacebookPage
                 doCollectAllPostsOfOnePage(geoCmdLine, currentPage);
                 // statistics Task_20171201_2
-                doStatistics(currentPage);
+                doStatistics(geoCmdLine, currentPage);
             }
         }
     }
@@ -259,10 +259,11 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
     /**
      * Inserts statistics information of a FacebookPage into database
      * 
+     * @param geoCmdLine
      * @param fbPage
      *            a FacebookPage object
      */
-    private void doStatistics(FacebookPage fbPage) {
+    private void doStatistics(GeoCmdLine geoCmdLine, FacebookPage fbPage) {
         log.info("start Statistics:==> pageId = " + fbPage.getId());
         log.info("pageName = " + fbPage.getName());
 
@@ -279,6 +280,8 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
         log.info("RepliesHasKeywordAndGeo:" + fbPage.getSizeOfRepliesHasKeywordAndGeo());
 
         StatsPage statsPage = new StatsPage();
+        statsPage.setKeyword(geoCmdLine.getKeywordOptionValue());
+        statsPage.setVendorType(VENDOR_TYPE_FACEBOOK);
         statsPage.setPageId(fbPage.getId());
         statsPage.setPageName(fbPage.getName());
 

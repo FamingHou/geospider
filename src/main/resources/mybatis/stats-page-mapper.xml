@@ -8,21 +8,26 @@
     <insert id="insertOne" parameterType="StatsPage">
         INSERT INTO
         stats_page
-        (page_id, page_name,
+        (keyword, vendor_type, page_id, page_name,
         size_of_posts_in_total,
-        size_of_posts_has_keyword, size_of_posts_has_keyword_and_geo,
-        size_of_comments_in_total, size_of_comments_has_keyword,
+        size_of_posts_has_keyword,
+        size_of_posts_has_keyword_and_geo,
+        size_of_comments_in_total,
+        size_of_comments_has_keyword,
         size_of_comments_has_keyword_and_geo,
         size_of_replies_in_total,
         size_of_replies_has_keyword,
         size_of_replies_has_keyword_and_geo)
-        VALUES (#{pageId},
+        VALUES (#{keyword},
+        #{vendorType}, #{pageId},
         #{pageName}, #{sizeOfPostsInTotal},
         #{sizeOfPostsHasKeyword},
-        #{sizeOfPostsHasKeywordAndGeo}, #{sizeOfCommentsInTotal},
+        #{sizeOfPostsHasKeywordAndGeo},
+        #{sizeOfCommentsInTotal},
         #{sizeOfCommentsHasKeyword},
         #{sizeOfCommentsHasKeywordAndGeo},
-        #{sizeOfRepliesInTotal}, #{sizeOfRepliesHasKeyword},
+        #{sizeOfRepliesInTotal},
+        #{sizeOfRepliesHasKeyword},
         #{sizeOfRepliesHasKeywordAndGeo});
     </insert>
 

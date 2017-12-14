@@ -10,6 +10,8 @@ package massey.geospider.persistence.dto;
 public class StatsPage {
 
     private long id;
+    private String keyword;
+    private int vendorType;
     private String pageId;
     private String pageName;
 
@@ -203,6 +205,36 @@ public class StatsPage {
         return id;
     }
 
+    /**
+     * @return the keyword
+     */
+    public String getKeyword() {
+        return keyword;
+    }
+
+    /**
+     * @param keyword
+     *            the keyword to set
+     */
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    /**
+     * @return the vendorType
+     */
+    public int getVendorType() {
+        return vendorType;
+    }
+
+    /**
+     * @param vendorType
+     *            the vendorType to set
+     */
+    public void setVendorType(int vendorType) {
+        this.vendorType = vendorType;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -210,13 +242,13 @@ public class StatsPage {
      */
     @Override
     public String toString() {
-        return "StatsPage [id=" + id + ", pageId=" + pageId + ", pageName=" + pageName + ", sizeOfPostsInTotal="
-                + sizeOfPostsInTotal + ", sizeOfPostsHasKeyword=" + sizeOfPostsHasKeyword
-                + ", sizeOfPostsHasKeywordAndGeo=" + sizeOfPostsHasKeywordAndGeo + ", sizeOfCommentsInTotal="
-                + sizeOfCommentsInTotal + ", sizeOfCommentsHasKeyword=" + sizeOfCommentsHasKeyword
-                + ", sizeOfCommentsHasKeywordAndGeo=" + sizeOfCommentsHasKeywordAndGeo + ", sizeOfRepliesInTotal="
-                + sizeOfRepliesInTotal + ", sizeOfRepliesHasKeyword=" + sizeOfRepliesHasKeyword
-                + ", sizeOfRepliesHasKeywordAndGeo=" + sizeOfRepliesHasKeywordAndGeo + "]";
+        return "StatsPage [id=" + id + ", keyword=" + keyword + ", vendorType=" + vendorType + ", pageId=" + pageId
+                + ", pageName=" + pageName + ", sizeOfPostsInTotal=" + sizeOfPostsInTotal + ", sizeOfPostsHasKeyword="
+                + sizeOfPostsHasKeyword + ", sizeOfPostsHasKeywordAndGeo=" + sizeOfPostsHasKeywordAndGeo
+                + ", sizeOfCommentsInTotal=" + sizeOfCommentsInTotal + ", sizeOfCommentsHasKeyword="
+                + sizeOfCommentsHasKeyword + ", sizeOfCommentsHasKeywordAndGeo=" + sizeOfCommentsHasKeywordAndGeo
+                + ", sizeOfRepliesInTotal=" + sizeOfRepliesInTotal + ", sizeOfRepliesHasKeyword="
+                + sizeOfRepliesHasKeyword + ", sizeOfRepliesHasKeywordAndGeo=" + sizeOfRepliesHasKeywordAndGeo + "]";
     }
 
 }
