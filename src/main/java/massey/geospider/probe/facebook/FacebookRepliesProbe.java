@@ -48,6 +48,21 @@ public class FacebookRepliesProbe extends FacebookCommentsProbe {
             log.info("The next page of replies searching...");
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see massey.geospider.probe.facebook.FacebookCommentsProbe#
+     * doCollectAllRepliessOfOneComment(massey.geospider.boot.GeoCmdLine,
+     * massey.geospider.message.facebook.FacebookComment)
+     */
+    @Override
+    protected void doCollectAllRepliessOfOneComment(GeoCmdLine geoCmdLine, FacebookComment fbComment) {
+        log.debug("do not fetch replies of a reply to reduce unnecessary HTTP request/response.");
+        // it is unnecessary to fetch replies of a reply.
+        // leave it empty to improve performance.
+        // super.doCollectAllRepliessOfOneComment(geoCmdLine, fbComment);
+    }
+
     /**
      * Returns 4 which means this is a reply
      */
