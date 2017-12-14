@@ -153,7 +153,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
                 URIBuilder builder = new URIBuilder(sb.toString());
                 builder.addParameter("access_token", PropReader.get(FB_ACCESS_TOKEN_PROP_NAME));
                 builder.addParameter("pretty", "0");
-                builder.addParameter("limit", PropReader.get(FB_PAGE_LIMIT_PROP_NAME));
+                builder.addParameter("limit", PropReader.get(FB_COMMENT_LIMIT_PROP_NAME));
                 log.info(builder.toString());
                 return builder.toString();
             } catch (URISyntaxException e) {
@@ -229,7 +229,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
      * @param geoCmdLine
      * @param fbComment
      */
-    private void doCollectAllRepliessOfOneComment(GeoCmdLine geoCmdLine, FacebookComment fbComment) {
+    protected void doCollectAllRepliessOfOneComment(GeoCmdLine geoCmdLine, FacebookComment fbComment) {
         if (fbComment == null)
             return;
         FacebookRepliesProbe fbRepliesProbe = new FacebookRepliesProbe(fbComment);

@@ -161,7 +161,7 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
                 builder.addParameter("fields", "id,message,created_time,place");
                 builder.addParameter("access_token", PropReader.get(FB_ACCESS_TOKEN_PROP_NAME));
                 builder.addParameter("pretty", "0");
-                builder.addParameter("limit", PropReader.get(FB_PAGE_LIMIT_PROP_NAME));
+                builder.addParameter("limit", PropReader.get(FB_POST_LIMIT_PROP_NAME));
                 log.info(builder.toString());
                 return builder.toString();
             } catch (URISyntaxException e) {
