@@ -394,8 +394,8 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
                 FacebookLocation fbLoc = new FacebookLocation();
                 fbLoc.setCity(locObj.isNull("city") ? "" : locObj.getString("city"));
                 fbLoc.setCountry(locObj.isNull("country") ? "" : locObj.getString("country"));
-                fbLoc.setLatitude(locObj.isNull("latitude") ? null : locObj.getDouble("latitude"));
-                fbLoc.setLongitude(locObj.isNull("longitude") ? null : locObj.getDouble("longitude"));
+                fbLoc.setLatitude(locObj.isNull("latitude") ? 0d : locObj.getDouble("latitude"));
+                fbLoc.setLongitude(locObj.isNull("longitude") ? 0d : locObj.getDouble("longitude"));
                 fbLoc.setZip(locObj.isNull("zip") ? "" : locObj.getString("zip"));
                 fbPlace.setLocation(fbLoc);
             }
