@@ -33,4 +33,29 @@ public interface StatsPageDAO {
      */
     public void insertList(List<StatsPage> sPageList);
 
+    /**
+     * Retrieve one {@code StatsPage} object mapped by pageId
+     * 
+     * @param pageId
+     *            the pageId to pass to the statement
+     * @return a {@code StatsPage} object
+     */
+    public StatsPage selectOneByPageId(String pageId);
+
+    /**
+     * Delete one {@code StatsPage} object mapped by pageId
+     * 
+     * @param pageId
+     *            the pageId to pass to the statement
+     */
+    public void deleteByPageId(String pageId);
+
+    /**
+     * Update one {@code StatsPage} object mapped by pageId
+     * 
+     * @param statsPage
+     *            the {@code StatsPage} object to pass to the statement
+     */
+    public void updateByPageId(StatsPage statsPage);
+
 }

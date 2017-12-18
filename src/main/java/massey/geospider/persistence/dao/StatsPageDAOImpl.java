@@ -12,8 +12,7 @@ import massey.geospider.persistence.dto.StatsPage;
 import massey.geospider.persistence.mybatis.MyBatisHelper;
 
 /**
- * This is the default implementation of interface StatsPageDAO using
- * MySQL
+ * This is the default implementation of interface StatsPageDAO using MySQL
  * 
  * @author Frank Hou (faming.hou@gmail.com)
  *
@@ -40,7 +39,38 @@ public class StatsPageDAOImpl implements StatsPageDAO {
 
     @Override
     public void insertList(List<StatsPage> sPageList) {
-        //@TODO
+        // @TODO
+    }
+
+    @Override
+    public StatsPage selectOneByPageId(String pageId) {
+        String statement = "StatsPageMapper.selectOneByPageId";
+        try {
+            return MyBatisHelper.getSingle().selectOne(statement, pageId);
+        } catch (IOException e) {
+            log.error(e, e);
+        }
+        return null;
+    }
+
+    @Override
+    public void deleteByPageId(String pageId) {
+        String statement = "StatsPageMapper.deleteByPageId";
+        try {
+            MyBatisHelper.getSingle().delete(statement, pageId);
+        } catch (IOException e) {
+            log.error(e, e);
+        }
+    }
+
+    @Override
+    public void updateByPageId(StatsPage statsPage) {
+        String statement = "StatsPageMapper.updateByPageId";
+        try {
+            MyBatisHelper.getSingle().update(statement, statsPage);
+        } catch (IOException e) {
+            log.error(e, e);
+        }
     }
 
 }

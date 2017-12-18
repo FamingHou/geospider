@@ -3,6 +3,8 @@
  */
 package massey.geospider.persistence.dto;
 
+import java.sql.Timestamp;
+
 /**
  * @author Frank Hou (faming.hou@gmail.com)
  *
@@ -26,6 +28,10 @@ public class StatsPage {
     private int sizeOfRepliesInTotal;
     private int sizeOfRepliesHasKeyword;
     private int sizeOfRepliesHasKeywordAndGeo;
+
+    private Timestamp createdTime;
+    private Timestamp updatedTime;
+    private boolean isNeedRefresh;
 
     /**
      * 
@@ -235,6 +241,51 @@ public class StatsPage {
         this.vendorType = vendorType;
     }
 
+    /**
+     * @return the createdTime
+     */
+    public Timestamp getCreatedTime() {
+        return createdTime;
+    }
+
+    /**
+     * @param createdTime
+     *            the createdTime to set
+     */
+    public void setCreatedTime(Timestamp createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    /**
+     * @return the updatedTime
+     */
+    public Timestamp getUpdatedTime() {
+        return updatedTime;
+    }
+
+    /**
+     * @param updatedTime
+     *            the updatedTime to set
+     */
+    public void setUpdatedTime(Timestamp updatedTime) {
+        this.updatedTime = updatedTime;
+    }
+
+    /**
+     * @return the isNeedRefresh
+     */
+    public boolean isNeedRefresh() {
+        return isNeedRefresh;
+    }
+
+    /**
+     * @param isNeedRefresh
+     *            the isNeedRefresh to set
+     */
+    public void setNeedRefresh(boolean isNeedRefresh) {
+        this.isNeedRefresh = isNeedRefresh;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -248,7 +299,9 @@ public class StatsPage {
                 + ", sizeOfCommentsInTotal=" + sizeOfCommentsInTotal + ", sizeOfCommentsHasKeyword="
                 + sizeOfCommentsHasKeyword + ", sizeOfCommentsHasKeywordAndGeo=" + sizeOfCommentsHasKeywordAndGeo
                 + ", sizeOfRepliesInTotal=" + sizeOfRepliesInTotal + ", sizeOfRepliesHasKeyword="
-                + sizeOfRepliesHasKeyword + ", sizeOfRepliesHasKeywordAndGeo=" + sizeOfRepliesHasKeywordAndGeo + "]";
+                + sizeOfRepliesHasKeyword + ", sizeOfRepliesHasKeywordAndGeo=" + sizeOfRepliesHasKeywordAndGeo
+                + ", createdTime=" + createdTime + ", updatedTime=" + updatedTime + ", isNeedRefresh=" + isNeedRefresh
+                + "]";
     }
 
 }

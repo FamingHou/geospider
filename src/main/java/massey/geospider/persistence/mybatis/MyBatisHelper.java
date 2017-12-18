@@ -81,12 +81,15 @@ public class MyBatisHelper {
      *            Unique identifier matching the statement to execute
      * @param parameter
      *            A parameter object to pass to the statement
+     * @return the number of rows affected. -1 will be returned if error
+     *         happens.
      */
-    public void insertOne(String statement, Object parameter) {
+    public int insertOne(String statement, Object parameter) {
+        int rowsAffected = -1;
         SqlSession session = null;
         try {
             session = sqlSessionFactory.openSession();
-            session.insert(statement, parameter);
+            rowsAffected = session.insert(statement, parameter);
             session.commit();
         } catch (Exception e) {
             log.error(e, e);
@@ -94,6 +97,83 @@ public class MyBatisHelper {
             if (session != null)
                 session.close();
         }
+        return rowsAffected;
     }
 
+    /**
+     * Retrieve a single row mapped from the statement key and parameter.
+     * 
+     * @param <T>
+     *            the returned object type
+     * @param statement
+     *            Unique identifier matching the statement to use.
+     * @param parameter
+     *            A parameter object to pass to the statement.
+     * @return Mapped object
+     */
+    public <T> T selectOne(String statement, Object parameter) {
+        SqlSession session = null;
+        try {
+            session = sqlSessionFactory.openSession();
+            return session.selectOne(statement, parameter);
+        } catch (Exception e) {
+            log.error(e, e);
+        } finally {
+            if (session != null)
+                session.close();
+        }
+        return null;
+    }
+
+    /**
+     * Execute a delete statement. The number of rows affected will be returned.
+     * 
+     * @param statement
+     *            Unique identifier matching the statement to execute
+     * @param parameter
+     *            A parameter object to pass to the statement
+     * @return the number of rows affected. -1 will be returned if error
+     *         happens.
+     */
+    public int delete(String statement, Object parameter) {
+        int rowsAffected = -1;
+        SqlSession session = null;
+        try {
+            session = sqlSessionFactory.openSession();
+            rowsAffected = session.delete(statement, parameter);
+            session.commit();
+        } catch (Exception e) {
+            log.error(e, e);
+        } finally {
+            if (session != null)
+                session.close();
+        }
+        return rowsAffected;
+    }
+
+    /**
+     * Execute a update statement. The number of rows affected will be returned.
+     * 
+     * @param statement
+     *            Unique identifier matching the statement to execute
+     * @param parameter
+     *            A parameter object to pass to the statement
+     * @return the number of rows affected. -1 will be returned if error
+     *         happens.
+     */
+    public int update(String statement, Object parameter) {
+        int rowsAffected = -1;
+        SqlSession session = null;
+        try {
+            session = sqlSessionFactory.openSession();
+            rowsAffected = session.update(statement, parameter);
+            session.commit();
+        } catch (Exception e) {
+            log.error(e, e);
+        } finally {
+            if (session != null)
+                session.close();
+        }
+        return rowsAffected;
+    }
 }

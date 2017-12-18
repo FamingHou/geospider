@@ -4,6 +4,7 @@
 package massey.geospider.probe.facebook;
 
 import java.net.URISyntaxException;
+import java.sql.Timestamp;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.log4j.Logger;
@@ -114,11 +115,7 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
             FacebookPage[] fbPageArray = fbPagesRsp.getDatas();
             for (int i = 0; i < fbPageArray.length; i++) {
                 currentPage = fbPageArray[i];
-                log.info("fetch all posts of the page ===> " + currentPage.getId());
-                // fetch all posts under one FacebookPage
-                doCollectAllPostsOfOnePage(geoCmdLine, currentPage);
-                // statistics Task_20171201_2
-                doStatistics(geoCmdLine, currentPage);
+                doProcessOnePageLogic(geoCmdLine, currentPage);
             }
         }
     }
@@ -130,6 +127,84 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
         // call collect method recursively to search the next page on pages
         // level.
         collect(geoCmdLine, inputGeoResponse);
+    }
+
+    /**
+     * Task_20171214_2
+     * 
+     * <pre>
+     *  If pageId does not exist in table stats_page: 
+     *      doOneStatsPageTransaction();
+     *  else:
+     *      if is_need_refresh = 1: (isNeedRefresh=true)
+     *          //
+     *          spDao.deleteByPageId(fbPage.getId());
+     *          doOneStatsPageTransaction();
+     *      else 
+     *          // do nothing, do not refresh the existing statistics record.
+     * </pre>
+     * 
+     * @param geoCmdLine
+     *            a {@code GeoCmdLine} object
+     * @param fbPage
+     *            a {@code FacebookPage} object to be processed
+     */
+    private void doProcessOnePageLogic(GeoCmdLine geoCmdLine, FacebookPage fbPage) {
+        StatsPageDAO spDao = new StatsPageDAOImpl();
+        if (fbPage != null) {
+            StatsPage statsPage = spDao.selectOneByPageId(fbPage.getId());
+            if (statsPage == null) {
+                log.info(fbPage.getId() + " does not exist in table stats_page. do doOneStatsPageTransaction()");
+                // this pageId does not exist in table stats_page.
+                doOneStatsPageTransaction(geoCmdLine, fbPage);
+            } else {
+                if (statsPage.isNeedRefresh()) {
+                    log.info(fbPage.getId() + " exists in table stats_page but is_need_refresh=true, do refresh.");
+                    // delete the existing one.
+                    spDao.deleteByPageId(fbPage.getId());
+                    doOneStatsPageTransaction(geoCmdLine, fbPage);
+                } else {
+                    // do nothing
+                    log.info(fbPage.getId() + " exists in table stats_page and is_need_refresh=false, do nothing.");
+                }
+            }
+        } else {
+            log.debug("fbPage is null");
+        }
+
+    }
+
+    /**
+     * Does one transaction for creating one record of table stats_page.
+     * 
+     * <pre>
+     * Step1: insert a stats_page record with page_id={@ fbPage.getId()},
+     * size_of_* = 0, created_time=updated_time=current timestamp,
+     * is_need_refresh=0
+     * 
+     * Step2: do counting all fields of size_of_*
+     * 
+     * Step3: update this record with all size fields achieved from step2,
+     * updated_time=current timestamp.
+     * <pre>
+     * The time elapsed for counting equals (updated_time - created_time). It is
+     * also good for distributed computing to insert a record with the pageId
+     * before step2 as step2 may takes a long time.
+     * 
+     * @param geoCmdLine
+     *            a {@code GeoCmdLine} object
+     * @param fbPage
+     *            a {@code FacebookPage} object to be processed
+     */
+    private void doOneStatsPageTransaction(GeoCmdLine geoCmdLine, FacebookPage fbPage) {
+        // Step1
+        insertStatsPage(geoCmdLine, currentPage);
+        // Step2
+        log.info("fetch all posts of the page ===> " + currentPage.getId());
+        // fetch all posts of one FacebookPage
+        doCollectAllPostsOfOnePage(geoCmdLine, currentPage);
+        // Step3
+        updateStatsPage(currentPage);
     }
 
     /**
@@ -257,33 +332,51 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
     }
 
     /**
-     * Inserts statistics information of a FacebookPage into database
+     * Insert statistics information of a FacebookPage into database
      * 
      * @param geoCmdLine
      * @param fbPage
      *            a FacebookPage object
      */
-    private void doStatistics(GeoCmdLine geoCmdLine, FacebookPage fbPage) {
-        log.info("start Statistics:==> pageId = " + fbPage.getId());
-        log.info("pageName = " + fbPage.getName());
-
-        log.info("PostsInTotal:" + fbPage.getSizeOfPostsInTotal());
-        log.info("PostsHasKeyword:" + fbPage.getSizeOfPostsHasKeyword());
-        log.info("PostsHasKeywordAndGeo:" + fbPage.getSizeOfPostsHasKeywordAndGeo());
-
-        log.info("CommentsInTotal:" + fbPage.getSizeOfCommentsInTotal());
-        log.info("CommentsHasKeyword:" + fbPage.getSizeOfCommentsHasKeyword());
-        log.info("CommentsHasKeywordAndGeo:" + fbPage.getSizeOfCommentsHasKeywordAndGeo());
-
-        log.info("RepliesInTotal:" + fbPage.getSizeOfRepliesInTotal());
-        log.info("RepliesHasKeyword:" + fbPage.getSizeOfRepliesHasKeyword());
-        log.info("RepliesHasKeywordAndGeo:" + fbPage.getSizeOfRepliesHasKeywordAndGeo());
+    private StatsPage insertStatsPage(GeoCmdLine geoCmdLine, FacebookPage fbPage) {
+        log.info("insertStatsPage:==> pageId = " + fbPage.getId());
 
         StatsPage statsPage = new StatsPage();
         statsPage.setKeyword(geoCmdLine.getKeywordOptionValue());
         statsPage.setVendorType(VENDOR_TYPE_FACEBOOK);
         statsPage.setPageId(fbPage.getId());
         statsPage.setPageName(fbPage.getName());
+
+        StatsPageDAO spDao = new StatsPageDAOImpl();
+        spDao.insertOne(statsPage);
+        return statsPage;
+    }
+
+    /**
+     * Update statistics information of a FacebookPage into database
+     * 
+     * @param fbPage
+     *            a FacebookPage object
+     */
+    private StatsPage updateStatsPage(FacebookPage fbPage) {
+        log.info("updateStatsPage:==> pageId = " + fbPage.getId());
+        StatsPage statsPage = new StatsPage();
+        statsPage.setPageId(fbPage.getId());
+        // log.info("PostsInTotal:" + fbPage.getSizeOfPostsInTotal());
+        // log.info("PostsHasKeyword:" + fbPage.getSizeOfPostsHasKeyword());
+        // log.info("PostsHasKeywordAndGeo:" +
+        // fbPage.getSizeOfPostsHasKeywordAndGeo());
+        //
+        // log.info("CommentsInTotal:" + fbPage.getSizeOfCommentsInTotal());
+        // log.info("CommentsHasKeyword:" +
+        // fbPage.getSizeOfCommentsHasKeyword());
+        // log.info("CommentsHasKeywordAndGeo:" +
+        // fbPage.getSizeOfCommentsHasKeywordAndGeo());
+        //
+        // log.info("RepliesInTotal:" + fbPage.getSizeOfRepliesInTotal());
+        // log.info("RepliesHasKeyword:" + fbPage.getSizeOfRepliesHasKeyword());
+        // log.info("RepliesHasKeywordAndGeo:" +
+        // fbPage.getSizeOfRepliesHasKeywordAndGeo());
 
         statsPage.setSizeOfPostsInTotal(fbPage.getSizeOfPostsInTotal());
         statsPage.setSizeOfPostsHasKeyword(fbPage.getSizeOfPostsHasKeyword());
@@ -297,8 +390,10 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
         statsPage.setSizeOfRepliesHasKeyword(fbPage.getSizeOfRepliesHasKeyword());
         statsPage.setSizeOfRepliesHasKeywordAndGeo(fbPage.getSizeOfRepliesHasKeywordAndGeo());
 
-        StatsPageDAO spDao = new StatsPageDAOImpl();
-        spDao.insertOne(statsPage);
-    }
+        statsPage.setUpdatedTime(new Timestamp(System.currentTimeMillis()));
 
+        StatsPageDAO spDao = new StatsPageDAOImpl();
+        spDao.updateByPageId(statsPage);
+        return statsPage;
+    }
 }

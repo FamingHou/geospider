@@ -17,10 +17,13 @@
         size_of_comments_has_keyword_and_geo,
         size_of_replies_in_total,
         size_of_replies_has_keyword,
-        size_of_replies_has_keyword_and_geo)
-        VALUES (#{keyword},
+        size_of_replies_has_keyword_and_geo,
+        is_need_refresh)
+        VALUES
+        (#{keyword},
         #{vendorType}, #{pageId},
-        #{pageName}, #{sizeOfPostsInTotal},
+        #{pageName},
+        #{sizeOfPostsInTotal},
         #{sizeOfPostsHasKeyword},
         #{sizeOfPostsHasKeywordAndGeo},
         #{sizeOfCommentsInTotal},
@@ -28,7 +31,68 @@
         #{sizeOfCommentsHasKeywordAndGeo},
         #{sizeOfRepliesInTotal},
         #{sizeOfRepliesHasKeyword},
-        #{sizeOfRepliesHasKeywordAndGeo});
+        #{sizeOfRepliesHasKeywordAndGeo},
+        #{isNeedRefresh});
     </insert>
+
+    <select id="selectOneByPageId" parameterType="String"
+        resultType="StatsPage">
+        SELECT id, keyword, vendor_type as vendorType,
+        page_id as pageId, page_name as pageName,
+        size_of_posts_in_total
+        as sizeOfPostsInTotal,
+        size_of_posts_has_keyword as
+        sizeOfPostsHasKeyword,
+        size_of_posts_has_keyword_and_geo as
+        sizeOfPostsHasKeywordAndGeo,
+        size_of_comments_in_total as
+        sizeOfCommentsInTotal,
+        size_of_comments_has_keyword as
+        sizeOfCommentsHasKeyword,
+        size_of_comments_has_keyword_and_geo as
+        sizeOfCommentsHasKeywordAndGeo,
+        size_of_replies_in_total as
+        sizeOfRepliesInTotal,
+        size_of_replies_has_keyword as
+        sizeOfRepliesHasKeyword,
+        size_of_replies_has_keyword_and_geo as
+        sizeOfRepliesHasKeywordAndGeo,
+        created_time as createdTime,
+        updated_time as updatedTime,
+        is_need_refresh as isNeedRefresh
+        FROM stats_page
+        WHERE page_id=#{pageId}
+        ORDER BY id
+        DESC;
+    </select>
+
+    <delete id="deleteByPageId" parameterType="String">
+        DELETE FROM
+        stats_page WHERE page_id=#{pageId};
+    </delete>
+
+    <update id="updateByPageId" parameterType="StatsPage">
+        UPDATE stats_page
+        SET
+        size_of_posts_in_total = #{sizeOfPostsInTotal},
+        size_of_posts_has_keyword =
+        #{sizeOfPostsHasKeyword},
+        size_of_posts_has_keyword_and_geo =
+        #{sizeOfPostsHasKeywordAndGeo},
+        size_of_comments_in_total
+        =#{sizeOfCommentsInTotal},
+        size_of_comments_has_keyword
+        =#{sizeOfCommentsHasKeyword},
+        size_of_comments_has_keyword_and_geo
+        =#{sizeOfCommentsHasKeywordAndGeo},
+        size_of_replies_in_total
+        =#{sizeOfRepliesInTotal},
+        size_of_replies_has_keyword
+        =#{sizeOfRepliesHasKeyword},
+        size_of_replies_has_keyword_and_geo
+        =#{sizeOfRepliesHasKeywordAndGeo},
+        updated_time = #{updatedTime}
+        WHERE page_id = #{pageId}
+    </update>
 
 </mapper>
