@@ -29,15 +29,15 @@ public class GeoSpiderApp {
 
         GeoCmdLine geoCmdLine = GeoCmdLineBuilder.build(args);
         if (geoCmdLine != null) {
-            log.info("========================================");
-            log.info("|| Geospider is going to work...      ||");
-            log.info("========================================");
+            log.fatal("========================================");
+            log.fatal("|| Geospider is going to work...      ||");
+            log.fatal("========================================");
 
             GeoController.getSingleton().dispatch(geoCmdLine);
 
-            log.info("================");
-            log.info("|| All done!  ||");
-            log.info("================");
+            log.fatal("================");
+            log.fatal("|| All done!  ||");
+            log.fatal("================");
         }
     }
 
