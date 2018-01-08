@@ -47,7 +47,7 @@ public abstract class FacebookAbstractProbe extends AbstractProbe {
                 doNextPageCollect(geoCmdLine, geoResponse);
         } else {
             log.info("geoResponse is null, which means this is the last page or the request url is invalid;");
-            log.info("or geoResponse has no a empty data list.");
+            log.info("or geoResponse has a empty data list.");
         }
         // doFinishProbe(geoCmdLine, geoResponse);
     }
