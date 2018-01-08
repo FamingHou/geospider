@@ -90,7 +90,7 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
             log.info("||Notice|| url of fetching posts is null or an empty string");
             return null;
         } else {
-            String responseString = HttpHelper.doGet(urlString);
+            String responseString = HttpHelper.doGetAsync(urlString);
             return createFacebookPostsResponse(responseString);
         }
     }

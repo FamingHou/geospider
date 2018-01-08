@@ -88,7 +88,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
             log.info("||Notice|| url of fetching comments is null or an empty string");
             return null;
         } else {
-            String responseString = HttpHelper.doGet(urlString);
+            String responseString = HttpHelper.doGetAsync(urlString);
             return createFacebookCommentsResponse(responseString);
         }
     }

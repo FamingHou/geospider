@@ -16,6 +16,9 @@ import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 /**
+ * Do HTTP request and get response by HttpClients.createDefault and
+ * ResponseHandler.
+ * 
  * @author Frank Hou (faming.hou@gmail.com)
  *
  */
@@ -30,13 +33,14 @@ public class HttpHelper {
     }
 
     /**
-     * Does HTTP Get request
+     * Does HTTP Get request.
+     * This is a asynchronized method by using ResponseHandler<String>
      * 
      * @param url
      *            the request url of String type
      * @return the HTTP response with the type of JSON format
      */
-    public static String doGet(String urlString) {
+    public static String doGetAsync(String urlString) {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         try {
             HttpGet httpGet = new HttpGet(urlString);

@@ -85,7 +85,7 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
             return null;
         } else {
             // do http request
-            String responseString = HttpHelper.doGet(urlString);
+            String responseString = HttpHelper.doGetAsync(urlString);
             return createFacebookPagesResponse(responseString);
         }
     }
@@ -186,6 +186,7 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
      * 
      * Step3: update this record with all size fields achieved from step2,
      * updated_time=current timestamp.
+     * 
      * <pre>
      * The time elapsed for counting equals (updated_time - created_time). It is
      * also good for distributed computing to insert a record with the pageId

@@ -52,8 +52,9 @@ public class HttpHelperGeotxtAPITest extends TestCase {
         builder.addParameter("m", "stanfords");
         builder.addParameter("q", message);
 
-        String responseString = HttpHelper.doGet(builder.toString());
-
+        String responseString = HttpHelper.doGetAsync(builder.toString());
+//        HttpHelperPoolingClient.shutdown();
+        
         JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
         if (jsonObj == null || jsonObj.isNull("features"))
             return;

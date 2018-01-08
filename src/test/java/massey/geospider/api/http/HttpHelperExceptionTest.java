@@ -52,7 +52,7 @@ public class HttpHelperExceptionTest extends TestCase {
             builder.addParameter("pretty", "0");
             builder.addParameter("limit", "100");
 
-            HttpHelper.doGet(builder.toString());
+            HttpHelper.doGetAsync(builder.toString());
             System.out.println("All done.");
         } catch (URISyntaxException ue) {
             ue.printStackTrace();
