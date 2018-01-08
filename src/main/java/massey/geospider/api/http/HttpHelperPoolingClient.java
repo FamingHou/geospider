@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Do HTTP request and get response by a cached pooling client connection
- * manager for better performance.
+ * manager.
  * 
  * 
  * @deprecated In multi threading environment, it is tested that both method
