@@ -1,5 +1,7 @@
 package massey.geospider.boot;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.log4j.Logger;
 
 import massey.geospider.controller.GeoController;
@@ -14,16 +16,14 @@ public class GeoSpiderApp {
 
     private static final Logger log = Logger.getLogger(GeoSpiderApp.class);
 
-    private static final String[] BANNER = {
-    "",
-    "/\\\\       ____                  ____            _       _               \\ \\ \\ \\",     
-    "(  )     / ___|   ___    ___   / ___|   _ __   (_)   __| |   ___   _ __   \\ \\ \\ \\",
-    " /\\\\    | |  _   / _ \\  / _ \\  \\___ \\  | '_ \\  | |  / _` |  / _ \\ | '__|    ) ) ) )",
-    "  '     | |_| | |  __/ | (_) |  ___) | | |_) | | | | (_| | |  __/ | |        ) ) ) )",
-    "  '      \\____|  \\___|  \\___/  |____/  | .__/  |_|  \\__,_|  \\___| |_|     / / / /",
-    "  '                                    |_|                               / / / /",
-    ""};
-    
+    private static final String[] BANNER = { "",
+            "/\\\\       ____                  ____            _       _               \\ \\ \\ \\",
+            "(  )     / ___|   ___    ___   / ___|   _ __   (_)   __| |   ___   _ __   \\ \\ \\ \\",
+            " /\\\\    | |  _   / _ \\  / _ \\  \\___ \\  | '_ \\  | |  / _` |  / _ \\ | '__|    ) ) ) )",
+            "  '     | |_| | |  __/ | (_) |  ___) | | |_) | | | | (_| | |  __/ | |        ) ) ) )",
+            "  '      \\____|  \\___|  \\___/  |____/  | .__/  |_|  \\__,_|  \\___| |_|     / / / /",
+            "  '                                    |_|                               / / / /", "" };
+
     public static void main(String[] args) {
 
         printBanner();
@@ -70,6 +70,11 @@ public class GeoSpiderApp {
      */
     private static void shutdown() {
         GeoExecutorService.getSingle().shutdown();
+        try {
+            GeoExecutorService.getSingle().getService().awaitTermination(5, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            log.error(e, e);
+        }
     }
 
 }

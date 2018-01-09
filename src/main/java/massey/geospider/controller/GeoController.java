@@ -64,7 +64,7 @@ public class GeoController {
         LinkedHashSet<String> socialMediaSet = populateSocialMediaSet(geoCmdLine);
         for (Iterator it = socialMediaSet.iterator(); it.hasNext();) {
             String vendor = (String) it.next();
-            Probe probe = ProbeFactory.generateProbe(vendor);
+            Probe probe = ProbeFactory.generateProbe(geoCmdLine, vendor);
             if (probe != null) {
                 // do collecting work
                 log.info(probe.getClass().getName() + " is going to collect data");

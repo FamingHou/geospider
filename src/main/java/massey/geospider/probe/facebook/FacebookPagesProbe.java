@@ -52,7 +52,7 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
     private static final Logger log = Logger.getLogger(FacebookPagesProbe.class);
 
     /** The current FacebookPage object which is being processed */
-    private FacebookPage currentPage;
+    protected FacebookPage currentPage;
 
     /**
      * 
@@ -149,7 +149,7 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
      * @param fbPage
      *            a {@code FacebookPage} object to be processed
      */
-    private void doProcessOnePageLogic(GeoCmdLine geoCmdLine, FacebookPage fbPage) {
+    protected void doProcessOnePageLogic(GeoCmdLine geoCmdLine, FacebookPage fbPage) {
         StatsPageDAO spDao = new StatsPageDAOImpl();
         if (fbPage != null) {
             StatsPage statsPage = spDao.selectOneByPageId(fbPage.getId());
@@ -323,7 +323,7 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
      * @param fbPage
      *            an object of class FacebookPage
      */
-    private void doCollectAllPostsOfOnePage(GeoCmdLine geoCmdLine, FacebookPage fbPage) {
+    protected void doCollectAllPostsOfOnePage(GeoCmdLine geoCmdLine, FacebookPage fbPage) {
         if (fbPage == null)
             return;
         FacebookPostsProbe fbPostsProbe = new FacebookPostsProbe(fbPage);

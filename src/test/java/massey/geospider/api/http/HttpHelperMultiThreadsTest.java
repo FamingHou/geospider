@@ -43,10 +43,12 @@ public class HttpHelperMultiThreadsTest extends TestCase {
             builder.addParameter("pretty", "0");
             builder.addParameter("limit", "100");
 
-//            String result = HttpHelperPoolingClient.doGetAsync(builder.toString());
-//             String result = HttpHelperPoolingClient.doGetSync(builder.toString());
+            // String result =
+            // HttpHelperPoolingClient.doGetAsync(builder.toString());
+            // String result =
+            // HttpHelperPoolingClient.doGetSync(builder.toString());
             String result = HttpHelper.doGetAsync(builder.toString());
-            
+
             // log.info("result= "+result);
             return result;
             // long stop = System.currentTimeMillis();
@@ -66,7 +68,7 @@ public class HttpHelperMultiThreadsTest extends TestCase {
         }
         long stop = System.currentTimeMillis();
         log.info(Thread.currentThread().getName() + ":testSingleThread: " + (stop - start) + "ms in total.");
-//        HttpHelperPoolingClient.shutdown();
+        // HttpHelperPoolingClient.shutdown();
     }
 
     public void testMultiThreads_NewFixedThreadPool() {
@@ -80,6 +82,8 @@ public class HttpHelperMultiThreadsTest extends TestCase {
         }
         System.out.println(Thread.currentThread().getName() + ": the size of future list: " + list.size());
         for (Future<String> future : list) {
+            // this is not only a print, it can also block threads to make join
+            // works.
             try {
                 log.info("result= " + Thread.currentThread().getName() + ": " + future.get());
             } catch (Exception e) {
@@ -91,7 +95,7 @@ public class HttpHelperMultiThreadsTest extends TestCase {
         long stop = System.currentTimeMillis();
         log.info(Thread.currentThread().getName() + ":testMultiThreads_NewFixedThreadPool: " + (stop - start)
                 + "ms in total.");
-//        HttpHelperPoolingClient.shutdown();
+        // HttpHelperPoolingClient.shutdown();
     }
 
     // public void testMultiThreadForkJoinPool() {
@@ -111,7 +115,7 @@ public class HttpHelperMultiThreadsTest extends TestCase {
         public String call() throws Exception {
             String ret = runOneTask();
             System.out.println(Thread.currentThread().getName() + ":call:" + name + " ^|^ " + ret);
-            return name+ret;
+            return name + ret;
         }
     }
 }
