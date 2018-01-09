@@ -15,8 +15,8 @@ import junit.framework.TestCase;
 
 public class HttpHelperMultiThreadsTest extends TestCase {
 
-    public static final int URI_COUNT = 2000;
-    public static final int THREAD_COUNT = 1000;
+    public static final int URI_COUNT = 50;
+    public static final int THREAD_COUNT = 100;
     private static final Logger log = Logger.getLogger(HttpHelperMultiThreadsTest.class);
 
     public HttpHelperMultiThreadsTest(String name) {
