@@ -5,8 +5,10 @@ package massey.geospider.probe;
 
 import org.apache.log4j.Logger;
 
+import massey.geospider.boot.GeoCmdLine;
 import massey.geospider.global.GeoConstants;
 import massey.geospider.probe.facebook.FacebookPagesProbe;
+import massey.geospider.probe.facebook.concurrent.FacebookPagesProbeConcurrent;
 
 /**
  * All probes are created in this class.
@@ -28,6 +30,8 @@ public class ProbeFactory implements GeoConstants {
     /**
      * Creates the corresponding Probe object according to the vendor name
      * 
+     * @param geoCmdLine
+     *            an object of class GeoCmdLine
      * @param vendor
      *            the social media vendor name
      * @return
@@ -36,11 +40,14 @@ public class ProbeFactory implements GeoConstants {
      *         {@link FacebookPagesProbe}</li>
      *         </ul>
      */
-    public static synchronized Probe generateProbe(String vendor) {
+    public static synchronized Probe generateProbe(GeoCmdLine geoCmdLine, String vendor) {
         if (vendor != null) {
             if (vendor.equalsIgnoreCase(FACEBOOK_OPTION)) {
                 log.info("FacebookPageProbe is going to be created for Facebook");
-                return new FacebookPagesProbe();
+                if (geoCmdLine.isConcurrentOption())
+                    return new FacebookPagesProbeConcurrent();
+                else
+                    return new FacebookPagesProbe();
             }
             if (vendor.equalsIgnoreCase(TWITTER_OPTION)) {
                 log.info("TwitterProbe is going to be created for twitter");
