@@ -101,7 +101,7 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
         // FacebookPosts level
         FacebookPostsResponse fbPostsRsp = (FacebookPostsResponse) inputGeoResponse;
         List<FacebookPost> fbPostList = doFilterPost(geoCmdLine, fbPostsRsp);
-        doPersistence(fbPostList);
+        doPersistence(geoCmdLine, fbPostList);
     }
 
     @Override
@@ -251,7 +251,7 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
      * @param geoCmdLine
      * @param fbPost
      */
-    private void doCollectAllCommentsOfOnePost(GeoCmdLine geoCmdLine, FacebookPost fbPost) {
+    protected void doCollectAllCommentsOfOnePost(GeoCmdLine geoCmdLine, FacebookPost fbPost) {
         if (fbPost == null)
             return;
         FacebookCommentsProbe fbCommentsProbe = new FacebookCommentsProbe(fbPost);
@@ -334,13 +334,15 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
     /**
      * Saves objects of class type FacebookPost in fbPostList into database
      * 
+     * @param geoCmdLine
      * @param fbPostList
      *            a list which contains objects of class type FacebookPost
      */
-    private void doPersistence(List<FacebookPost> fbPostList) {
+    private void doPersistence(GeoCmdLine geoCmdLine, List<FacebookPost> fbPostList) {
         // @TODO using batch mode for better performance
         for (FacebookPost facebookPost : fbPostList) {
             SocialMediaRecord smRecord = new SocialMediaRecord();
+            smRecord.setKeyword(geoCmdLine.getKeywordOptionValue());
             smRecord.setVendorRecordId(facebookPost.getId());
             smRecord.setVendorRecordParentId(facebookPost.getParent().getId());
             smRecord.setMessage(facebookPost.getMessage());

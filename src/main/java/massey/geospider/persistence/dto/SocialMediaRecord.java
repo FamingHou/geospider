@@ -28,6 +28,7 @@ public class SocialMediaRecord {
     private String placeZip;
     private double placeLatitude;
     private double placeLongitude;
+    private String keyword;
 
     /**
      * 
@@ -263,6 +264,21 @@ public class SocialMediaRecord {
         this.placeLongitude = placeLongitude;
     }
 
+    /**
+     * @return the keyword
+     */
+    public String getKeyword() {
+        return keyword;
+    }
+
+    /**
+     * @param keyword
+     *            the keyword to set
+     */
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -270,12 +286,12 @@ public class SocialMediaRecord {
      */
     @Override
     public String toString() {
-        return "SocialMediaRecord [id=" + id + ", vendorRecordId=" + vendorRecordId + ", vendorRecordParentId="
-                + vendorRecordParentId + ", message=" + message + ", recordType=" + recordType + ", vendorType="
-                + vendorType + ", vendorRecordCreatedTime=" + vendorRecordCreatedTime + ", createTime=" + createTime
-                + ", placeId=" + placeId + ", placeName=" + placeName + ", placeCity=" + placeCity + ", placeCountry="
-                + placeCountry + ", placeZip=" + placeZip + ", placeLatitude=" + placeLatitude + ", placeLongitude="
-                + placeLongitude + "]";
+        return "SocialMediaRecord [id=" + id + ", keyword=" + keyword + ", vendorRecordId=" + vendorRecordId
+                + ", vendorRecordParentId=" + vendorRecordParentId + ", message=" + message + ", recordType="
+                + recordType + ", vendorType=" + vendorType + ", vendorRecordCreatedTime=" + vendorRecordCreatedTime
+                + ", createTime=" + createTime + ", placeId=" + placeId + ", placeName=" + placeName + ", placeCity="
+                + placeCity + ", placeCountry=" + placeCountry + ", placeZip=" + placeZip + ", placeLatitude="
+                + placeLatitude + ", placeLongitude=" + placeLongitude + "]";
     }
 
 }

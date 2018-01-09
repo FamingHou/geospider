@@ -7,15 +7,25 @@
 
     <insert id="insertOne" parameterType="SocialMediaRecord">
         INSERT INTO
-        social_media_record (vendor_record_id, vendor_record_parent_id,
-        message, record_type, vendor_type, vendor_record_created_time,
-        place_id, place_name, place_city, place_country, place_zip,
+        social_media_record (keyword, vendor_record_id,
+        vendor_record_parent_id,
+        message, record_type, vendor_type,
+        vendor_record_created_time,
+        place_id, place_name, place_city,
+        place_country, place_zip,
         place_latitude, place_longitude)
-        VALUES (#{vendorRecordId},
-        #{vendorRecordParentId}, #{message},
+        VALUES
+        (#{keyword}, #{vendorRecordId},
+        #{vendorRecordParentId},
+        #{message},
         #{recordType},
-        #{vendorType}, #{vendorRecordCreatedTime}, #{placeId},
-        #{placeName}, #{placeCity}, #{placeCountry}, #{placeZip},
-        #{placeLatitude}, #{placeLongitude});
+        #{vendorType},
+        #{vendorRecordCreatedTime},
+        #{placeId},
+        #{placeName},
+        #{placeCity}, #{placeCountry},
+        #{placeZip},
+        #{placeLatitude},
+        #{placeLongitude});
     </insert>
 </mapper>

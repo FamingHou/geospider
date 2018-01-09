@@ -99,7 +99,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
         // FacebookComments level
         FacebookCommentsResponse fbCommentsRsp = (FacebookCommentsResponse) inputGeoResponse;
         List<FacebookComment> fbCommentList = doFilterComment(geoCmdLine, fbCommentsRsp);
-        doPersistence(fbCommentList);
+        doPersistence(geoCmdLine, fbCommentList);
     }
 
     @Override
@@ -112,7 +112,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
             for (int i = 0; i < fbCommentArray.length; i++) {
                 // fetch all replies under one FacebookComment.
                 // a reply is still a type of class FacebookComment.
-                doCollectAllRepliessOfOneComment(geoCmdLine, fbCommentArray[i]);
+                doCollectAllRepliesOfOneComment(geoCmdLine, fbCommentArray[i]);
             }
         }
     }
@@ -229,7 +229,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
      * @param geoCmdLine
      * @param fbComment
      */
-    protected void doCollectAllRepliessOfOneComment(GeoCmdLine geoCmdLine, FacebookComment fbComment) {
+    protected void doCollectAllRepliesOfOneComment(GeoCmdLine geoCmdLine, FacebookComment fbComment) {
         if (fbComment == null)
             return;
         FacebookRepliesProbe fbRepliesProbe = new FacebookRepliesProbe(fbComment);
@@ -318,13 +318,15 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
      * Saves objects of class type FacebookComment in fbCommentList into
      * database
      * 
+     * @param geoCmdLine
      * @param fbCommentList
      *            a list which contains objects of class type FacebookPost
      */
-    private void doPersistence(List<FacebookComment> fbCommentList) {
+    private void doPersistence(GeoCmdLine geoCmdLine, List<FacebookComment> fbCommentList) {
         // @TODO using batch mode for better performance
         for (FacebookComment facebookComment : fbCommentList) {
             SocialMediaRecord smRecord = new SocialMediaRecord();
+            smRecord.setKeyword(geoCmdLine.getKeywordOptionValue());
             smRecord.setVendorRecordId(facebookComment.getId());
             smRecord.setVendorRecordParentId(facebookComment.getParent().getId());
             smRecord.setMessage(facebookComment.getMessage());
