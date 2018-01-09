@@ -3,6 +3,7 @@ package massey.geospider.boot;
 import org.apache.log4j.Logger;
 
 import massey.geospider.controller.GeoController;
+import massey.geospider.util.GeoExecutorService;
 
 /**
  * 
@@ -33,7 +34,13 @@ public class GeoSpiderApp {
             log.fatal("|| Geospider is going to work...      ||");
             log.fatal("========================================");
 
+            // init services
+            init();
+
             GeoController.getSingleton().dispatch(geoCmdLine);
+
+            // shutdown services
+            shutdown();
 
             log.fatal("================");
             log.fatal("|| All done!  ||");
@@ -49,5 +56,20 @@ public class GeoSpiderApp {
             System.out.println(line);
         }
     }
-    
+
+    /**
+     * Initiates services before the application is working.
+     * 
+     */
+    private static void init() {
+        GeoExecutorService.getSingle();
+    }
+
+    /**
+     * Stops services before the application exists.
+     */
+    private static void shutdown() {
+        GeoExecutorService.getSingle().shutdown();
+    }
+
 }
