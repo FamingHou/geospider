@@ -18,6 +18,7 @@ public interface GeoConstants {
     public static final String INSTAGRAM_OPTION = "instagram";
     public static final String YOUTUBE_OPTION = "youtube";
     public static final String FLICKR_OPTION = "flickr";
+    public static final String ISCONCURRENT_OPTION = "concurrent";
 
     /** Facebook constants */
     public static final String FB_DOMAIN_NAME_PROP_NAME = "FB_DOMAIN_NAME";

@@ -58,6 +58,9 @@ public class GeoCmdLineBuilder implements GeoConstants {
 
         Option flickr = Option.builder("l").required(false).hasArg(false).longOpt(FLICKR_OPTION)
                 .desc("Collecting geo places from Flickr").build();
+        
+        Option isConcurrent = Option.builder("c").required(false).hasArg(false).longOpt(ISCONCURRENT_OPTION)
+                .desc("Jobs will be done concurrently.").build();
 
         final Options options = new Options();
         options.addOption(keyword);
@@ -67,6 +70,7 @@ public class GeoCmdLineBuilder implements GeoConstants {
         options.addOption(instagram);
         options.addOption(youtube);
         options.addOption(flickr);
+        options.addOption(isConcurrent);
         return options;
     }
 
@@ -101,12 +105,12 @@ public class GeoCmdLineBuilder implements GeoConstants {
      */
     private static boolean validateArguments(final GeoCmdLine geoCmdLine) {
         if (geoCmdLine != null) {
-            boolean f = geoCmdLine.getFacebookOption();
-            boolean t = geoCmdLine.getTwitterOption();
-            boolean r = geoCmdLine.getRedditOption();
-            boolean i = geoCmdLine.getInstagramOption();
-            boolean y = geoCmdLine.getYoutubeOption();
-            boolean l = geoCmdLine.getFlickrOption();
+            boolean f = geoCmdLine.isFacebookOption();
+            boolean t = geoCmdLine.isTwitterOption();
+            boolean r = geoCmdLine.isRedditOption();
+            boolean i = geoCmdLine.isInstagramOption();
+            boolean y = geoCmdLine.isYoutubeOption();
+            boolean l = geoCmdLine.isFlickrOption();
 
             boolean result = f | t | r | i | y | l;
             // it is valid only when at least one social media was selected
@@ -147,12 +151,13 @@ public class GeoCmdLineBuilder implements GeoConstants {
 
         boolean isValid = validateArguments(geoCmdLine);
         if (isValid) {
-            log.info("Facebook is " + geoCmdLine.getFacebookOption());
-            log.info("Twitter is " + geoCmdLine.getTwitterOption());
-            log.info("Reddit is " + geoCmdLine.getRedditOption());
-            log.info("Instagram is " + geoCmdLine.getInstagramOption());
-            log.info("Youtube is " + geoCmdLine.getYoutubeOption());
-            log.info("Flickr is " + geoCmdLine.getFlickrOption());
+            log.info("Facebook is " + geoCmdLine.isFacebookOption());
+            log.info("Twitter is " + geoCmdLine.isTwitterOption());
+            log.info("Reddit is " + geoCmdLine.isRedditOption());
+            log.info("Instagram is " + geoCmdLine.isInstagramOption());
+            log.info("Youtube is " + geoCmdLine.isYoutubeOption());
+            log.info("Flickr is " + geoCmdLine.isFlickrOption());
+            log.info("isConcurrent is " + geoCmdLine.isConcurrentOption());
             return geoCmdLine;
         } else {
             printUsage(options);

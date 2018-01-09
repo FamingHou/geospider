@@ -89,17 +89,17 @@ public class GeoController {
      */
     private LinkedHashSet<String> populateSocialMediaSet(final GeoCmdLine geoCmdLine) {
         LinkedHashSet<String> socialMediaSet = new LinkedHashSet<>();
-        if (geoCmdLine.getFacebookOption())
+        if (geoCmdLine.isFacebookOption())
             socialMediaSet.add(GeoConstants.FACEBOOK_OPTION);
-        if (geoCmdLine.getTwitterOption())
+        if (geoCmdLine.isTwitterOption())
             socialMediaSet.add(GeoConstants.TWITTER_OPTION);
-        if (geoCmdLine.getRedditOption())
+        if (geoCmdLine.isRedditOption())
             socialMediaSet.add(GeoConstants.REDDIT_OPTION);
-        if (geoCmdLine.getInstagramOption())
+        if (geoCmdLine.isInstagramOption())
             socialMediaSet.add(GeoConstants.INSTAGRAM_OPTION);
-        if (geoCmdLine.getYoutubeOption())
+        if (geoCmdLine.isYoutubeOption())
             socialMediaSet.add(GeoConstants.YOUTUBE_OPTION);
-        if (geoCmdLine.getFlickrOption())
+        if (geoCmdLine.isFlickrOption())
             socialMediaSet.add(GeoConstants.FLICKR_OPTION);
         return socialMediaSet;
     }

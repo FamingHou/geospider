@@ -41,30 +41,34 @@ public class GeoCmdLine implements GeoConstants {
      * 
      * @return
      */
-    public boolean getFacebookOption() {
+    public boolean isFacebookOption() {
         return hasOption(FACEBOOK_OPTION);
     }
 
-    public boolean getTwitterOption() {
+    public boolean isTwitterOption() {
         return hasOption(TWITTER_OPTION);
     }
 
-    public boolean getRedditOption() {
+    public boolean isRedditOption() {
         return hasOption(REDDIT_OPTION);
     }
 
-    public boolean getInstagramOption() {
+    public boolean isInstagramOption() {
         return hasOption(INSTAGRAM_OPTION);
     }
 
-    public boolean getYoutubeOption() {
+    public boolean isYoutubeOption() {
         return hasOption(YOUTUBE_OPTION);
     }
 
-    public boolean getFlickrOption() {
+    public boolean isFlickrOption() {
         return hasOption(FLICKR_OPTION);
     }
 
+    public boolean isConcurrentOption() {
+        return hasOption(ISCONCURRENT_OPTION);
+    }
+    
     /**
      * 
      * @return the value of keyword option
