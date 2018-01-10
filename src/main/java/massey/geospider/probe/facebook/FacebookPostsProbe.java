@@ -123,8 +123,12 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
 
     @Override
     protected void doNextPageCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
-        log.debug("FacebookPostsProbe#doNextPageCollect(): currentPostId = " + currentPost == null ? "null"
-                : currentPost.getId());
+        StringBuilder sb = new StringBuilder("currentPostId = ");
+        if (currentPost == null)
+            sb.append("null");
+        else
+            sb.append(currentPost.getId());
+        log.debug(sb.toString());
         // call collect method recursively to search the next page on posts
         // level.
         collect(geoCmdLine, inputGeoResponse);
