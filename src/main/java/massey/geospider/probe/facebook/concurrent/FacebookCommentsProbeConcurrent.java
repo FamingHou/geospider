@@ -52,7 +52,7 @@ public class FacebookCommentsProbeConcurrent extends FacebookCommentsProbe {
             String nextURL = fbCommentsRsp.getPaging() == null ? "N/A" : fbCommentsRsp.getPaging().getNextURL();
             FacebookComment[] fbCommentArray = fbCommentsRsp.getDatas();
             int length = fbCommentArray.length;
-            log.info(new StringBuilder().append("fork <<< ").append(nextURL));
+            log.info(new StringBuilder().append("<fetching_replies> fork <<< ").append(nextURL));
             log.info(new StringBuilder().append("input size: <<").append(length));
             // option-1: when using submit, Future<String> must be printed to make join works.
             // option-2: using invokeAll.
@@ -70,7 +70,7 @@ public class FacebookCommentsProbeConcurrent extends FacebookCommentsProbe {
             } catch (InterruptedException e) {
                 log.error(e, e);
             }
-            log.info(new StringBuilder().append(">>> join.").append(nextURL));
+            log.info(new StringBuilder().append(">>> join. </fetching_replies>").append(nextURL));
         }
         log.debug("FacebookCommentsProbeConcurrent#doPostCollect()_end.");
     }
