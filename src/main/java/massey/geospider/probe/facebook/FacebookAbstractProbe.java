@@ -3,22 +3,16 @@
  */
 package massey.geospider.probe.facebook;
 
-import java.net.URISyntaxException;
-
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import massey.geospider.api.http.HttpHelper;
 import massey.geospider.boot.GeoCmdLine;
 import massey.geospider.message.facebook.FacebookMessage;
 import massey.geospider.message.response.GeoResponse;
 import massey.geospider.message.response.facebook.FacebookError;
 import massey.geospider.message.response.facebook.FacebookPaging;
+import massey.geospider.message.response.facebook.FacebookResponse;
 import massey.geospider.probe.AbstractProbe;
-import massey.geospider.util.JSONHelper;
 
 /**
  * 
@@ -36,15 +30,15 @@ public abstract class FacebookAbstractProbe extends AbstractProbe {
     @Override
     public void collect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         doPreCollect(geoCmdLine, inputGeoResponse);
-        GeoResponse geoResponse = doRequest(geoCmdLine, inputGeoResponse);
+        FacebookResponse fbResponse = (FacebookResponse) doRequest(geoCmdLine, inputGeoResponse);
         // if the value of datas in response is empty, it also means that there
         // is no need to doNextPageCollect
-        if (geoResponse != null && geoResponse.isDatasEmpty()) {
-            doProcessResponse(geoCmdLine, geoResponse);
-            doPostCollect(geoCmdLine, geoResponse);
+        if (fbResponse != null && fbResponse.isDatasEmpty()) {
+            doProcessResponse(geoCmdLine, fbResponse);
+            doPostCollect(geoCmdLine, fbResponse);
             // only call doNextPageCollect when the response has nextPagingURL
-            if (geoResponse.hasNextPagingURL())
-                doNextPageCollect(geoCmdLine, geoResponse);
+            if (fbResponse.hasNextPagingURL())
+                doNextPageCollect(geoCmdLine, fbResponse);
         } else {
             log.info("geoResponse is null, which means this is the last page or the request url is invalid;");
             log.info("or geoResponse has a empty data list.");
@@ -117,31 +111,31 @@ public abstract class FacebookAbstractProbe extends AbstractProbe {
      * @return true - if fbMessage has valid geoplaces; false -otherwise
      */
     protected boolean hasGeoPlace(FacebookMessage fbMessage) {
-//        try {
-//            String msg = fbMessage.getMessage();
-//            StringBuilder sb = new StringBuilder();
-//            sb.append("http://geotxt.org/v2/api/geotxt.json");
-//            // using URIBuilder to solve URISyntax issues
-//            URIBuilder builder = new URIBuilder(sb.toString());
-//            builder.addParameter("m", "stanfords");
-//            builder.addParameter("q", msg);
-//
-//            String responseString = HttpHelper.doGet(builder.toString());
-//            try {
-//                JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
-//                if (jsonObj != null && !jsonObj.isNull("features")) {
-//                    JSONArray dataArray = jsonObj.getJSONArray("features");
-//                    int len = dataArray.length();
-//                    if (len > 0)
-//                        return true;
-//                }
-//            } catch (JSONException e) {
-//                log.error(e, e);
-//            }
-//        } catch (URISyntaxException e) {
-//            log.error(e, e);
-//        }
-//        return false;
+        // try {
+        // String msg = fbMessage.getMessage();
+        // StringBuilder sb = new StringBuilder();
+        // sb.append("http://geotxt.org/v2/api/geotxt.json");
+        // // using URIBuilder to solve URISyntax issues
+        // URIBuilder builder = new URIBuilder(sb.toString());
+        // builder.addParameter("m", "stanfords");
+        // builder.addParameter("q", msg);
+        //
+        // String responseString = HttpHelper.doGet(builder.toString());
+        // try {
+        // JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
+        // if (jsonObj != null && !jsonObj.isNull("features")) {
+        // JSONArray dataArray = jsonObj.getJSONArray("features");
+        // int len = dataArray.length();
+        // if (len > 0)
+        // return true;
+        // }
+        // } catch (JSONException e) {
+        // log.error(e, e);
+        // }
+        // } catch (URISyntaxException e) {
+        // log.error(e, e);
+        // }
+        // return false;
         // only for performance test
         return true;
     }
