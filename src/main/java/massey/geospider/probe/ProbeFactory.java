@@ -9,6 +9,7 @@ import massey.geospider.boot.GeoCmdLine;
 import massey.geospider.global.GeoConstants;
 import massey.geospider.probe.facebook.FacebookPagesProbe;
 import massey.geospider.probe.facebook.concurrent.FacebookPagesProbeConcurrent;
+import massey.geospider.probe.twitter.TwitterSearchProbe;
 
 /**
  * All probes are created in this class.
@@ -51,7 +52,7 @@ public class ProbeFactory implements GeoConstants {
             }
             if (vendor.equalsIgnoreCase(TWITTER_OPTION)) {
                 log.info("TwitterProbe is going to be created for twitter");
-                return null; // @TODO
+                return new TwitterSearchProbe(); // @TODO
             }
             if (vendor.equalsIgnoreCase(REDDIT_OPTION)) {
                 log.info("RedditProbe is going to be created for Reddit");

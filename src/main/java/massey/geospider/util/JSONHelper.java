@@ -64,4 +64,46 @@ public class JSONHelper {
         return new JSONObject(jsonString);
     }
 
+    /**
+     * Returns the attribute value of the attribute name of the JSONObject
+     * 
+     * @param obj
+     *            JSONObject object
+     * @param name
+     *            attribute name
+     * @return attribute value of the attribute name
+     */
+    public static String get(JSONObject obj, String name) {
+        if (obj == null || name == null)
+            return null;
+        return obj.isNull(name) ? null : obj.getString(name);
+    }
+
+    /**
+     * Returns an object of JSONObject by name
+     * 
+     * @param obj
+     * @param name
+     * @return JSONObject
+     */
+    public static JSONObject getJSONObj(JSONObject obj, String name) {
+        if (obj == null || obj.isNull(name))
+            return null;
+        else
+            return obj.getJSONObject(name);
+    }
+
+    /**
+     * Returns an object of JSONArray by name
+     * 
+     * @param obj
+     * @param name
+     * @return JSONArray
+     */
+    public static JSONArray getJSONArray(JSONObject obj, String name) {
+        if (obj == null || obj.isNull(name))
+            return null;
+        return obj.getJSONArray(name);
+    }
+
 }

@@ -20,12 +20,20 @@ public interface GeoConstants {
     public static final String FLICKR_OPTION = "flickr";
     public static final String ISCONCURRENT_OPTION = "concurrent";
 
+    public static final String SEPARATOR = "/";
+
     /** Facebook constants */
     public static final String FB_DOMAIN_NAME_PROP_NAME = "FB_DOMAIN_NAME";
     public static final String FB_VERSION_PROP_NAME = "FB_VERSION";
     public static final String FB_ACCESS_TOKEN_PROP_NAME = "FB_ACCESS_TOKEN";
-    public static final String SEPARATOR = "/";
 
+    /** Twitter constants */
+    public static final String TW_DOMAIN_NAME_PROP_NAME = "TW_DOMAIN_NAME";
+    public static final String TW_VERSION_PROP_NAME = "TW_VERSION";
+    public static final String TW_ACCESS_TOKEN_PROP_NAME = "TW_ACCESS_TOKEN";
+    public static final String TW_SEARCH_LIMIT_PROP_NAME = "TW_SEARCH_LIMIT";
+    public static final String TW_HEADER_AUTHORIZATION_PROP_NAME = "Authorization";
+    
     /**
      * According to the response message of Facebook API, the 'limit' parameter
      * should not exceed 100 when fetching posts in one page, there is no
@@ -77,6 +85,7 @@ public interface GeoConstants {
     public static final int VENDOR_TYPE_YOUTUBE = 5;
     public static final int VENDOR_TYPE_FLICKR = 6;
 
-    public static final String DATETIME_FORMAT_FB = "yyyy-MM-dd'T'HH:mm:ssZ";
+    public static final String DATETIME_FORMAT_FB = "yyyy-MM-dd'T'HH:mm:ssZ"; //Facebook
+    public static final String DATETIME_FORMAT_TW = "EEE MMM dd HH:mm:ss ZZZZZ yyyy"; //Twitter
 
 }
