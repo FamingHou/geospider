@@ -4,6 +4,8 @@
 package massey.geospider.api.http;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -15,6 +17,9 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
+import massey.geospider.conf.PropReader;
+import massey.geospider.global.GeoConstants;
+
 /**
  * Do HTTP request and get response by HttpClients.createDefault and
  * ResponseHandler.
@@ -22,7 +27,7 @@ import org.apache.log4j.Logger;
  * @author Frank Hou (faming.hou@gmail.com)
  *
  */
-public class HttpHelper {
+public class HttpHelper implements GeoConstants {
 
     private static final Logger log = Logger.getLogger(HttpHelper.class);
 
@@ -33,17 +38,36 @@ public class HttpHelper {
     }
 
     /**
-     * Does HTTP Get request.
-     * This is a asynchronized method by using ResponseHandler<String>
+     * Does HTTP Get request. This is a asynchronized method by using
+     * ResponseHandler<String>
      * 
      * @param url
      *            the request url of String type
      * @return the HTTP response with the type of JSON format
      */
     public static String doGetAsync(String urlString) {
+        return doGetAsyncWithHeaders(urlString, null);
+    }
+
+    /**
+     * Does HTTP Get request with headers.
+     * 
+     * This is a asynchronized method by using ResponseHandler<String>
+     * 
+     * @param url
+     *            the request url of String type
+     * @param headerMap
+     * @return the HTTP response with the type of JSON format
+     */
+    public static String doGetAsyncWithHeaders(String urlString, Map<String, String> headerMap) {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         try {
             HttpGet httpGet = new HttpGet(urlString);
+            if (headerMap != null && !headerMap.isEmpty()) {
+                for (String name : headerMap.keySet()) {
+                    httpGet.addHeader(name, headerMap.get(name));
+                }
+            }
             log.info("Executing request: ===> " + httpGet.getRequestLine());
             // Create a custom response handler
             ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
@@ -75,4 +99,18 @@ public class HttpHelper {
         return "";
     }
 
+    /**
+     * Does Get request for Twitter APIs.
+     * 
+     * Reconnects the Twitter API with a different token when the application
+     * reaches the rate limitation using current token.
+     * 
+     * @param urlString
+     * @return
+     */
+    public static String doGetAsync4Twitter(String urlString) {
+        Map<String, String> headerMap = new HashMap<>();
+        headerMap.put(TW_HEADER_AUTHORIZATION_PROP_NAME, PropReader.get(TW_ACCESS_TOKEN_PROP_NAME));
+        return doGetAsyncWithHeaders(urlString, headerMap);
+    }
 }
