@@ -39,8 +39,12 @@ public abstract class TwitterAbstractProbe extends AbstractProbe {
             doPostCollect(geoCmdLine, twSearchRsp);
             // only call doNextPageCollect when the response has hasNextResults
             // in Twitter
-            if (twSearchRsp.hasNextResults())
+            if (twSearchRsp.hasNextResults()) {
                 doNextPageCollect(geoCmdLine, twSearchRsp);
+            } else {
+                log.info("twSearchRsp is not null, but it has no nextResults, call method onCollectEnd()");
+                onCollectEnd(geoCmdLine, twSearchRsp);
+            }
         } else {
             log.info("twitterResponse is null, which means this is the last page or the request url is invalid;");
             log.info("or geoResponse has a empty data list.");
