@@ -39,13 +39,14 @@ public class FacebookRepliesProbe extends FacebookCommentsProbe {
      * @see massey.geospider.probe.facebook.FacebookCommentsProbe#doPreCollect()
      */
     @Override
-    protected void doPreCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
+    protected boolean doPreCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("FacebookRepliesProbe#doPreCollect()");
         log.info("Fetching all replies of the comment " + fbParent.getId());
         if (inputGeoResponse == null)
             log.info("The first page of replies searching...");
         else
             log.info("The next page of replies searching...");
+        return true;
     }
 
     /*

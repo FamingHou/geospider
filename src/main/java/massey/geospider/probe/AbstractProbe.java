@@ -26,9 +26,11 @@ public abstract class AbstractProbe implements Probe {
      *            the values of the arguments which were filled by user.
      * @param inputGeoResponse
      *            an input GeoResponse object
+     * @return true - keep on processing; false - stop processing           
      */
-    protected void doPreCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
+    protected boolean doPreCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("doPreCollect");
+        return true;
     }
 
     /**

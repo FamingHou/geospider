@@ -68,13 +68,14 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
     }
 
     @Override
-    protected void doPreCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
+    protected boolean doPreCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("FacebookPostsProbe#doPreCollect()");
         log.info("Fetching all posts of the page " + fbPage.getId());
         if (inputGeoResponse == null)
             log.info("The first page of posts searching...");
         else
             log.info("The next page of posts searching...");
+        return true;
     }
 
     /**
