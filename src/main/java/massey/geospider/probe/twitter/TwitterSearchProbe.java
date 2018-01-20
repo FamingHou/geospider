@@ -23,7 +23,10 @@ import massey.geospider.message.twitter.TwitterSearchMetaData;
 import massey.geospider.message.twitter.TwitterStatus;
 import massey.geospider.persistence.dao.SocialMediaRecordDAO;
 import massey.geospider.persistence.dao.SocialMediaRecordDAOImpl;
+import massey.geospider.persistence.dao.StatsPageDAO;
+import massey.geospider.persistence.dao.StatsPageDAOImpl;
 import massey.geospider.persistence.dto.SocialMediaRecord;
+import massey.geospider.persistence.dto.StatsPage;
 import massey.geospider.util.DateHelper;
 import massey.geospider.util.JSONHelper;
 
@@ -55,14 +58,27 @@ public class TwitterSearchProbe extends TwitterAbstractProbe implements GeoConst
     protected int sizeOfRepliesHasKeywordAndGeo = 0;
 
     /**
+     * Is this class is called recursively? If yes, isRecursive = true;
+     * otherwise false.
+     */
+    private boolean isRecursive = false;
+
+    /**
      * 
      */
     public TwitterSearchProbe() {
     }
 
     @Override
-    protected void doPreCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
+    protected boolean doPreCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.info("Fetching all tweets&replies filtered by the keyword [" + geoCmdLine.getKeywordOptionValue() + "]");
+        if (!isRecursive) {
+            // this method is called for the first time.
+            boolean isProcessing = doProcessOneSearchLogic(geoCmdLine);
+            isRecursive = true; //
+            return isProcessing; // keep processing or stop
+        }
+        return true;
     }
 
     /**
@@ -140,8 +156,9 @@ public class TwitterSearchProbe extends TwitterAbstractProbe implements GeoConst
     @Override
     protected void onCollectEnd(GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("TwitterSearchProbe#onCollectEnd()");
-        log.info("insert into stats_page...");
-        // @TODO
+        log.info("update stats_page...");
+        //
+        updateStatsPage(geoCmdLine);
     }
 
     /**
@@ -442,7 +459,8 @@ public class TwitterSearchProbe extends TwitterAbstractProbe implements GeoConst
      *            a list which contains objects of class type FacebookPost
      */
     private void doPersistence(GeoCmdLine geoCmdLine, List<TwitterStatus> twStatusList) {
-        // @TODO using batch mode for better performance
+        // @TODO using batch mode for better performance, unnecessary in
+        // multi-threading environment.
         for (TwitterStatus twStatus : twStatusList) {
             SocialMediaRecord smRecord = new SocialMediaRecord();
             smRecord.setKeyword(geoCmdLine.getKeywordOptionValue());
@@ -462,6 +480,97 @@ public class TwitterSearchProbe extends TwitterAbstractProbe implements GeoConst
             SocialMediaRecordDAO smrDao = new SocialMediaRecordDAOImpl();
             smrDao.insertOne(smRecord);
         }
+    }
+
+    /**
+     * Insert statistics information of a Twitter searching into table
+     * stats_page. The value of keyword is set to both page_id and page_name.
+     * 
+     * @param geoCmdLine
+     * @return StatsPage
+     */
+    private StatsPage insertStatsPage(GeoCmdLine geoCmdLine) {
+        String keyword = geoCmdLine.getKeywordOptionValue();
+        log.info("insertStatsPage:==> keyword = " + keyword);
+
+        StatsPage statsPage = new StatsPage();
+        statsPage.setKeyword(keyword);
+        statsPage.setVendorType(VENDOR_TYPE_TWITTER);
+        statsPage.setPageId(keyword);
+        statsPage.setPageName(keyword);
+
+        StatsPageDAO spDao = new StatsPageDAOImpl();
+        spDao.insertOne(statsPage);
+        return statsPage;
+    }
+
+    /**
+     * Update statistics information of a Twitter searching into table
+     * stats_page.
+     * 
+     */
+    private StatsPage updateStatsPage(GeoCmdLine geoCmdLine) {
+        String keyword = geoCmdLine.getKeywordOptionValue();
+        log.info("updateStatsPage:==> keyword = " + keyword);
+        StatsPage statsPage = new StatsPage();
+        statsPage.setPageId(keyword);
+
+        statsPage.setSizeOfPostsInTotal(this.sizeOfTweetsInTotal);
+        statsPage.setSizeOfPostsHasKeyword(this.sizeOfTweetsHasKeyword);
+        statsPage.setSizeOfPostsHasKeywordAndGeo(this.sizeOfTweetsHasKeywordAndGeo);
+
+        statsPage.setSizeOfRepliesInTotal(this.sizeOfRepliesInTotal);
+        statsPage.setSizeOfRepliesHasKeyword(this.sizeOfRepliesHasKeyword);
+        statsPage.setSizeOfRepliesHasKeywordAndGeo(this.sizeOfRepliesHasKeywordAndGeo);
+
+        statsPage.setUpdatedTime(new Timestamp(System.currentTimeMillis()));
+
+        StatsPageDAO spDao = new StatsPageDAOImpl();
+        spDao.updateByPageId(statsPage);
+        return statsPage;
+    }
+
+    /**
+     * Task_20171214_2
+     * 
+     * <pre>
+     *  If keyword does not exist in table stats_page: 
+     *      doOneStatsPageTransaction();
+     *  else:
+     *      if is_need_refresh = 1: (isNeedRefresh=true)
+     *          //
+     *          spDao.deleteByPageId(keyword);
+     *          doOneStatsPageTransaction();
+     *      else 
+     *          // do nothing, do not refresh the existing statistics record.
+     * </pre>
+     * 
+     * @param geoCmdLine
+     *            a {@code GeoCmdLine} object
+     * @return true - keep processing if keyword is in table stats_page and
+     *         is_need_refresh=true; otherwise false - stop processing
+     */
+    protected boolean doProcessOneSearchLogic(GeoCmdLine geoCmdLine) {
+        String keyword = geoCmdLine.getKeywordOptionValue();
+        StatsPageDAO spDao = new StatsPageDAOImpl();
+        StatsPage statsPage = spDao.selectOneByPageId(keyword);
+        if (statsPage == null) {
+            log.info(keyword + " does not exist in table stats_page. do doOneStatsPageTransaction()");
+            // this pageId does not exist in table stats_page.
+            insertStatsPage(geoCmdLine);
+        } else {
+            if (statsPage.isNeedRefresh()) {
+                log.info(keyword + " exists in table stats_page but is_need_refresh=true, do refresh.");
+                // delete the existing one.
+                spDao.deleteByPageId(keyword);
+                insertStatsPage(geoCmdLine);
+            } else {
+                // do nothing
+                log.info(keyword + " exists in table stats_page and is_need_refresh=false, do nothing.");
+                return false;
+            }
+        }
+        return true;
     }
 
 }

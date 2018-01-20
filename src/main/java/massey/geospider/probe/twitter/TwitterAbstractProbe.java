@@ -30,26 +30,32 @@ public abstract class TwitterAbstractProbe extends AbstractProbe {
      */
     @Override
     public void collect(GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
-        doPreCollect(geoCmdLine, inputGeoResponse);
-        TwitterSearchResponse twSearchRsp = (TwitterSearchResponse) doRequest(geoCmdLine, inputGeoResponse);
-        // if the value of datas in response is empty, it also means that there
-        // is no need to doNextPageCollect
-        if (twSearchRsp != null && twSearchRsp.isDatasEmpty()) {
-            doProcessResponse(geoCmdLine, twSearchRsp);
-            doPostCollect(geoCmdLine, twSearchRsp);
-            // only call doNextPageCollect when the response has hasNextResults
-            // in Twitter
-            if (twSearchRsp.hasNextResults()) {
-                doNextPageCollect(geoCmdLine, twSearchRsp);
+        boolean isProcessing = doPreCollect(geoCmdLine, inputGeoResponse);
+        if (isProcessing) {
+            TwitterSearchResponse twSearchRsp = (TwitterSearchResponse) doRequest(geoCmdLine, inputGeoResponse);
+            // if the value of datas in response is empty, it also means that
+            // there
+            // is no need to doNextPageCollect
+            if (twSearchRsp != null && twSearchRsp.isDatasEmpty()) {
+                doProcessResponse(geoCmdLine, twSearchRsp);
+                doPostCollect(geoCmdLine, twSearchRsp);
+                // only call doNextPageCollect when the response has
+                // hasNextResults
+                // in Twitter
+                if (twSearchRsp.hasNextResults()) {
+                    doNextPageCollect(geoCmdLine, twSearchRsp);
+                } else {
+                    log.info("twSearchRsp is not null, but it has no nextResults, call method onCollectEnd()");
+                    onCollectEnd(geoCmdLine, twSearchRsp);
+                }
             } else {
-                log.info("twSearchRsp is not null, but it has no nextResults, call method onCollectEnd()");
+                log.info("twitterResponse is null, which means this is the last page or the request url is invalid;");
+                log.info("or geoResponse has a empty data list.");
+                log.info("The end of this searching, call method onCollectEnd()");
                 onCollectEnd(geoCmdLine, twSearchRsp);
             }
         } else {
-            log.info("twitterResponse is null, which means this is the last page or the request url is invalid;");
-            log.info("or geoResponse has a empty data list.");
-            log.info("The end of this searching, call method onCollectEnd()");
-            onCollectEnd(geoCmdLine, twSearchRsp);
+            log.info("stop processing.");
         }
     }
 
