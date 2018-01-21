@@ -3,6 +3,8 @@
  */
 package massey.geospider.message.response.twitter;
 
+import org.apache.log4j.Logger;
+
 import massey.geospider.message.twitter.TwitterSearchMetaData;
 import massey.geospider.message.twitter.TwitterStatus;
 
@@ -31,9 +33,12 @@ import massey.geospider.message.twitter.TwitterStatus;
  */
 public class TwitterSearchResponse extends TwitterResponse {
 
+    private static final Logger log = Logger.getLogger(TwitterSearchResponse.class);
+
     protected TwitterStatus[] datas;
     protected TwitterSearchMetaData meta;
 
+    // @deprecated
     private String maxIdFromNextResults;
 
     /**
@@ -42,7 +47,7 @@ public class TwitterSearchResponse extends TwitterResponse {
     public TwitterSearchResponse(TwitterStatus[] datas, TwitterSearchMetaData meta) {
         this.datas = datas;
         this.meta = meta;
-        populateMaxIdFromNextResults();
+        // populateMaxIdFromNextResults();
     }
 
     @Override
@@ -55,22 +60,23 @@ public class TwitterSearchResponse extends TwitterResponse {
     /**
      * Query next page or not?
      * 
-     * @return true if next_results is not null; false otherwise.
+     * Task_20180119_3:
+     * 
+     * if {@link getMinIdMinusOne} is not null, return true; otherwise return
+     * false;
+     * 
+     * @return true if there is no status in response; false otherwise.
      */
     public boolean hasNextResults() {
-        if (maxIdFromNextResults == null)
-            return false;
-        else
-            return true;
+        return getMinIdMinusOne() != null;
     }
 
     /**
+     * @deprecated Set the value of max_id in next_results.
      * 
-     * Set the value of max_id in next_results.
-     * 
-     * <pre>
+     *             <pre>
      *     "next_results": "?max_id=953038141715226623&q=%22earthquakefrank%22&lang=en&count=2&include_entities=1",
-     * </pre>
+     *             </pre>
      * 
      * @return 953038141715226623 in this case
      */
@@ -93,16 +99,55 @@ public class TwitterSearchResponse extends TwitterResponse {
 
     /**
      * 
-     * Get the value of max_id in next_results.
+     * @deprecated replace by {@link getMinId}
      * 
-     * <pre>
+     *             Get the value of max_id in next_results.
+     * 
+     *             <pre>
      *     "next_results": "?max_id=953038141715226623&q=%22earthquakefrank%22&lang=en&count=2&include_entities=1",
-     * </pre>
+     *             </pre>
      * 
      * @return 953038141715226623 in this case
      */
     public String getMaxIdFromNextResults() {
         return this.maxIdFromNextResults;
+    }
+
+    /**
+     * Get the minimum id
+     * 
+     * @return if datas is not empty, return the id of the last status; null
+     *         otherwise
+     */
+    public String getMinId() {
+        // the last status has the minimum id.
+        if (datas != null && datas.length > 0) {
+            TwitterStatus status = datas[datas.length - 1];
+            if (status != null)
+                return status.getId();
+            else
+                return null;
+        }
+        return null;
+    }
+
+    /**
+     * get the String result of method getMinId, convert it into Long, minus 1,
+     * convert into String back, then return it.
+     * 
+     * @return
+     */
+    public String getMinIdMinusOne() {
+        String minIdStr = getMinId();
+        if (minIdStr != null) {
+            try {
+                long minId = Long.parseLong(minIdStr);
+                return String.valueOf(minId - 1);
+            } catch (NumberFormatException e) {
+                log.error(e, e);
+            }
+        }
+        return null;
     }
 
     /**

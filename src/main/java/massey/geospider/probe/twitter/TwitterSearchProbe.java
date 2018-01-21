@@ -188,9 +188,14 @@ public class TwitterSearchProbe extends TwitterAbstractProbe implements GeoConst
             uriBuilder.addParameter("lang", "en");
             uriBuilder.addParameter("count", PropReader.get(TW_SEARCH_LIMIT_PROP_NAME));
             uriBuilder.addParameter("q", geoCmdLine.getKeywordOptionValue());
-            if (twSearchRsp != null && twSearchRsp.getMeta() != null) {
-                log.debug("url is generated from twSearchRsp for the next page searching");
-                uriBuilder.addParameter("max_id", twSearchRsp.getMaxIdFromNextResults());
+            if (twSearchRsp != null) { // Task_20180119_3
+                log.info("get the minimum id from the previous search response, ");
+                log.info("and append it into the value of max_id as the next search URL.");
+                String minIdMinusOne = twSearchRsp.getMinIdMinusOne();
+                if (minIdMinusOne != null)
+                    uriBuilder.addParameter("max_id", minIdMinusOne);
+                else
+                    throw new URISyntaxException(minIdMinusOne, "the minIdMinusOne is null.");
             }
             log.info(uriBuilder.toString());
             return uriBuilder.toString();
