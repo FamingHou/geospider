@@ -19,6 +19,7 @@ import massey.geospider.conf.PropReader;
 import massey.geospider.global.GeoConstants;
 import massey.geospider.message.response.GeoResponse;
 import massey.geospider.message.response.twitter.TwitterSearchResponse;
+import massey.geospider.message.twitter.TwitterPlace;
 import massey.geospider.message.twitter.TwitterSearchMetaData;
 import massey.geospider.message.twitter.TwitterStatus;
 import massey.geospider.persistence.dao.SocialMediaRecordDAO;
@@ -143,8 +144,6 @@ public class TwitterSearchProbe extends TwitterAbstractProbe implements GeoConst
     @Override
     protected void doNextPageCollect(GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("TwitterSearchProbe#doNextPageCollect()");
-        TwitterSearchResponse twSearchRsp = (TwitterSearchResponse) inputGeoResponse;
-        log.info("next_results=" + twSearchRsp.getMeta() == null ? "null" : twSearchRsp.getMeta().getNextResults());
         // call method collect recursively
         collect(geoCmdLine, inputGeoResponse);
     }
@@ -238,6 +237,7 @@ public class TwitterSearchProbe extends TwitterAbstractProbe implements GeoConst
             // latitude & longitude
             double latitude = parseLatitude(statusObj);
             double longitude = parseLongitude(statusObj);
+            TwitterPlace place = parsePlace(statusObj);
             TwitterStatus twStatus = new TwitterStatus();
             twStatus.setId(id);
             twStatus.setText(text);
@@ -245,6 +245,8 @@ public class TwitterSearchProbe extends TwitterAbstractProbe implements GeoConst
             twStatus.setInReplyToStatusId(inReplyToStatusId);
             twStatus.setLatitude(latitude);
             twStatus.setLongitude(longitude);
+            twStatus.setPlace(place);
+
             tweetArray[i] = twStatus;
         }
         return tweetArray;
@@ -302,6 +304,60 @@ public class TwitterSearchProbe extends TwitterAbstractProbe implements GeoConst
             log.error(e, e);
         }
         return longitude;
+    }
+
+    /**
+     * 
+     * <pre>
+     * "place": {
+                "id": "01215ca860c04522",
+                "url": "https://api.twitter.com/1.1/geo/id/01215ca860c04522.json",
+                "place_type": "neighborhood",
+                "name": "Albany",
+                "full_name": "Albany, Auckland",
+                "country_code": "NZ",
+                "country": "New Zealand",
+                "contained_within": [],
+                "bounding_box": {
+                    "type": "Polygon",
+                    "coordinates": [
+                        [
+                            [
+                                174.678726,
+                                -36.751624
+                            ],
+                            [
+                                174.719655,
+                                -36.751624
+                            ],
+                            [
+                                174.719655,
+                                -36.717618
+                            ],
+                            [
+                                174.678726,
+                                -36.717618
+                            ]
+                        ]
+                    ]
+                },
+                "attributes": {}
+            },
+     * </pre>
+     * 
+     * @param statusObj
+     * @return an object of class TwitterPlace
+     */
+    private TwitterPlace parsePlace(JSONObject statusObj) {
+        JSONObject placeObj = JSONHelper.getJSONObj(statusObj, "place");
+        String id = JSONHelper.get(placeObj, "id"); // "id"
+        String name = JSONHelper.get(placeObj, "full_name"); // "full_name"
+        String country = JSONHelper.get(placeObj, "country"); // "country"
+        TwitterPlace place = new TwitterPlace();
+        place.setId(id);
+        place.setName(name);
+        place.setCountry(country);
+        return place;
     }
 
     /**
@@ -475,6 +531,13 @@ public class TwitterSearchProbe extends TwitterAbstractProbe implements GeoConst
                 smRecord.setRecordType(RECORD_TYPE_REPLY);
             } else { // TwitterTweet
                 smRecord.setRecordType(RECORD_TYPE_POST);
+            }
+            // Task_20180119_1
+            TwitterPlace place = twStatus.getPlace();
+            if (place != null) {
+                smRecord.setPlaceId(place.getId());
+                smRecord.setPlaceName(place.getName());
+                smRecord.setPlaceCountry(place.getCountry());
             }
 
             SocialMediaRecordDAO smrDao = new SocialMediaRecordDAOImpl();

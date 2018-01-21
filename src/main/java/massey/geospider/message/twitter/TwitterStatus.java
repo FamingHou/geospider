@@ -147,6 +147,8 @@ public class TwitterStatus extends TwitterMessage {
     private double latitude;
     private double longitude;
 
+    private TwitterPlace place;
+    
     /**
      * 
      */
@@ -241,6 +243,20 @@ public class TwitterStatus extends TwitterMessage {
      */
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    /**
+     * @return the place
+     */
+    public TwitterPlace getPlace() {
+        return place;
+    }
+
+    /**
+     * @param place the place to set
+     */
+    public void setPlace(TwitterPlace place) {
+        this.place = place;
     }
 
     /*
