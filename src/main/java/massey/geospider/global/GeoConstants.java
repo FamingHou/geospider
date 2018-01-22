@@ -30,6 +30,7 @@ public interface GeoConstants {
     /** Twitter constants */
     public static final String TW_DOMAIN_NAME_PROP_NAME = "TW_DOMAIN_NAME";
     public static final String TW_VERSION_PROP_NAME = "TW_VERSION";
+    public static final String NUMBER_OF_TW_ACCESS_TOKENS_PROP_NAME = "NUMBER_OF_TW_ACCESS_TOKENS";
     public static final String TW_ACCESS_TOKEN_PROP_NAME = "TW_ACCESS_TOKEN";
     public static final String TW_SEARCH_LIMIT_PROP_NAME = "TW_SEARCH_LIMIT";
     public static final String TW_HEADER_AUTHORIZATION_PROP_NAME = "Authorization";

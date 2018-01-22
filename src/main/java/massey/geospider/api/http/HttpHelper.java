@@ -46,7 +46,12 @@ public class HttpHelper implements GeoConstants {
      * @return the HTTP response with the type of JSON format
      */
     public static String doGetAsync(String urlString) {
-        return doGetAsyncWithHeaders(urlString, null);
+        try {
+            return doGetAsyncWithHeaders(urlString, null);
+        } catch (GeoClientProtocolException e) {
+            log.error(e, e);
+            return "";
+        }
     }
 
     /**
@@ -58,8 +63,10 @@ public class HttpHelper implements GeoConstants {
      *            the request url of String type
      * @param headerMap
      * @return the HTTP response with the type of JSON format
+     * @throws GeoClientProtocolException
      */
-    public static String doGetAsyncWithHeaders(String urlString, Map<String, String> headerMap) {
+    public static String doGetAsyncWithHeaders(String urlString, Map<String, String> headerMap)
+            throws GeoClientProtocolException {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         try {
             HttpGet httpGet = new HttpGet(urlString);
@@ -78,7 +85,7 @@ public class HttpHelper implements GeoConstants {
                         HttpEntity entity = response.getEntity();
                         return entity != null ? EntityUtils.toString(entity) : null;
                     } else {
-                        throw new ClientProtocolException("Unexpected response status: " + status);
+                        throw new GeoClientProtocolException("Unexpected response ", status);
                     }
                 }
             };
@@ -87,7 +94,11 @@ public class HttpHelper implements GeoConstants {
             log.info(responseBody);
             log.info("----------------------------------------");
             return responseBody;
-        } catch (Exception ex) {
+        } catch (GeoClientProtocolException ex) {
+            throw ex;
+        } catch (ClientProtocolException ex) {
+            log.error(ex, ex);
+        } catch (IOException ex) {
             log.error(ex, ex);
         } finally {
             try {
@@ -110,7 +121,26 @@ public class HttpHelper implements GeoConstants {
      */
     public static String doGetAsync4Twitter(String urlString) {
         Map<String, String> headerMap = new HashMap<>();
-        headerMap.put(TW_HEADER_AUTHORIZATION_PROP_NAME, PropReader.get(TW_ACCESS_TOKEN_PROP_NAME));
-        return doGetAsyncWithHeaders(urlString, headerMap);
+        headerMap.put(TW_HEADER_AUTHORIZATION_PROP_NAME, PropReader.getNextTwitterAccessToken());
+        try {
+            return doGetAsyncWithHeaders(urlString, headerMap);
+        } catch (GeoClientProtocolException e) {
+            log.info("GeoClientProtocolException of Twitter, statusCode = " + e.getStatusCode());
+            log.error(e, e);
+            if (e.getStatusCode() == 429) {
+                // sleep 500ms and reconnect
+                log.info("sleep 500ms...");
+                try {
+                    Thread.sleep(500);
+                    log.info("reconnecting...");
+                    String responseStr = doGetAsync4Twitter(urlString);
+                    log.info("got response after sleeping.");
+                    return responseStr;
+                } catch (Exception ex) {
+                    log.error(ex, ex);
+                }
+            }
+        }
+        return "";
     }
 }
