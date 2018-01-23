@@ -94,20 +94,21 @@ public abstract class AbstractProbe implements Probe {
      * @return true - if fbMessage has valid geo places; false -otherwise
      */
     protected boolean hasGeoPlace(String msg) {
-        try {
-            StringBuilder sb = new StringBuilder();
-            sb.append(PropReader.get(GeoConstants.GEO_VALIDATION_URL_PROP_NAME));
-            String msgEncoded = URLEncoder.encode(msg, "UTF-8").replaceAll("\\+", "%20");
-            sb.append(msgEncoded);
-            String responseString = HttpHelper.doGetAsync(sb.toString());
-            JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
-            String isValidStr = JSONHelper.get(jsonObj, "is_valid_str");
-            if (isValidStr != null && isValidStr.trim().equalsIgnoreCase("true"))
-                return true;
-        } catch (Exception e) {
-            log.error(e, e);
-        }
-        return false;
+//        try {
+//            StringBuilder sb = new StringBuilder();
+//            sb.append(PropReader.get(GeoConstants.GEO_VALIDATION_URL_PROP_NAME));
+//            String msgEncoded = URLEncoder.encode(msg, "UTF-8").replaceAll("\\+", "%20");
+//            sb.append(msgEncoded);
+//            String responseString = HttpHelper.doGetAsync(sb.toString());
+//            JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
+//            String isValidStr = JSONHelper.get(jsonObj, "is_valid_str");
+//            if (isValidStr != null && isValidStr.trim().equalsIgnoreCase("true"))
+//                return true;
+//        } catch (Exception e) {
+//            log.error(e, e);
+//        }
+//        return false;
+        return true;
     }
 
 }

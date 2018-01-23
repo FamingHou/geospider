@@ -67,6 +67,39 @@ public class FacebookCommentsProbeConcurrent extends FacebookCommentsProbe {
 
     /*
      * This is an override method to implement concurrent solution using
+     * multi-threading for FilterGeo of Comments
+     * 
+     * @see
+     * massey.geospider.probe.facebook.FacebookCommentsProbe#doFilterGeo(java.
+     * util. List)
+     */
+    @Override
+    protected List<FacebookComment> doFilterGeo(List<FacebookComment> fbCommentList) {
+        List<FacebookComment> hasGeoList = new ArrayList<>();
+        if (fbCommentList != null && !fbCommentList.isEmpty()) {
+            int length = fbCommentList.size();
+            log.info(new StringBuilder().append("<doFilterGeo_Comments> fork <<< "));
+            log.info(new StringBuilder().append("input size: <<").append(length));
+            List<Callable<String>> listIn = new ArrayList<Callable<String>>(length);
+            for (int i = 0; i < length; i++) {
+                OneCommentFilterGeoCallable task = new OneCommentFilterGeoCallable(this, fbCommentList.get(i),
+                        hasGeoList);
+                listIn.add(task);
+            }
+            // invokeAll tasks
+            try {
+                List<Future<String>> listOut = GeoExecutorService.getSingle().getService().invokeAll(listIn);
+                log.info(new StringBuilder().append("output size: >> ").append(listOut.size()));
+            } catch (InterruptedException e) {
+                log.error(e, e);
+            }
+            log.info(new StringBuilder().append(">>> join. </doFilterGeo_Comments>"));
+        }
+        return hasGeoList;
+    }
+
+    /*
+     * This is an override method to implement concurrent solution using
      * multi-threading for persistence of Comments.
      * 
      * @see massey.geospider.probe.facebook.FacebookCommentsProbe#doPostCollect(
@@ -181,4 +214,29 @@ public class FacebookCommentsProbeConcurrent extends FacebookCommentsProbe {
         }
 
     }
+
+    /**
+     * This class is used for doing FilterFeo for one Comment concurrently
+     *
+     */
+    class OneCommentFilterGeoCallable implements Callable<String> {
+        private final FacebookCommentsProbeConcurrent fbCommentsProbConc;
+        private final FacebookComment fbComment;
+        private List<FacebookComment> hasGeoList;
+
+        public OneCommentFilterGeoCallable(final FacebookCommentsProbeConcurrent fbCommentsProbConc,
+                final FacebookComment fbComment, List<FacebookComment> hasGeoList) {
+            this.fbCommentsProbConc = fbCommentsProbConc;
+            this.fbComment = fbComment;
+            this.hasGeoList = hasGeoList;
+        }
+
+        public String call() throws Exception {
+            fbCommentsProbConc.doFilterGeoOne(hasGeoList, fbComment);
+            String id = fbComment.getId();
+            log.debug(new StringBuilder().append("comment id [").append(id).append("] was appended into hasGeoList"));
+            return id;
+        }
+    }
+
 }

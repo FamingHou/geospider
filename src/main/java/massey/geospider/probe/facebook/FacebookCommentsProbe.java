@@ -309,10 +309,20 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
     protected List<FacebookComment> doFilterGeo(List<FacebookComment> fbCommentList) {
         List<FacebookComment> hasGeoList = new ArrayList<>();
         for (FacebookComment fbComment : fbCommentList) {
-            if (super.hasGeoPlace(fbComment))
-                hasGeoList.add(fbComment);
+            doFilterGeoOne(hasGeoList, fbComment);
         }
         return hasGeoList;
+    }
+
+    /**
+     * If facebookComment has geo places, add it into hasGeoList
+     * 
+     * @param hasGeoList
+     * @param facebookComment
+     */
+    protected void doFilterGeoOne(List<FacebookComment> hasGeoList, FacebookComment facebookComment) {
+        if (super.hasGeoPlace(facebookComment))
+            hasGeoList.add(facebookComment);
     }
 
     /**
@@ -321,7 +331,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
      * 
      * @param geoCmdLine
      * @param fbCommentList
-     *            a list which contains objects of class type FacebookPost
+     *            a list which contains objects of class type FacebookComment
      */
     protected void doPersistence(GeoCmdLine geoCmdLine, List<FacebookComment> fbCommentList) {
         // @TODO using batch mode for better performance

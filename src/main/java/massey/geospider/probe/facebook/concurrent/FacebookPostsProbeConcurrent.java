@@ -67,6 +67,38 @@ public class FacebookPostsProbeConcurrent extends FacebookPostsProbe {
 
     /*
      * This is an override method to implement concurrent solution using
+     * multi-threading for FilterGeo of Posts
+     * 
+     * @see
+     * massey.geospider.probe.facebook.FacebookPostsProbe#doFilterGeo(java.util.
+     * List)
+     */
+    @Override
+    protected List<FacebookPost> doFilterGeo(List<FacebookPost> fbPostList) {
+        List<FacebookPost> hasGeoList = new ArrayList<>();
+        if (fbPostList != null && !fbPostList.isEmpty()) {
+            int length = fbPostList.size();
+            log.info(new StringBuilder().append("<doFilterGeo_Posts> fork <<< "));
+            log.info(new StringBuilder().append("input size: <<").append(length));
+            List<Callable<String>> listIn = new ArrayList<Callable<String>>(length);
+            for (int i = 0; i < length; i++) {
+                OnePostFilterGeoCallable task = new OnePostFilterGeoCallable(this, fbPostList.get(i), hasGeoList);
+                listIn.add(task);
+            }
+            // invokeAll tasks
+            try {
+                List<Future<String>> listOut = GeoExecutorService.getSingle().getService().invokeAll(listIn);
+                log.info(new StringBuilder().append("output size: >> ").append(listOut.size()));
+            } catch (InterruptedException e) {
+                log.error(e, e);
+            }
+            log.info(new StringBuilder().append(">>> join. </doFilterGeo_Posts>"));
+        }
+        return hasGeoList;
+    }
+
+    /*
+     * This is an override method to implement concurrent solution using
      * multi-threading for collecting comments of one post.
      * 
      * @see
@@ -170,10 +202,34 @@ public class FacebookPostsProbeConcurrent extends FacebookPostsProbe {
             fbPostsProbConc.doPersistenceOne(geoCmdLine, fbPost);
             String id = fbPost.getId();
             log.debug(new StringBuilder().append("post id [").append(id)
-                    .append("] were inserted into social_media_record."));
+                    .append("] was inserted into social_media_record."));
             return id;
         }
 
+    }
+
+    /**
+     * This class is used for doing FilterFeo for one Post concurrently
+     *
+     */
+    class OnePostFilterGeoCallable implements Callable<String> {
+        private final FacebookPostsProbeConcurrent fbPostsProbConc;
+        private final FacebookPost fbPost;
+        private List<FacebookPost> hasGeoList;
+
+        public OnePostFilterGeoCallable(final FacebookPostsProbeConcurrent fbPostsProbConc, final FacebookPost fbPost,
+                List<FacebookPost> hasGeoList) {
+            this.fbPostsProbConc = fbPostsProbConc;
+            this.fbPost = fbPost;
+            this.hasGeoList = hasGeoList;
+        }
+
+        public String call() throws Exception {
+            fbPostsProbConc.doFilterGeoOne(hasGeoList, fbPost);
+            String id = fbPost.getId();
+            log.debug(new StringBuilder().append("post id [").append(id).append("] was appended into hasGeoList"));
+            return id;
+        }
     }
 
 }

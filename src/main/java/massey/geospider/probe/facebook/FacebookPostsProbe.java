@@ -330,10 +330,20 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
     protected List<FacebookPost> doFilterGeo(List<FacebookPost> fbPostList) {
         List<FacebookPost> hasGeoList = new ArrayList<>();
         for (FacebookPost fbPost : fbPostList) {
-            if (super.hasGeoPlace(fbPost))
-                hasGeoList.add(fbPost);
+            doFilterGeoOne(hasGeoList, fbPost);
         }
         return hasGeoList;
+    }
+
+    /**
+     * If facebookPost has geo places, add it into hasGeoList
+     * 
+     * @param hasGeoList
+     * @param facebookPost
+     */
+    protected void doFilterGeoOne(List<FacebookPost> hasGeoList, FacebookPost facebookPost) {
+        if (super.hasGeoPlace(facebookPost))
+            hasGeoList.add(facebookPost);
     }
 
     /**
