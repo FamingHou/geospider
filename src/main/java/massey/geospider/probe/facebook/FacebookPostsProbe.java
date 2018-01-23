@@ -327,7 +327,7 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
      * @param fbPostList
      * @return
      */
-    private List<FacebookPost> doFilterGeo(List<FacebookPost> fbPostList) {
+    protected List<FacebookPost> doFilterGeo(List<FacebookPost> fbPostList) {
         List<FacebookPost> hasGeoList = new ArrayList<>();
         for (FacebookPost fbPost : fbPostList) {
             if (super.hasGeoPlace(fbPost))
@@ -343,33 +343,44 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
      * @param fbPostList
      *            a list which contains objects of class type FacebookPost
      */
-    private void doPersistence(GeoCmdLine geoCmdLine, List<FacebookPost> fbPostList) {
-        // @TODO using batch mode for better performance
+    protected void doPersistence(GeoCmdLine geoCmdLine, List<FacebookPost> fbPostList) {
+        // @TODO using batch mode for better performance. It is unnecessary for
+        // multi-threading solution.
         for (FacebookPost facebookPost : fbPostList) {
-            SocialMediaRecord smRecord = new SocialMediaRecord();
-            smRecord.setKeyword(geoCmdLine.getKeywordOptionValue());
-            smRecord.setVendorRecordId(facebookPost.getId());
-            smRecord.setVendorRecordParentId(facebookPost.getParent().getId());
-            smRecord.setMessage(facebookPost.getMessage());
-            smRecord.setVendorType(VENDOR_TYPE_FACEBOOK);
-            smRecord.setRecordType(RECORD_TYPE_POST);
-            smRecord.setVendorRecordCreatedTime(facebookPost.getCreatedTime());
-            if (facebookPost.getFbPlace() != null) {
-                FacebookPlace fbPlace = facebookPost.getFbPlace();
-                smRecord.setPlaceId(fbPlace.getId());
-                smRecord.setPlaceName(fbPlace.getName());
-                if (fbPlace.getLocation() != null) {
-                    FacebookLocation fbLoc = fbPlace.getLocation();
-                    smRecord.setPlaceCity(fbLoc.getCity());
-                    smRecord.setPlaceCountry(fbLoc.getCountry());
-                    smRecord.setPlaceZip(fbLoc.getZip());
-                    smRecord.setPlaceLatitude(fbLoc.getLatitude());
-                    smRecord.setPlaceLongitude(fbLoc.getLongitude());
-                }
-            }
-            SocialMediaRecordDAO smrDao = new SocialMediaRecordDAOImpl();
-            smrDao.insertOne(smRecord);
+            doPersistenceOne(geoCmdLine, facebookPost);
         }
+    }
+
+    /**
+     * Inserts one facebookPost object into database.
+     * 
+     * @param geoCmdLine
+     * @param facebookPost
+     */
+    protected void doPersistenceOne(GeoCmdLine geoCmdLine, FacebookPost facebookPost) {
+        SocialMediaRecord smRecord = new SocialMediaRecord();
+        smRecord.setKeyword(geoCmdLine.getKeywordOptionValue());
+        smRecord.setVendorRecordId(facebookPost.getId());
+        smRecord.setVendorRecordParentId(facebookPost.getParent().getId());
+        smRecord.setMessage(facebookPost.getMessage());
+        smRecord.setVendorType(VENDOR_TYPE_FACEBOOK);
+        smRecord.setRecordType(RECORD_TYPE_POST);
+        smRecord.setVendorRecordCreatedTime(facebookPost.getCreatedTime());
+        if (facebookPost.getFbPlace() != null) {
+            FacebookPlace fbPlace = facebookPost.getFbPlace();
+            smRecord.setPlaceId(fbPlace.getId());
+            smRecord.setPlaceName(fbPlace.getName());
+            if (fbPlace.getLocation() != null) {
+                FacebookLocation fbLoc = fbPlace.getLocation();
+                smRecord.setPlaceCity(fbLoc.getCity());
+                smRecord.setPlaceCountry(fbLoc.getCountry());
+                smRecord.setPlaceZip(fbLoc.getZip());
+                smRecord.setPlaceLatitude(fbLoc.getLatitude());
+                smRecord.setPlaceLongitude(fbLoc.getLongitude());
+            }
+        }
+        SocialMediaRecordDAO smrDao = new SocialMediaRecordDAOImpl();
+        smrDao.insertOne(smRecord);
     }
 
     /**

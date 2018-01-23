@@ -8,6 +8,9 @@ import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 
+import massey.geospider.conf.PropReader;
+import massey.geospider.global.GeoConstants;
+
 /**
  * A class which has only one singleton object, used for all callers when using
  * thread pooling service.
@@ -19,7 +22,7 @@ public class GeoExecutorService {
 
     private static final Logger log = Logger.getLogger(GeoExecutorService.class);
 
-    public static final int THREAD_COUNT = 100;
+    public static int THREAD_COUNT = 100;
     /** The singleton object reference */
     private static GeoExecutorService geoExecutorService;
 
@@ -30,6 +33,7 @@ public class GeoExecutorService {
      */
     private GeoExecutorService() {
         log.info("GeoExecutorService()");
+        THREAD_COUNT = Integer.parseInt(PropReader.get(GeoConstants.THREAD_COUNT_OF_GEO_EXECUTOR_SERVICE_PROP_NAME));
         executor = Executors.newFixedThreadPool(THREAD_COUNT);
         log.info("executor was created.");
     }

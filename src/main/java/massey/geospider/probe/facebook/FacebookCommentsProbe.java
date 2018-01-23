@@ -323,20 +323,30 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
      * @param fbCommentList
      *            a list which contains objects of class type FacebookPost
      */
-    private void doPersistence(GeoCmdLine geoCmdLine, List<FacebookComment> fbCommentList) {
+    protected void doPersistence(GeoCmdLine geoCmdLine, List<FacebookComment> fbCommentList) {
         // @TODO using batch mode for better performance
         for (FacebookComment facebookComment : fbCommentList) {
-            SocialMediaRecord smRecord = new SocialMediaRecord();
-            smRecord.setKeyword(geoCmdLine.getKeywordOptionValue());
-            smRecord.setVendorRecordId(facebookComment.getId());
-            smRecord.setVendorRecordParentId(facebookComment.getParent().getId());
-            smRecord.setMessage(facebookComment.getMessage());
-            smRecord.setVendorType(VENDOR_TYPE_FACEBOOK);
-            smRecord.setRecordType(getRecordType());
-            smRecord.setVendorRecordCreatedTime(facebookComment.getCreatedTime());
-            SocialMediaRecordDAO smrDao = new SocialMediaRecordDAOImpl();
-            smrDao.insertOne(smRecord);
+            doPersistenceOne(geoCmdLine, facebookComment);
         }
+    }
+
+    /**
+     * Inserts into one FacebookComment object into table social_media_record
+     * 
+     * @param geoCmdLine
+     * @param facebookComment
+     */
+    protected void doPersistenceOne(GeoCmdLine geoCmdLine, FacebookComment facebookComment) {
+        SocialMediaRecord smRecord = new SocialMediaRecord();
+        smRecord.setKeyword(geoCmdLine.getKeywordOptionValue());
+        smRecord.setVendorRecordId(facebookComment.getId());
+        smRecord.setVendorRecordParentId(facebookComment.getParent().getId());
+        smRecord.setMessage(facebookComment.getMessage());
+        smRecord.setVendorType(VENDOR_TYPE_FACEBOOK);
+        smRecord.setRecordType(getRecordType());
+        smRecord.setVendorRecordCreatedTime(facebookComment.getCreatedTime());
+        SocialMediaRecordDAO smrDao = new SocialMediaRecordDAOImpl();
+        smrDao.insertOne(smRecord);
     }
 
     /**

@@ -37,6 +37,36 @@ public class FacebookPostsProbeConcurrent extends FacebookPostsProbe {
 
     /*
      * This is an override method to implement concurrent solution using
+     * multi-threading for persistence of Posts
+     * 
+     * @see
+     * massey.geospider.probe.facebook.FacebookPostsProbe#doPersistence(massey.
+     * geospider.boot.GeoCmdLine, java.util.List)
+     */
+    @Override
+    protected void doPersistence(GeoCmdLine geoCmdLine, List<FacebookPost> fbPostList) {
+        if (fbPostList != null && !fbPostList.isEmpty()) {
+            int length = fbPostList.size();
+            log.info(new StringBuilder().append("<doPersistence_Posts> fork <<< "));
+            log.info(new StringBuilder().append("input size: <<").append(length));
+            List<Callable<String>> listIn = new ArrayList<Callable<String>>(length);
+            for (int i = 0; i < length; i++) {
+                OnePostPersistenceCallable task = new OnePostPersistenceCallable(this, geoCmdLine, fbPostList.get(i));
+                listIn.add(task);
+            }
+            // invokeAll tasks
+            try {
+                List<Future<String>> listOut = GeoExecutorService.getSingle().getService().invokeAll(listIn);
+                log.info(new StringBuilder().append("output size: >> ").append(listOut.size()));
+            } catch (InterruptedException e) {
+                log.error(e, e);
+            }
+            log.info(new StringBuilder().append(">>> join. </doPersistence_Posts>"));
+        }
+    }
+
+    /*
+     * This is an override method to implement concurrent solution using
      * multi-threading for collecting comments of one post.
      * 
      * @see
@@ -98,7 +128,7 @@ public class FacebookPostsProbeConcurrent extends FacebookPostsProbe {
 
         private final FacebookPostsProbeConcurrent fbPostsProbConc;
         private final GeoCmdLine geoCmdLine;
-        final FacebookPost fbPost;
+        private final FacebookPost fbPost;
 
         public CollectingCommentsCallable(final FacebookPostsProbeConcurrent fbPostsProbConc,
                 final GeoCmdLine geoCmdLine, final FacebookPost fbPost) {
@@ -113,6 +143,35 @@ public class FacebookPostsProbeConcurrent extends FacebookPostsProbe {
             String id = fbPost.getId();
             log.debug(new StringBuilder().append("Comments of post id [").append(id).append("] were collected."));
             return id; // return comment id for validation.
+        }
+
+    }
+
+    /**
+     * 
+     * This class is used for doing persistence for one post concurrently
+     *
+     */
+    class OnePostPersistenceCallable implements Callable<String> {
+
+        private final FacebookPostsProbeConcurrent fbPostsProbConc;
+        private final GeoCmdLine geoCmdLine;
+        private final FacebookPost fbPost;
+
+        public OnePostPersistenceCallable(final FacebookPostsProbeConcurrent fbPostsProbConc,
+                final GeoCmdLine geoCmdLine, final FacebookPost fbPost) {
+            this.fbPostsProbConc = fbPostsProbConc;
+            this.geoCmdLine = geoCmdLine;
+            this.fbPost = fbPost;
+        }
+
+        @Override
+        public String call() throws Exception {
+            fbPostsProbConc.doPersistenceOne(geoCmdLine, fbPost);
+            String id = fbPost.getId();
+            log.debug(new StringBuilder().append("post id [").append(id)
+                    .append("] were inserted into social_media_record."));
+            return id;
         }
 
     }

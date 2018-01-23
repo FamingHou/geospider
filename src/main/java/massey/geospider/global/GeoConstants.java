@@ -8,6 +8,9 @@ package massey.geospider.global;
  */
 public interface GeoConstants {
 
+    /** # the number of thread count of GeoExecutorService */
+    public static final String THREAD_COUNT_OF_GEO_EXECUTOR_SERVICE_PROP_NAME = "THREAD_COUNT_OF_GEO_EXECUTOR_SERVICE";
+
     /** the option name of keyword for searching usage */
     public static final String KEYWORD_OPTION = "keyword";
 

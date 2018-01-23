@@ -37,7 +37,37 @@ public class FacebookCommentsProbeConcurrent extends FacebookCommentsProbe {
 
     /*
      * This is an override method to implement concurrent solution using
-     * multi-threading.
+     * multi-threading for persistence of one Comment
+     * 
+     * @see massey.geospider.probe.facebook.FacebookCommentsProbe#doPersistence(
+     * massey. geospider.boot.GeoCmdLine, java.util.List)
+     */
+    @Override
+    protected void doPersistence(GeoCmdLine geoCmdLine, List<FacebookComment> fbCommentList) {
+        if (fbCommentList != null && !fbCommentList.isEmpty()) {
+            int length = fbCommentList.size();
+            log.info(new StringBuilder().append("<doPersistence_Comments> fork <<< "));
+            log.info(new StringBuilder().append("input size: <<").append(length));
+            List<Callable<String>> listIn = new ArrayList<Callable<String>>(length);
+            for (int i = 0; i < length; i++) {
+                OneCommentPersistenceCallable task = new OneCommentPersistenceCallable(this, geoCmdLine,
+                        fbCommentList.get(i));
+                listIn.add(task);
+            }
+            // invokeAll tasks
+            try {
+                List<Future<String>> listOut = GeoExecutorService.getSingle().getService().invokeAll(listIn);
+                log.info(new StringBuilder().append("output size: >> ").append(listOut.size()));
+            } catch (InterruptedException e) {
+                log.error(e, e);
+            }
+            log.info(new StringBuilder().append(">>> join. </doPersistence_Comments>"));
+        }
+    }
+
+    /*
+     * This is an override method to implement concurrent solution using
+     * multi-threading for persistence of Comments.
      * 
      * @see massey.geospider.probe.facebook.FacebookCommentsProbe#doPostCollect(
      * massey.geospider.boot.GeoCmdLine,
@@ -54,13 +84,16 @@ public class FacebookCommentsProbeConcurrent extends FacebookCommentsProbe {
             int length = fbCommentArray.length;
             log.info(new StringBuilder().append("<fetching_replies> fork <<< ").append(nextURL));
             log.info(new StringBuilder().append("input size: <<").append(length));
-            // option-1: when using submit, Future<String> must be printed to make join works.
+            // option-1: when using submit, Future<String> must be printed to
+            // make join works.
             // option-2: using invokeAll.
-//            List<Future<String>> list = new ArrayList<Future<String>>(length);
+            // List<Future<String>> list = new
+            // ArrayList<Future<String>>(length);
             List<Callable<String>> listIn = new ArrayList<Callable<String>>(length);
             for (int i = 0; i < length; i++) {
                 CollectingRepliesCallable task = new CollectingRepliesCallable(this, geoCmdLine, fbCommentArray[i]);
-//                Future<String> submit = GeoExecutorService.getSingle().getService().submit(task);
+                // Future<String> submit =
+                // GeoExecutorService.getSingle().getService().submit(task);
                 listIn.add(task);
             }
             // invokeAll tasks
@@ -120,4 +153,32 @@ public class FacebookCommentsProbeConcurrent extends FacebookCommentsProbe {
 
     }
 
+    /**
+     * 
+     * This class is used for doing persistence for one Comment concurrently
+     *
+     */
+    class OneCommentPersistenceCallable implements Callable<String> {
+
+        private final FacebookCommentsProbeConcurrent fbCommentsProbConc;
+        private final GeoCmdLine geoCmdLine;
+        private final FacebookComment fbComment;
+
+        public OneCommentPersistenceCallable(final FacebookCommentsProbeConcurrent fbCommentsProbConc,
+                final GeoCmdLine geoCmdLine, final FacebookComment fbComment) {
+            this.fbCommentsProbConc = fbCommentsProbConc;
+            this.geoCmdLine = geoCmdLine;
+            this.fbComment = fbComment;
+        }
+
+        @Override
+        public String call() throws Exception {
+            fbCommentsProbConc.doPersistenceOne(geoCmdLine, fbComment);
+            String id = fbComment.getId();
+            log.debug(new StringBuilder().append("comment id [").append(id)
+                    .append("] were inserted into social_media_record."));
+            return id;
+        }
+
+    }
 }
