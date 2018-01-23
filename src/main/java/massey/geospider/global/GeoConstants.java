@@ -34,7 +34,10 @@ public interface GeoConstants {
     public static final String TW_ACCESS_TOKEN_PROP_NAME = "TW_ACCESS_TOKEN";
     public static final String TW_SEARCH_LIMIT_PROP_NAME = "TW_SEARCH_LIMIT";
     public static final String TW_HEADER_AUTHORIZATION_PROP_NAME = "Authorization";
-    
+
+    /** GEO_VALIDATION API */
+    public static final String GEO_VALIDATION_URL_PROP_NAME = "GEO_VALIDATION_URL";
+
     /**
      * According to the response message of Facebook API, the 'limit' parameter
      * should not exceed 100 when fetching posts in one page, there is no
@@ -86,7 +89,7 @@ public interface GeoConstants {
     public static final int VENDOR_TYPE_YOUTUBE = 5;
     public static final int VENDOR_TYPE_FLICKR = 6;
 
-    public static final String DATETIME_FORMAT_FB = "yyyy-MM-dd'T'HH:mm:ssZ"; //Facebook
-    public static final String DATETIME_FORMAT_TW = "EEE MMM dd HH:mm:ss ZZZZZ yyyy"; //Twitter
+    public static final String DATETIME_FORMAT_FB = "yyyy-MM-dd'T'HH:mm:ssZ"; // Facebook
+    public static final String DATETIME_FORMAT_TW = "EEE MMM dd HH:mm:ss ZZZZZ yyyy"; // Twitter
 
 }

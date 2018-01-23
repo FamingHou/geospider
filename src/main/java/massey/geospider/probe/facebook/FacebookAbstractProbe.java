@@ -3,16 +3,22 @@
  */
 package massey.geospider.probe.facebook;
 
+import java.net.URLEncoder;
+
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import massey.geospider.api.http.HttpHelper;
 import massey.geospider.boot.GeoCmdLine;
+import massey.geospider.conf.PropReader;
+import massey.geospider.global.GeoConstants;
 import massey.geospider.message.facebook.FacebookMessage;
 import massey.geospider.message.response.GeoResponse;
 import massey.geospider.message.response.facebook.FacebookError;
 import massey.geospider.message.response.facebook.FacebookPaging;
 import massey.geospider.message.response.facebook.FacebookResponse;
 import massey.geospider.probe.AbstractProbe;
+import massey.geospider.util.JSONHelper;
 
 /**
  * 
@@ -104,39 +110,13 @@ public abstract class FacebookAbstractProbe extends AbstractProbe {
     }
 
     /**
-     * Checks whether the message in FacebookMessage object has valid
-     * geoplace(s)
+     * Checks whether the message object has valid geo place
      * 
      * @param fbMessage
-     * @return true - if fbMessage has valid geoplaces; false -otherwise
+     * @return true - if fbMessage has valid geo places; false -otherwise
      */
     protected boolean hasGeoPlace(FacebookMessage fbMessage) {
-        // try {
-        // String msg = fbMessage.getMessage();
-        // StringBuilder sb = new StringBuilder();
-        // sb.append("http://geotxt.org/v2/api/geotxt.json");
-        // // using URIBuilder to solve URISyntax issues
-        // URIBuilder builder = new URIBuilder(sb.toString());
-        // builder.addParameter("m", "stanfords");
-        // builder.addParameter("q", msg);
-        //
-        // String responseString = HttpHelper.doGet(builder.toString());
-        // try {
-        // JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
-        // if (jsonObj != null && !jsonObj.isNull("features")) {
-        // JSONArray dataArray = jsonObj.getJSONArray("features");
-        // int len = dataArray.length();
-        // if (len > 0)
-        // return true;
-        // }
-        // } catch (JSONException e) {
-        // log.error(e, e);
-        // }
-        // } catch (URISyntaxException e) {
-        // log.error(e, e);
-        // }
-        // return false;
-        // only for performance test
-        return true;
+        return super.hasGeoPlace(fbMessage.getMessage());
     }
+
 }

@@ -66,8 +66,7 @@ public abstract class TwitterAbstractProbe extends AbstractProbe {
      * @return true - if twStatus has valid geoplaces; false -otherwise
      */
     protected boolean hasGeoPlace(TwitterStatus twStatus) {
-        // @TODO
-        return true;
+        return super.hasGeoPlace(twStatus.getText());
     }
 
     /**
