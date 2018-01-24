@@ -13,7 +13,8 @@
         vendor_record_created_time,
         place_id, place_name, place_city,
         place_country, place_zip,
-        place_latitude, place_longitude)
+        place_latitude, place_longitude,
+        has_keyword, has_geo)
         VALUES
         (#{keyword}, #{vendorRecordId},
         #{vendorRecordParentId},
@@ -26,6 +27,8 @@
         #{placeCity}, #{placeCountry},
         #{placeZip},
         #{placeLatitude},
-        #{placeLongitude});
+        #{placeLongitude},
+        #{isHasKeyword},
+        #{isHasGeo});
     </insert>
 </mapper>

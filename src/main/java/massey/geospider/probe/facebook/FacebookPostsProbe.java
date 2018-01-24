@@ -389,6 +389,8 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
                 smRecord.setPlaceLongitude(fbLoc.getLongitude());
             }
         }
+        smRecord.setHasGeo(true);
+        smRecord.setHasKeyword(true);
         SocialMediaRecordDAO smrDao = new SocialMediaRecordDAOImpl();
         smrDao.insertOne(smRecord);
     }

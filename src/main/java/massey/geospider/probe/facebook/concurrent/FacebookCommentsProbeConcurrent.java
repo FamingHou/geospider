@@ -207,6 +207,7 @@ public class FacebookCommentsProbeConcurrent extends FacebookCommentsProbe {
         @Override
         public String call() throws Exception {
             fbCommentsProbConc.doPersistenceOne(geoCmdLine, fbComment);
+            fbCommentsProbConc.doPostPersistenceOne(geoCmdLine, fbComment);
             String id = fbComment.getId();
             log.debug(new StringBuilder().append("comment id [").append(id)
                     .append("] were inserted into social_media_record."));

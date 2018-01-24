@@ -544,7 +544,8 @@ public class TwitterSearchProbe extends TwitterAbstractProbe implements GeoConst
                 smRecord.setPlaceName(place.getName());
                 smRecord.setPlaceCountry(place.getCountry());
             }
-
+            smRecord.setHasKeyword(true);
+            smRecord.setHasGeo(true);
             SocialMediaRecordDAO smrDao = new SocialMediaRecordDAOImpl();
             smrDao.insertOne(smRecord);
         }

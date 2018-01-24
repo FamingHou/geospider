@@ -115,6 +115,7 @@ public class FacebookRepliesProbeConcurrent extends FacebookRepliesProbe {
         @Override
         public String call() throws Exception {
             fbRepliesProbConc.doPersistenceOne(geoCmdLine, fbReply);
+            fbRepliesProbConc.doPostPersistenceOne(geoCmdLine, fbReply);
             String id = fbReply.getId();
             log.debug(new StringBuilder().append("reply id [").append(id)
                     .append("] were inserted into social_media_record."));

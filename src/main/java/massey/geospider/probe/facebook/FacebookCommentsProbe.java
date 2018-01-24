@@ -19,8 +19,11 @@ import massey.geospider.boot.GeoCmdLine;
 import massey.geospider.conf.PropReader;
 import massey.geospider.global.GeoConstants;
 import massey.geospider.message.facebook.FacebookComment;
+import massey.geospider.message.facebook.FacebookLocation;
 import massey.geospider.message.facebook.FacebookMessage;
 import massey.geospider.message.facebook.FacebookPage;
+import massey.geospider.message.facebook.FacebookPlace;
+import massey.geospider.message.facebook.FacebookPost;
 import massey.geospider.message.response.GeoResponse;
 import massey.geospider.message.response.facebook.FacebookCommentsResponse;
 import massey.geospider.message.response.facebook.FacebookError;
@@ -30,6 +33,7 @@ import massey.geospider.persistence.dao.SocialMediaRecordDAOImpl;
 import massey.geospider.persistence.dto.SocialMediaRecord;
 import massey.geospider.util.DateHelper;
 import massey.geospider.util.JSONHelper;
+import massey.geospider.util.StringHelper;
 
 /**
  * 
@@ -337,6 +341,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
         // @TODO using batch mode for better performance
         for (FacebookComment facebookComment : fbCommentList) {
             doPersistenceOne(geoCmdLine, facebookComment);
+            doPostPersistenceOne(geoCmdLine, facebookComment);
         }
     }
 
@@ -355,6 +360,102 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
         smRecord.setVendorType(VENDOR_TYPE_FACEBOOK);
         smRecord.setRecordType(getRecordType());
         smRecord.setVendorRecordCreatedTime(facebookComment.getCreatedTime());
+        smRecord.setHasKeyword(true);
+        smRecord.setHasGeo(true);
+        SocialMediaRecordDAO smrDao = new SocialMediaRecordDAOImpl();
+        smrDao.insertOne(smRecord);
+    }
+
+    /**
+     * Does post work after facebookComment was inserted.
+     * 
+     * Inserts the parent(post) of the facebookComment into db.
+     * 
+     * @param geoCmdLine
+     * @param facebookComment
+     *            Comment or Reply
+     */
+    protected void doPostPersistenceOne(GeoCmdLine geoCmdLine, FacebookComment facebookComment) {
+        if (facebookComment.getParent() != null) {
+            // the parent of a FacebookComment object is a FacebookPost object
+            // the parent of a FacebookReply(still FacebookComment in Facebook)
+            // object is a FacebookComment object
+            FacebookMessage parent = facebookComment.getParent();
+            if (parent instanceof FacebookPost) {
+                FacebookPost parentFbPost = (FacebookPost) parent;
+                // insert parent (post) of the facebookComment unnecessary to
+                // find out whether the parent is in db or not,using unique
+                // constraint of field vendor_record_id of table
+                // social_media_vendor especially multi-threading condition,
+                doInsertOnePost(geoCmdLine, parentFbPost);
+            } else if (parent instanceof FacebookComment) {
+                //
+                FacebookComment parentFbComment = (FacebookComment) parent;
+                doInsertOneComment(geoCmdLine, parentFbComment);
+                // insert the parent post of this comment by calling
+                // doPostPersistenceOne recursively
+                doPostPersistenceOne(geoCmdLine, parentFbComment);
+            }
+        }
+    }
+
+    /**
+     * Inserts one facebookPost into db.
+     * 
+     * @param geoCmdLine
+     * @param facebookPost
+     */
+    protected void doInsertOnePost(GeoCmdLine geoCmdLine, FacebookPost facebookPost) {
+        SocialMediaRecord smRecord = new SocialMediaRecord();
+        smRecord.setKeyword(geoCmdLine.getKeywordOptionValue());
+        smRecord.setVendorRecordId(facebookPost.getId());
+        smRecord.setVendorRecordParentId(facebookPost.getParent().getId());
+        smRecord.setMessage(facebookPost.getMessage());
+        smRecord.setVendorType(VENDOR_TYPE_FACEBOOK);
+        smRecord.setRecordType(RECORD_TYPE_POST);
+        smRecord.setVendorRecordCreatedTime(facebookPost.getCreatedTime());
+        if (facebookPost.getFbPlace() != null) {
+            FacebookPlace fbPlace = facebookPost.getFbPlace();
+            smRecord.setPlaceId(fbPlace.getId());
+            smRecord.setPlaceName(fbPlace.getName());
+            if (fbPlace.getLocation() != null) {
+                FacebookLocation fbLoc = fbPlace.getLocation();
+                smRecord.setPlaceCity(fbLoc.getCity());
+                smRecord.setPlaceCountry(fbLoc.getCountry());
+                smRecord.setPlaceZip(fbLoc.getZip());
+                smRecord.setPlaceLatitude(fbLoc.getLatitude());
+                smRecord.setPlaceLongitude(fbLoc.getLongitude());
+            }
+        }
+        //
+        boolean isHasKeyword = StringHelper.hasKeyword(smRecord.getMessage(), smRecord.getKeyword());
+        boolean isHasGeo = super.hasGeoPlace(smRecord.getMessage());
+        smRecord.setHasKeyword(isHasKeyword);
+        smRecord.setHasGeo(isHasGeo);
+        SocialMediaRecordDAO smrDao = new SocialMediaRecordDAOImpl();
+        smrDao.insertOne(smRecord);
+    }
+
+    /**
+     * Insert one facebookComment into db
+     * 
+     * @param geoCmdLine
+     * @param facebookComment
+     */
+    protected void doInsertOneComment(GeoCmdLine geoCmdLine, FacebookComment facebookComment) {
+        SocialMediaRecord smRecord = new SocialMediaRecord();
+        smRecord.setKeyword(geoCmdLine.getKeywordOptionValue());
+        smRecord.setVendorRecordId(facebookComment.getId());
+        smRecord.setVendorRecordParentId(facebookComment.getParent().getId());
+        smRecord.setMessage(facebookComment.getMessage());
+        smRecord.setVendorType(VENDOR_TYPE_FACEBOOK);
+        smRecord.setRecordType(RECORD_TYPE_COMMENT);
+        smRecord.setVendorRecordCreatedTime(facebookComment.getCreatedTime());
+        //
+        boolean isHasKeyword = StringHelper.hasKeyword(smRecord.getMessage(), smRecord.getKeyword());
+        boolean isHasGeo = super.hasGeoPlace(smRecord.getMessage());
+        smRecord.setHasKeyword(isHasKeyword);
+        smRecord.setHasGeo(isHasGeo);
         SocialMediaRecordDAO smrDao = new SocialMediaRecordDAOImpl();
         smrDao.insertOne(smRecord);
     }

@@ -30,6 +30,9 @@ public class SocialMediaRecord {
     private double placeLongitude;
     private String keyword;
 
+    private boolean isHasKeyword = true; // default true
+    private boolean isHasGeo = true; // default true
+
     /**
      * 
      */
@@ -279,6 +282,36 @@ public class SocialMediaRecord {
         this.keyword = keyword;
     }
 
+    /**
+     * @return the isHasKeyword
+     */
+    public boolean isHasKeyword() {
+        return isHasKeyword;
+    }
+
+    /**
+     * @param isHasKeyword
+     *            the isHasKeyword to set
+     */
+    public void setHasKeyword(boolean isHasKeyword) {
+        this.isHasKeyword = isHasKeyword;
+    }
+
+    /**
+     * @return the isHasGeo
+     */
+    public boolean isHasGeo() {
+        return isHasGeo;
+    }
+
+    /**
+     * @param isHasGeo
+     *            the isHasGeo to set
+     */
+    public void setHasGeo(boolean isHasGeo) {
+        this.isHasGeo = isHasGeo;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -286,12 +319,13 @@ public class SocialMediaRecord {
      */
     @Override
     public String toString() {
-        return "SocialMediaRecord [id=" + id + ", keyword=" + keyword + ", vendorRecordId=" + vendorRecordId
-                + ", vendorRecordParentId=" + vendorRecordParentId + ", message=" + message + ", recordType="
-                + recordType + ", vendorType=" + vendorType + ", vendorRecordCreatedTime=" + vendorRecordCreatedTime
-                + ", createTime=" + createTime + ", placeId=" + placeId + ", placeName=" + placeName + ", placeCity="
-                + placeCity + ", placeCountry=" + placeCountry + ", placeZip=" + placeZip + ", placeLatitude="
-                + placeLatitude + ", placeLongitude=" + placeLongitude + "]";
+        return "SocialMediaRecord [id=" + id + ", vendorRecordId=" + vendorRecordId + ", vendorRecordParentId="
+                + vendorRecordParentId + ", message=" + message + ", recordType=" + recordType + ", vendorType="
+                + vendorType + ", vendorRecordCreatedTime=" + vendorRecordCreatedTime + ", createTime=" + createTime
+                + ", placeId=" + placeId + ", placeName=" + placeName + ", placeCity=" + placeCity + ", placeCountry="
+                + placeCountry + ", placeZip=" + placeZip + ", placeLatitude=" + placeLatitude + ", placeLongitude="
+                + placeLongitude + ", keyword=" + keyword + ", isHasKeyword=" + isHasKeyword + ", isHasGeo=" + isHasGeo
+                + "]";
     }
 
 }
