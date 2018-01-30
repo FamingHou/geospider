@@ -4,6 +4,7 @@
 package massey.geospider.probe;
 
 import massey.geospider.boot.GeoCmdLine;
+import massey.geospider.global.GeoConstants;
 import massey.geospider.message.response.GeoResponse;
 
 /**
@@ -13,7 +14,7 @@ import massey.geospider.message.response.GeoResponse;
  * @author Frank Hou (faming.hou@gmail.com)
  *
  */
-public interface Probe {
+public interface Probe extends GeoConstants {
 
     /**
      * Collects messages according to used typed options.

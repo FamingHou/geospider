@@ -41,8 +41,14 @@ public class TwitterSearchResponse extends TwitterResponse {
     // @deprecated
     private String maxIdFromNextResults;
 
+    public TwitterSearchResponse() {
+
+    }
+
     /**
      * 
+     * @param datas
+     * @param meta
      */
     public TwitterSearchResponse(TwitterStatus[] datas, TwitterSearchMetaData meta) {
         this.datas = datas;
@@ -53,8 +59,8 @@ public class TwitterSearchResponse extends TwitterResponse {
     @Override
     public boolean isDatasEmpty() {
         if (datas == null || datas.length == 0)
-            return false;
-        return true;
+            return true;
+        return false;
     }
 
     /**
