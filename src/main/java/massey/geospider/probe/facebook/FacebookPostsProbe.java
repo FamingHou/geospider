@@ -111,7 +111,7 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
         // FacebookPosts level
         FacebookPostsResponse fbPostsRsp = (FacebookPostsResponse) inputGeoResponse;
         if (fbPostsRsp != null) {
-            FacebookPost[] fbPostArray = fbPostsRsp.getDatas();
+            FacebookPost[] fbPostArray = fbPostsRsp.getDataArray();
             for (int i = 0; i < fbPostArray.length; i++) {
                 currentPost = fbPostArray[i];
                 log.info("fetch all comments of the post ===> " + currentPost.getId());
@@ -190,10 +190,10 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
      */
     private FacebookPostsResponse createFacebookPostsResponse(String responseString) {
         JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
-        FacebookPost[] datas = parseDatas(jsonObj);
+        FacebookPost[] dataArray = parseDataArray(jsonObj);
         FacebookError error = parseError(jsonObj);
         FacebookPaging paging = parsePaging(jsonObj);
-        return new FacebookPostsResponse(datas, error, paging);
+        return new FacebookPostsResponse(dataArray, error, paging);
     }
 
     /**
@@ -232,7 +232,7 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
      *         null</li>
      *         </ul>
      */
-    private FacebookPost[] parseDatas(JSONObject jsonObj) {
+    private FacebookPost[] parseDataArray(JSONObject jsonObj) {
         if (jsonObj == null || jsonObj.isNull("data"))
             return null;
         JSONArray dataArray = jsonObj.getJSONArray("data");
@@ -276,9 +276,9 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
      *         and GeoPlace
      */
     private List<FacebookPost> doFilterPost(final GeoCmdLine geoCmdLine, final FacebookPostsResponse fbPostsRsp) {
-        if (fbPostsRsp != null && fbPostsRsp.getDatas() != null) {
-            // append the size of fbPostsRsp.getDatas() into SizeOfPostsInTotal
-            fbPage.setSizeOfPostsInTotal(fbPage.getSizeOfPostsInTotal() + fbPostsRsp.getDatas().length);
+        if (fbPostsRsp != null && fbPostsRsp.getDataArray() != null) {
+            // append the size of fbPostsRsp.getDataArray() into SizeOfPostsInTotal
+            fbPage.setSizeOfPostsInTotal(fbPage.getSizeOfPostsInTotal() + fbPostsRsp.getDataArray().length);
         }
         // filter keyword
         List<FacebookPost> hasKeywordPostList = doFilterKeyword(geoCmdLine, fbPostsRsp);
@@ -305,7 +305,7 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
     private List<FacebookPost> doFilterKeyword(final GeoCmdLine geoCmdLine, final FacebookPostsResponse fbPostsRsp) {
         List<FacebookPost> hasKeywordlist = new ArrayList<>();
         if (fbPostsRsp != null) {
-            FacebookPost[] fbPostsArray = fbPostsRsp.getDatas();
+            FacebookPost[] fbPostsArray = fbPostsRsp.getDataArray();
             for (int i = 0; i < fbPostsArray.length; i++) {
                 if (fbPostsArray[i] != null && fbPostsArray[i].getMessage() != null) {
                     String s1 = fbPostsArray[i].getMessage();

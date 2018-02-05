@@ -113,7 +113,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
         // FacebookComments level
         FacebookCommentsResponse fbCommentsRsp = (FacebookCommentsResponse) inputGeoResponse;
         if (fbCommentsRsp != null) {
-            FacebookComment[] fbCommentArray = fbCommentsRsp.getDatas();
+            FacebookComment[] fbCommentArray = fbCommentsRsp.getDataArray();
             for (int i = 0; i < fbCommentArray.length; i++) {
                 // fetch all replies under one FacebookComment.
                 // a reply is still a type of class FacebookComment.
@@ -182,10 +182,10 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
      */
     private FacebookCommentsResponse createFacebookCommentsResponse(String responseString) {
         JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
-        FacebookComment[] datas = parseDatas(jsonObj);
+        FacebookComment[] dataArray = parseData(jsonObj);
         FacebookError error = parseError(jsonObj);
         FacebookPaging paging = parsePaging(jsonObj);
-        return new FacebookCommentsResponse(datas, error, paging);
+        return new FacebookCommentsResponse(dataArray, error, paging);
     }
 
     /**
@@ -211,7 +211,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
      *         null</li>
      *         </ul>
      */
-    private FacebookComment[] parseDatas(JSONObject jsonObj) {
+    private FacebookComment[] parseData(JSONObject jsonObj) {
         if (jsonObj == null || jsonObj.isNull("data"))
             return null;
         JSONArray dataArray = jsonObj.getJSONArray("data");
@@ -257,9 +257,9 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
             final FacebookCommentsResponse fbCommentsRsp) {
         // get the reference of FacebookPage of current FacebookPost object.
         FacebookPage fbPage = (FacebookPage) fbParent.getParent();
-        if (fbCommentsRsp != null && fbCommentsRsp.getDatas() != null) {
-            // append fbCommentsRsp.getDatas() into SizeOfCommentsInTotal
-            fbPage.setSizeOfCommentsInTotal(fbPage.getSizeOfCommentsInTotal() + fbCommentsRsp.getDatas().length);
+        if (fbCommentsRsp != null && fbCommentsRsp.getDataArray() != null) {
+            // append fbCommentsRsp.getDataArray() into SizeOfCommentsInTotal
+            fbPage.setSizeOfCommentsInTotal(fbPage.getSizeOfCommentsInTotal() + fbCommentsRsp.getDataArray().length);
         }
         // filter keyword
         List<FacebookComment> hasKeywordCommentList = doFilterKeyword(geoCmdLine, fbCommentsRsp);
@@ -288,7 +288,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
             final FacebookCommentsResponse fbCommentsRsp) {
         List<FacebookComment> hasKeywordlist = new ArrayList<>();
         if (fbCommentsRsp != null) {
-            FacebookComment[] fbCommentsArray = fbCommentsRsp.getDatas();
+            FacebookComment[] fbCommentsArray = fbCommentsRsp.getDataArray();
             for (int i = 0; i < fbCommentsArray.length; i++) {
                 if (fbCommentsArray[i] != null && fbCommentsArray[i].getMessage() != null) {
                     String s1 = fbCommentsArray[i].getMessage();

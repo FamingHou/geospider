@@ -94,9 +94,9 @@ public class FacebookRepliesProbe extends FacebookCommentsProbe {
         // current object is a Comment, fbParent.getParent() is a Post,
         // fbParent.getParent().getParent() is aPage.
         FacebookPage fbPage = (FacebookPage) fbParent.getParent().getParent();
-        if (fbRepliesRsp != null && fbRepliesRsp.getDatas() != null) {
-            // append fbCommentsRsp.getDatas() into SizeOfRepliesInTotal
-            fbPage.setSizeOfRepliesInTotal(fbPage.getSizeOfRepliesInTotal() + fbRepliesRsp.getDatas().length);
+        if (fbRepliesRsp != null && fbRepliesRsp.getDataArray() != null) {
+            // append fbCommentsRsp.getDataArray() into SizeOfRepliesInTotal
+            fbPage.setSizeOfRepliesInTotal(fbPage.getSizeOfRepliesInTotal() + fbRepliesRsp.getDataArray().length);
         }
         // filter keyword
         List<FacebookComment> hasKeywordReplyList = doFilterKeyword(geoCmdLine, fbRepliesRsp);

@@ -19,12 +19,11 @@ public abstract class GeoResponse {
     }
 
     /**
-     * Checks whether the response has valid datas or not. If datas is null or
+     * Checks whether the response has valid data or not. If data is null or
      * empty, it is invalid.
      * 
-     * @return true - valid datas in response; false - otherwise.
+     * @return true - valid data in response; false - otherwise.
      */
-    public abstract boolean isDatasEmpty();
-
+    public abstract boolean isDataEmpty();
 
 }

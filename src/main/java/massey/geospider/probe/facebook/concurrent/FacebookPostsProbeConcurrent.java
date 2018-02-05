@@ -113,7 +113,7 @@ public class FacebookPostsProbeConcurrent extends FacebookPostsProbe {
         FacebookPostsResponse fbPostsRsp = (FacebookPostsResponse) inputGeoResponse;
         if (fbPostsRsp != null) {
             String nextURL = fbPostsRsp.getPaging() == null ? "N/A" : fbPostsRsp.getPaging().getNextURL();
-            FacebookPost[] fbPostArray = fbPostsRsp.getDatas();
+            FacebookPost[] fbPostArray = fbPostsRsp.getDataArray();
             int length = fbPostArray.length;
             log.info(new StringBuilder().append("<fetching_comments> fork <<< ").append(nextURL));
             log.info(new StringBuilder().append("input size: <<").append(length));

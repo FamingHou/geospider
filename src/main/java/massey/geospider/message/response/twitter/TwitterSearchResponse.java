@@ -35,7 +35,7 @@ public class TwitterSearchResponse extends TwitterResponse {
 
     private static final Logger log = Logger.getLogger(TwitterSearchResponse.class);
 
-    protected TwitterStatus[] datas;
+    protected TwitterStatus[] dataArray;
     protected TwitterSearchMetaData meta;
 
     // @deprecated
@@ -47,18 +47,18 @@ public class TwitterSearchResponse extends TwitterResponse {
 
     /**
      * 
-     * @param datas
+     * @param dataArray
      * @param meta
      */
-    public TwitterSearchResponse(TwitterStatus[] datas, TwitterSearchMetaData meta) {
-        this.datas = datas;
+    public TwitterSearchResponse(TwitterStatus[] dataArray, TwitterSearchMetaData meta) {
+        this.dataArray = dataArray;
         this.meta = meta;
         // populateMaxIdFromNextResults();
     }
 
     @Override
-    public boolean isDatasEmpty() {
-        if (datas == null || datas.length == 0)
+    public boolean isDataEmpty() {
+        if (dataArray == null || dataArray.length == 0)
             return true;
         return false;
     }
@@ -122,13 +122,13 @@ public class TwitterSearchResponse extends TwitterResponse {
     /**
      * Get the minimum id
      * 
-     * @return if datas is not empty, return the id of the last status; null
+     * @return if dataArray is not empty, return the id of the last status; null
      *         otherwise
      */
     public String getMinId() {
         // the last status has the minimum id.
-        if (datas != null && datas.length > 0) {
-            TwitterStatus status = datas[datas.length - 1];
+        if (dataArray != null && dataArray.length > 0) {
+            TwitterStatus status = dataArray[dataArray.length - 1];
             if (status != null)
                 return status.getId();
             else
@@ -157,18 +157,18 @@ public class TwitterSearchResponse extends TwitterResponse {
     }
 
     /**
-     * @return the datas
+     * @return the dataArray
      */
-    public TwitterStatus[] getDatas() {
-        return datas;
+    public TwitterStatus[] getDataArray() {
+        return dataArray;
     }
 
     /**
-     * @param datas
-     *            the datas to set
+     * @param dataArray
+     *            the dataArray to set
      */
-    public void setDatas(TwitterStatus[] datas) {
-        this.datas = datas;
+    public void setDataArray(TwitterStatus[] dataArray) {
+        this.dataArray = dataArray;
     }
 
     /**

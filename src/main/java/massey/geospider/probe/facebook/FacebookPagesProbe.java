@@ -113,7 +113,7 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
         // FacebookPages level
         FacebookPagesResponse fbPagesRsp = (FacebookPagesResponse) inputGeoResponse;
         if (fbPagesRsp != null) {
-            FacebookPage[] fbPageArray = fbPagesRsp.getDatas();
+            FacebookPage[] fbPageArray = fbPagesRsp.getDataArray();
             for (int i = 0; i < fbPageArray.length; i++) {
                 currentPage = fbPageArray[i];
                 doProcessOnePageLogic(geoCmdLine, currentPage);
@@ -264,10 +264,10 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
      */
     private FacebookPagesResponse createFacebookPagesResponse(String responseString) {
         JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
-        FacebookPage[] datas = parseDatas(jsonObj);
+        FacebookPage[] dataArray = parseDataArray(jsonObj);
         FacebookError error = parseError(jsonObj);
         FacebookPaging paging = parsePaging(jsonObj);
-        return new FacebookPagesResponse(datas, error, paging);
+        return new FacebookPagesResponse(dataArray, error, paging);
     }
 
     /**
@@ -300,7 +300,7 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
      *         null</li>
      *         </ul>
      */
-    private FacebookPage[] parseDatas(JSONObject jsonObj) {
+    private FacebookPage[] parseDataArray(JSONObject jsonObj) {
         if (jsonObj == null || jsonObj.isNull("data"))
             return null;
         JSONArray dataArray = jsonObj.getJSONArray("data");

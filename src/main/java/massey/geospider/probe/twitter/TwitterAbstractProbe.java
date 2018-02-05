@@ -44,10 +44,9 @@ public abstract class TwitterAbstractProbe extends AbstractProbe {
         boolean isProcessing = doPreCollect(geoCmdLine, inputGeoResponse);
         if (isProcessing) {
             TwitterSearchResponse twSearchRsp = (TwitterSearchResponse) doRequest(geoCmdLine, inputGeoResponse);
-            // if the value of datas in response is empty, it also means that
-            // there
-            // is no need to doNextPageCollect
-            if (twSearchRsp != null && !twSearchRsp.isDatasEmpty()) {
+            // if the value of dataArray in response is empty, it also means
+            // there is no need to doNextPageCollect
+            if (twSearchRsp != null && !twSearchRsp.isDataEmpty()) {
                 doProcessResponse(geoCmdLine, twSearchRsp);
                 doPostCollect(geoCmdLine, twSearchRsp);
                 // only call doNextPageCollect when the response has

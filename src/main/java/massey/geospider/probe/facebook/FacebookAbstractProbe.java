@@ -37,9 +37,9 @@ public abstract class FacebookAbstractProbe extends AbstractProbe {
     public void collect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         doPreCollect(geoCmdLine, inputGeoResponse);
         FacebookResponse fbResponse = (FacebookResponse) doRequest(geoCmdLine, inputGeoResponse);
-        // if the value of datas in response is empty, it also means that there
+        // if the value of dataArray in response is empty, it also means that there
         // is no need to doNextPageCollect
-        if (fbResponse != null && fbResponse.isDatasEmpty()) {
+        if (fbResponse != null && fbResponse.isDataEmpty()) {
             doProcessResponse(geoCmdLine, fbResponse);
             doPostCollect(geoCmdLine, fbResponse);
             // only call doNextPageCollect when the response has nextPagingURL

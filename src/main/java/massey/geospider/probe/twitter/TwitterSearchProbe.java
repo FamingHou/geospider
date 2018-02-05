@@ -268,7 +268,7 @@ public class TwitterSearchProbe extends TwitterAbstractProbe {
     private List<TwitterStatus> doFilterTweet(final GeoCmdLine geoCmdLine, final TwitterSearchResponse twSearchRsp) {
         List<TwitterStatus> tweetList = new ArrayList<>();
         if (twSearchRsp != null) {
-            TwitterStatus[] twStatusArray = twSearchRsp.getDatas();
+            TwitterStatus[] twStatusArray = twSearchRsp.getDataArray();
             for (int i = 0; i < twStatusArray.length; i++) {
                 if (twStatusArray[i] != null) {
                     String inReplyToStatusId = twStatusArray[i].getInReplyToStatusId();
@@ -291,7 +291,7 @@ public class TwitterSearchProbe extends TwitterAbstractProbe {
     private List<TwitterStatus> doFilterReply(final GeoCmdLine geoCmdLine, final TwitterSearchResponse twSearchRsp) {
         List<TwitterStatus> replyList = new ArrayList<>();
         if (twSearchRsp != null) {
-            TwitterStatus[] twStatusArray = twSearchRsp.getDatas();
+            TwitterStatus[] twStatusArray = twSearchRsp.getDataArray();
             for (int i = 0; i < twStatusArray.length; i++) {
                 if (twStatusArray[i] != null) {
                     String inReplyToStatusId = twStatusArray[i].getInReplyToStatusId();

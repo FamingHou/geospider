@@ -14,14 +14,14 @@ import massey.geospider.message.response.GeoResponse;
  */
 public abstract class FacebookResponse extends GeoResponse {
 
-    protected FacebookMessage[] datas;
+    protected FacebookMessage[] dataArray;
     protected FacebookError error;
     protected FacebookPaging paging;
 
     /**
      * Fills in messages which are in the specific class type.
      * 
-     * @param datas
+     * @param dataArray
      *            polymorphism of Facebook messages, it could be an array of
      *            class type FacebookPage, FacebookPost or FaceComment
      * @param error
@@ -30,17 +30,17 @@ public abstract class FacebookResponse extends GeoResponse {
      *            an object of class FacebookPaging which contains the URL of
      *            the next page
      */
-    public FacebookResponse(FacebookMessage[] datas, FacebookError error, FacebookPaging paging) {
-        this.datas = datas; // using reference, beware of multithreading issues.
+    public FacebookResponse(FacebookMessage[] dataArray, FacebookError error, FacebookPaging paging) {
+        this.dataArray = dataArray; // using reference, beware of multithreading issues.
         this.error = error;
         this.paging = paging;
     }
 
     /**
-     * @return the datas
+     * @return the dataArray
      */
-    public FacebookMessage[] getDatas() {
-        return datas;
+    public FacebookMessage[] getDataArray() {
+        return dataArray;
     }
 
     /**
@@ -60,11 +60,11 @@ public abstract class FacebookResponse extends GeoResponse {
     /*
      * (non-Javadoc)
      * 
-     * @see massey.geospider.message.response.GeoResponse#isDatasEmpty()
+     * @see massey.geospider.message.response.GeoResponse#isDataEmpty()
      */
     @Override
-    public boolean isDatasEmpty() {
-        if (datas != null && datas.length != 0)
+    public boolean isDataEmpty() {
+        if (dataArray != null && dataArray.length != 0)
             return true;
         else
             return false;

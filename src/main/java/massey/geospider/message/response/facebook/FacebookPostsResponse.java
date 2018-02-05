@@ -52,22 +52,22 @@ public class FacebookPostsResponse extends FacebookResponse {
 
     /**
      * 
-     * @param datas
+     * @param dataArray
      * @param error
      * @param paging
      */
-    public FacebookPostsResponse(FacebookPost[] datas, FacebookError error, FacebookPaging paging) {
-        super(datas, error, paging);
+    public FacebookPostsResponse(FacebookPost[] dataArray, FacebookError error, FacebookPaging paging) {
+        super(dataArray, error, paging);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see massey.geospider.message.response.FacebookResponse#getDatas()
+     * @see massey.geospider.message.response.FacebookResponse#getDataArray()
      */
     @Override
-    public FacebookPost[] getDatas() {
-        return (FacebookPost[]) datas;
+    public FacebookPost[] getDataArray() {
+        return (FacebookPost[]) dataArray;
     }
 
 }

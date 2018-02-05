@@ -27,7 +27,7 @@ public class TwitterOneStatusResponse extends TwitterSearchResponse {
     }
 
     @Override
-    public boolean isDatasEmpty() {
+    public boolean isDataEmpty() {
         return twStatus == null || twStatus.getId() == null || twStatus.getId().equals("");
     }
 
