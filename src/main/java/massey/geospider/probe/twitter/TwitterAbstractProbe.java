@@ -329,4 +329,15 @@ public abstract class TwitterAbstractProbe extends AbstractProbe {
         SocialMediaRecordDAO smrDao = new SocialMediaRecordDAOImpl();
         smrDao.insertOne(smRecord);
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see massey.geospider.probe.AbstractProbe#getVendorType()
+     */
+    @Override
+    protected int getVendorType() {
+        return VENDOR_TYPE_TWITTER;
+    }
+
 }

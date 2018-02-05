@@ -3,22 +3,16 @@
  */
 package massey.geospider.probe.facebook;
 
-import java.net.URLEncoder;
-
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-import massey.geospider.api.http.HttpHelper;
 import massey.geospider.boot.GeoCmdLine;
-import massey.geospider.conf.PropReader;
-import massey.geospider.global.GeoConstants;
 import massey.geospider.message.facebook.FacebookMessage;
 import massey.geospider.message.response.GeoResponse;
 import massey.geospider.message.response.facebook.FacebookError;
 import massey.geospider.message.response.facebook.FacebookPaging;
 import massey.geospider.message.response.facebook.FacebookResponse;
 import massey.geospider.probe.AbstractProbe;
-import massey.geospider.util.JSONHelper;
 
 /**
  * 
@@ -37,7 +31,8 @@ public abstract class FacebookAbstractProbe extends AbstractProbe {
     public void collect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         doPreCollect(geoCmdLine, inputGeoResponse);
         FacebookResponse fbResponse = (FacebookResponse) doRequest(geoCmdLine, inputGeoResponse);
-        // if the value of dataArray in response is empty, it also means that there
+        // if the value of dataArray in response is empty, it also means that
+        // there
         // is no need to doNextPageCollect
         if (fbResponse != null && fbResponse.isDataEmpty()) {
             doProcessResponse(geoCmdLine, fbResponse);
@@ -117,6 +112,16 @@ public abstract class FacebookAbstractProbe extends AbstractProbe {
      */
     protected boolean hasGeoPlace(FacebookMessage fbMessage) {
         return super.hasGeoPlace(fbMessage.getMessage());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see massey.geospider.probe.AbstractProbe#getVendorType()
+     */
+    @Override
+    protected int getVendorType() {
+        return VENDOR_TYPE_FACEBOOK;
     }
 
 }
