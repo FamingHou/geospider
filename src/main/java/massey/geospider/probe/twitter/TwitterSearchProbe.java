@@ -4,7 +4,6 @@
 package massey.geospider.probe.twitter;
 
 import java.net.URISyntaxException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,9 +18,6 @@ import massey.geospider.message.response.GeoResponse;
 import massey.geospider.message.response.twitter.TwitterSearchResponse;
 import massey.geospider.message.twitter.TwitterSearchMetaData;
 import massey.geospider.message.twitter.TwitterStatus;
-import massey.geospider.persistence.dao.StatsPageDAO;
-import massey.geospider.persistence.dao.StatsPageDAOImpl;
-import massey.geospider.persistence.dto.StatsPage;
 import massey.geospider.util.JSONHelper;
 
 /**
@@ -37,14 +33,14 @@ public class TwitterSearchProbe extends TwitterAbstractProbe {
 
     private static final Logger log = Logger.getLogger(TwitterSearchProbe.class);
 
-    /** The number of tweets in total */
+    /** The number of tweets in total, post level */
     protected int sizeOfTweetsInTotal = 0;
     /** The number of tweets that has keyword. */
     protected int sizeOfTweetsHasKeyword = 0;
     /** The number of tweets that has both keyword and geoplaces */
     protected int sizeOfTweetsHasKeywordAndGeo = 0;
 
-    /** The number of replies in total */
+    /** The number of replies in total, reply level */
     protected int sizeOfRepliesInTotal = 0;
     /** The number of replies that has keyword. */
     protected int sizeOfRepliesHasKeyword = 0;
@@ -356,6 +352,68 @@ public class TwitterSearchProbe extends TwitterAbstractProbe {
             TwitterShowOneStatusRecursiveProbe probe = new TwitterShowOneStatusRecursiveProbe(parentId);
             probe.collect(geoCmdLine, null);
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see massey.geospider.probe.AbstractProbe#getSizeOfPostsInTotal()
+     */
+    @Override
+    protected int getSizeOfPostsInTotal() {
+        return sizeOfTweetsInTotal;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see massey.geospider.probe.AbstractProbe#getSizeOfPostsHasKeyword()
+     */
+    @Override
+    protected int getSizeOfPostsHasKeyword() {
+        return sizeOfTweetsHasKeyword;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * massey.geospider.probe.AbstractProbe#getSizeOfPostsHasKeywordAndGeo()
+     */
+    @Override
+    protected int getSizeOfPostsHasKeywordAndGeo() {
+        return sizeOfTweetsHasKeywordAndGeo;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see massey.geospider.probe.AbstractProbe#getSizeOfRepliesInTotal()
+     */
+    @Override
+    protected int getSizeOfRepliesInTotal() {
+        return sizeOfRepliesInTotal;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see massey.geospider.probe.AbstractProbe#getSizeOfRepliesHasKeyword()
+     */
+    @Override
+    protected int getSizeOfRepliesHasKeyword() {
+        return sizeOfRepliesHasKeyword;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * massey.geospider.probe.AbstractProbe#getSizeOfRepliesHasKeywordAndGeo()
+     */
+    @Override
+    protected int getSizeOfRepliesHasKeywordAndGeo() {
+        return sizeOfRepliesHasKeywordAndGeo;
     }
 
 }
