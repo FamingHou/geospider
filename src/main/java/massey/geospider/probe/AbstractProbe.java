@@ -137,7 +137,8 @@ public abstract class AbstractProbe implements Probe {
     protected boolean doProcessOneSearchLogic(GeoCmdLine geoCmdLine) {
         String keyword = geoCmdLine.getKeywordOptionValue();
         StatsPageDAO spDao = new StatsPageDAOImpl();
-        StatsPage statsPage = spDao.selectOneByPageId(keyword);
+        // Task_20180208_1
+        StatsPage statsPage = spDao.selectOneByPageId(createUniquePageId(keyword));
         if (statsPage == null) {
             log.info(keyword + " does not exist in table stats_page. do doOneStatsPageTransaction()");
             // this pageId does not exist in table stats_page.
@@ -146,7 +147,7 @@ public abstract class AbstractProbe implements Probe {
             if (statsPage.isNeedRefresh()) {
                 log.info(keyword + " exists in table stats_page but is_need_refresh=true, do refresh.");
                 // delete the existing one.
-                spDao.deleteByPageId(keyword);
+                spDao.deleteByPageId(createUniquePageId(keyword));
                 insertStatsPage(geoCmdLine);
             } else {
                 // do nothing
@@ -171,14 +172,26 @@ public abstract class AbstractProbe implements Probe {
         StatsPage statsPage = new StatsPage();
         statsPage.setKeyword(keyword);
         statsPage.setVendorType(getVendorType());
-        // set vendorType#keyword as the value of pageId
-        // pageId is a unique column in table stats_page
-        statsPage.setPageId(getVendorType() + "#" + keyword);
+        statsPage.setPageId(createUniquePageId(keyword));
         statsPage.setPageName(keyword);
 
         StatsPageDAO spDao = new StatsPageDAOImpl();
         spDao.insertOne(statsPage);
         return statsPage;
+    }
+
+    /**
+     * Sets vendorType#keyword as the value of pageId pageId is a unique column
+     * in table stats_page.
+     * 
+     * This method should be used when selecting, deleting or updating the
+     * stats_page record with an unique pageId.
+     * 
+     * @param keyword
+     * @return
+     */
+    private String createUniquePageId(String keyword) {
+        return new StringBuilder().append(getVendorType()).append('#').append(keyword).toString();
     }
 
     /**
@@ -199,7 +212,7 @@ public abstract class AbstractProbe implements Probe {
         String keyword = geoCmdLine.getKeywordOptionValue();
         log.info("updateStatsPage:==> keyword = " + keyword);
         StatsPage statsPage = new StatsPage();
-        statsPage.setPageId(keyword);
+        statsPage.setPageId(createUniquePageId(keyword));
 
         statsPage.setSizeOfPostsInTotal(getSizeOfPostsInTotal());
         statsPage.setSizeOfPostsHasKeyword(getSizeOfPostsHasKeyword());
