@@ -171,7 +171,9 @@ public abstract class AbstractProbe implements Probe {
         StatsPage statsPage = new StatsPage();
         statsPage.setKeyword(keyword);
         statsPage.setVendorType(getVendorType());
-        statsPage.setPageId(keyword);
+        // set vendorType#keyword as the value of pageId
+        // pageId is a unique column in table stats_page
+        statsPage.setPageId(getVendorType() + "#" + keyword);
         statsPage.setPageName(keyword);
 
         StatsPageDAO spDao = new StatsPageDAOImpl();
@@ -180,9 +182,10 @@ public abstract class AbstractProbe implements Probe {
     }
 
     /**
-     * Returns the vendor type of social media platform.
+     * A abstract method to get the vendor type of a social media platform,
+     * which is used in template method {@link #insertStatsPage}
      * 
-     * @return
+     * @return social media vendor type
      */
     protected abstract int getVendorType();
 
