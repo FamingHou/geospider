@@ -48,4 +48,14 @@ public class DateHelper {
         }
     }
 
+    /**
+     * Constructs a Timestamp object using a seconds time value.
+     * 
+     * @param epochTime
+     *            seconds since January 1, 1970, 00:00:00 GMT.
+     * @return java.sql.Timestamp
+     */
+    public static Timestamp parse(long epochTime) {
+        return new Timestamp(epochTime*1000);
+    }
 }

@@ -71,12 +71,60 @@ public class JSONHelper {
      *            JSONObject object
      * @param name
      *            attribute name
-     * @return attribute value of the attribute name
+     * @return attribute value of the attribute name with String type
      */
     public static String get(JSONObject obj, String name) {
         if (obj == null || name == null)
             return null;
         return obj.isNull(name) ? null : obj.getString(name);
+    }
+
+    /**
+     * Returns the attribute value of the attribute name of the JSONObject
+     * 
+     * @param obj
+     *            JSONObject
+     * @param name
+     *            attribute name
+     * @return the corresponding attribute value of the name; Long.MIN_VALUE
+     *         will be returned when errors happen
+     */
+    public static long getLong(JSONObject obj, String name) {
+        if (obj == null || name == null)
+            return Long.MIN_VALUE;
+        return obj.isNull(name) ? Long.MIN_VALUE : obj.getLong(name);
+    }
+
+    /**
+     * Returns the attribute value of the attribute name of the JSONObject
+     * 
+     * @param obj
+     *            JSONObject
+     * @param name
+     *            attribute name
+     * @return the corresponding attribute value of the name; Double.MIN_VALUE
+     *         will be returned when errors happen
+     */
+    public static double getDouble(JSONObject obj, String name) {
+        if (obj == null || name == null)
+            return Double.MIN_VALUE;
+        return obj.isNull(name) ? Double.MIN_VALUE : obj.getDouble(name);
+    }
+
+    /**
+     * Returns the attribute value of the attribute name of the JSONObject
+     * 
+     * @param obj
+     *            JSONObject
+     * @param name
+     *            attribute name
+     * @return the corresponding attribute value of the name; Integer.MIN_VALUE
+     *         will be returned when errors happen
+     */
+    public static int getInt(JSONObject obj, String name) {
+        if (obj == null || name == null)
+            return Integer.MIN_VALUE;
+        return obj.isNull(name) ? Integer.MIN_VALUE : obj.getInt(name);
     }
 
     /**

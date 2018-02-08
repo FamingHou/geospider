@@ -38,6 +38,11 @@ public interface GeoConstants {
     public static final String TW_SEARCH_LIMIT_PROP_NAME = "TW_SEARCH_LIMIT";
     public static final String TW_HEADER_AUTHORIZATION_PROP_NAME = "Authorization";
 
+    /**Flickr constants*/
+    public static final String FLICKR_DOMAIN_NAME_PROP_NAME = "FLICKR_DOMAIN_NAME";
+    public static final String FLICKR_API_KEY_PROP_NAME = "FLICKR_API_KEY";
+    public static final String FLICKR_PER_PAGE_PROP_NAME = "FLICKR_PER_PAGE";
+    
     /** GEO_VALIDATION API */
     public static final String GEO_VALIDATION_URL_PROP_NAME = "GEO_VALIDATION_URL";
 
