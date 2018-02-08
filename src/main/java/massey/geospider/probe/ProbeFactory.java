@@ -10,6 +10,7 @@ import massey.geospider.global.GeoConstants;
 import massey.geospider.probe.facebook.FacebookPagesProbe;
 import massey.geospider.probe.facebook.concurrent.FacebookPagesProbeConcurrent;
 import massey.geospider.probe.flickr.FlickrSearchProbe;
+import massey.geospider.probe.flickr.FlickrSearchProbeConcurrent;
 import massey.geospider.probe.twitter.TwitterSearchProbe;
 
 /**
@@ -69,7 +70,10 @@ public class ProbeFactory implements GeoConstants {
             }
             if (vendor.equalsIgnoreCase(FLICKR_OPTION)) {
                 log.info("FlickrProbe is going to be created for Flickr");
-                return new FlickrSearchProbe();
+                if (geoCmdLine.isConcurrentOption())
+                    return new FlickrSearchProbeConcurrent();
+                else
+                    return new FlickrSearchProbe();
             }
         }
         return null;

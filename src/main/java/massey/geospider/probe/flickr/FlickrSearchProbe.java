@@ -287,7 +287,8 @@ public class FlickrSearchProbe extends FlickrAbstractProbe {
      * @param flickrSearchRsp
      * @return
      */
-    private List<FlickrPhoto> doFilterKeyword(final GeoCmdLine geoCmdLine, final FlickrSearchResponse flickrSearchRsp) {
+    protected List<FlickrPhoto> doFilterKeyword(final GeoCmdLine geoCmdLine,
+            final FlickrSearchResponse flickrSearchRsp) {
         // the Flickr search result will always contian the keyword.
         return Arrays.asList(flickrSearchRsp.getPhotoArray());
     }
@@ -298,13 +299,23 @@ public class FlickrSearchProbe extends FlickrAbstractProbe {
      * @param flickrPhotoList
      * @return
      */
-    private List<FlickrPhoto> doFilterGeo(List<FlickrPhoto> flickrPhotoList) {
+    protected List<FlickrPhoto> doFilterGeo(List<FlickrPhoto> flickrPhotoList) {
         List<FlickrPhoto> hasGeoList = new ArrayList<>();
-        for (FlickrPhoto flickrPhoto : flickrPhotoList) {
-            if (super.hasGeoPlace(flickrPhoto.getText()))
-                hasGeoList.add(flickrPhoto);
+        for (FlickrPhoto photo : flickrPhotoList) {
+            doFilterGeoOne(hasGeoList, photo);
         }
         return hasGeoList;
+    }
+
+    /**
+     * If photo has geo places, then appends it into hasGeoList
+     * 
+     * @param hasGeoList
+     * @param photo
+     */
+    protected void doFilterGeoOne(List<FlickrPhoto> hasGeoList, FlickrPhoto photo) {
+        if (super.hasGeoPlace(photo.getText()))
+            hasGeoList.add(photo);
     }
 
     /**
