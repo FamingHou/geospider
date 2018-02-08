@@ -12,6 +12,8 @@ import org.apache.log4j.Logger;
 
 import massey.geospider.boot.GeoCmdLine;
 import massey.geospider.message.flickr.FlickrPhoto;
+import massey.geospider.message.response.GeoResponse;
+import massey.geospider.message.response.flickr.FlickrSearchResponse;
 import massey.geospider.util.GeoExecutorService;
 
 /**
@@ -93,6 +95,41 @@ public class FlickrSearchProbeConcurrent extends FlickrSearchProbe {
         }
     }
 
+    /*
+     * Multi-threading implementation for fetching all comments of each photo in
+     * the list
+     * 
+     * @see
+     * massey.geospider.probe.flickr.FlickrSearchProbe#doPostCollect(massey.
+     * geospider.boot.GeoCmdLine, massey.geospider.message.response.GeoResponse)
+     */
+    @Override
+    protected void doPostCollect(GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
+        log.debug("#doPostCollect()_start");
+        FlickrSearchResponse searchRsp = (FlickrSearchResponse) inputGeoResponse;
+        if (searchRsp != null) {
+            FlickrPhoto[] photoArray = searchRsp.getPhotoArray();
+            int length = photoArray.length;
+            log.info(new StringBuilder().append("<#fetching_comments_of_one_photo> fork <<< "));
+            log.info(new StringBuilder().append("input size: << ").append(length));
+            List<Callable<String>> listIn = new ArrayList<Callable<String>>(length);
+            for (int i = 0; i < length; i++) {
+                FetchingCommentsOfOnePhotoCallable task = new FetchingCommentsOfOnePhotoCallable(this, geoCmdLine,
+                        photoArray[i]);
+                listIn.add(task);
+            }
+            // invokeAll tasks
+            try {
+                List<Future<String>> listOut = GeoExecutorService.getSingle().getService().invokeAll(listIn);
+                log.info(new StringBuilder().append("output size: >> ").append(listOut.size()));
+            } catch (InterruptedException e) {
+                log.error(e, e);
+            }
+            log.info(new StringBuilder().append(">>> join. </#fetching_comments_of_one_photo>"));
+        }
+        log.debug("#doPostCollect()_end.");
+    }
+
     /**
      * The class which defines the unit task of doing FilterFeo for each
      * FlickrPhoto in an list concurrently
@@ -154,4 +191,32 @@ public class FlickrSearchProbeConcurrent extends FlickrSearchProbe {
 
     }
 
+    /**
+     * This class defines the unit task of fetching comments of each photo in a
+     * list concurrently.
+     *
+     */
+    class FetchingCommentsOfOnePhotoCallable implements Callable<String> {
+
+        private final FlickrSearchProbeConcurrent searchProbConc;
+        private final GeoCmdLine geoCmdLine;
+        private final FlickrPhoto photo;
+
+        public FetchingCommentsOfOnePhotoCallable(final FlickrSearchProbeConcurrent searchProbConc,
+                final GeoCmdLine geoCmdLine, final FlickrPhoto photo) {
+            this.searchProbConc = searchProbConc;
+            this.geoCmdLine = geoCmdLine;
+            this.photo = photo;
+        }
+
+        @Override
+        public String call() throws Exception {
+            searchProbConc.doCollectAllCommentsOfOnePhoto(geoCmdLine, photo);
+            String id = photo.getId();
+            log.debug(new StringBuilder().append("Comments of photo id [").append(id)
+                    .append("] were fetched concurrently."));
+            return id; // return photo id for validation.
+        }
+
+    }
 }

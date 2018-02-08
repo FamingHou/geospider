@@ -337,7 +337,7 @@ public class FlickrSearchProbe extends FlickrAbstractProbe {
      * @param geoCmdLine
      * @param photo
      */
-    private void doCollectAllCommentsOfOnePhoto(GeoCmdLine geoCmdLine, FlickrPhoto photo) {
+    protected void doCollectAllCommentsOfOnePhoto(GeoCmdLine geoCmdLine, FlickrPhoto photo) {
         if (photo == null)
             return;
         FlickrShowCommentsOfOnePhotoProbe commentsProbe = new FlickrShowCommentsOfOnePhotoProbe(this, photo.getId());
