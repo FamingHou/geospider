@@ -17,6 +17,7 @@ public class SocialMediaRecord {
     private String vendorRecordId;
     private String vendorRecordParentId;
     private String message;
+    private String tags;
     private int recordType;
     private int vendorType;
     private Timestamp vendorRecordCreatedTime;
@@ -310,6 +311,21 @@ public class SocialMediaRecord {
      */
     public void setHasGeo(boolean isHasGeo) {
         this.isHasGeo = isHasGeo;
+    }
+
+    /**
+     * @return the tags
+     */
+    public String getTags() {
+        return tags;
+    }
+
+    /**
+     * @param tags
+     *            the tags to set
+     */
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 
     /*

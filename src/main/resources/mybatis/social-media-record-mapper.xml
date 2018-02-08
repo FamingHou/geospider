@@ -9,7 +9,7 @@
         INSERT INTO
         social_media_record (keyword, vendor_record_id,
         vendor_record_parent_id,
-        message, record_type, vendor_type,
+        message, tags, record_type, vendor_type,
         vendor_record_created_time,
         place_id, place_name, place_city,
         place_country, place_zip,
@@ -19,6 +19,7 @@
         (#{keyword}, #{vendorRecordId},
         #{vendorRecordParentId},
         #{message},
+        #{tags},
         #{recordType},
         #{vendorType},
         #{vendorRecordCreatedTime},
