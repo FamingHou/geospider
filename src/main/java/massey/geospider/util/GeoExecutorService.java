@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 
+import massey.geospider.boot.GeoCmdLine;
 import massey.geospider.conf.PropReader;
 import massey.geospider.global.GeoConstants;
 
@@ -31,21 +32,62 @@ public class GeoExecutorService {
     /**
      * 
      */
-    private GeoExecutorService() {
+    private GeoExecutorService(GeoCmdLine geoCmdLine) {
         log.info("GeoExecutorService()");
-        THREAD_COUNT = Integer.parseInt(PropReader.get(GeoConstants.THREAD_COUNT_OF_GEO_EXECUTOR_SERVICE_PROP_NAME));
+        THREAD_COUNT = getThreadCount(geoCmdLine);
         executor = Executors.newFixedThreadPool(THREAD_COUNT);
-        log.info("executor was created.");
+        log.info(new StringBuilder().append("The executor with ").append(THREAD_COUNT).append(" threads was created.")
+                .toString());
+    }
+
+    /**
+     * Gets the number of threads for the specific social media vendors
+     * 
+     * 
+     * @param geoCmdLine
+     * @return
+     *         <ul>
+     *         <li>Facebook: the value of
+     *         THREAD_COUNT_OF_GEO_EXECUTOR_SERVICE_FACEBOOK in
+     *         geospider.properties;</li>
+     *         <li>Twitter: the value of
+     *         THREAD_COUNT_OF_GEO_EXECUTOR_SERVICE_TWITTER in
+     *         geospider.properties;</li>
+     *         <li>Flickr: the value of
+     *         THREAD_COUNT_OF_GEO_EXECUTOR_SERVICE_FLICKR in
+     *         geospider.properties;</li>
+     *         <li>Others: the value of THREAD_COUNT_OF_GEO_EXECUTOR_SERVICE in
+     *         geospider.properties;</li>
+     *         <li>100 when any exception occurs</li>
+     *         </ul>
+     */
+    private int getThreadCount(GeoCmdLine geoCmdLine) {
+        try {
+            if (geoCmdLine.isFacebookOption())
+                return Integer
+                        .parseInt(PropReader.get(GeoConstants.THREAD_COUNT_OF_GEO_EXECUTOR_SERVICE_FACEBOOK_PROP_NAME));
+            else if (geoCmdLine.isTwitterOption())
+                return Integer
+                        .parseInt(PropReader.get(GeoConstants.THREAD_COUNT_OF_GEO_EXECUTOR_SERVICE_TWITTER_PROP_NAME));
+            else if (geoCmdLine.isFlickrOption())
+                return Integer
+                        .parseInt(PropReader.get(GeoConstants.THREAD_COUNT_OF_GEO_EXECUTOR_SERVICE_FLICKR_PROP_NAME));
+            else
+                return Integer.parseInt(PropReader.get(GeoConstants.THREAD_COUNT_OF_GEO_EXECUTOR_SERVICE_PROP_NAME));
+        } catch (Exception e) {
+            return THREAD_COUNT;
+        }
+
     }
 
     /**
      * 
      * @return the singleton object
      */
-    public static GeoExecutorService getSingle() {
+    public static GeoExecutorService getSingle(GeoCmdLine geoCmdLine) {
         if (geoExecutorService == null) {
             synchronized (GeoExecutorService.class) {
-                geoExecutorService = new GeoExecutorService();
+                geoExecutorService = new GeoExecutorService(geoCmdLine);
             }
         }
         return geoExecutorService;

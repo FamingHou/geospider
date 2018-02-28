@@ -53,7 +53,7 @@ public class FacebookRepliesProbeConcurrent extends FacebookRepliesProbe {
             }
             // invokeAll tasks
             try {
-                List<Future<String>> listOut = GeoExecutorService.getSingle().getService().invokeAll(listIn);
+                List<Future<String>> listOut = GeoExecutorService.getSingle(geoCmdLine).getService().invokeAll(listIn);
                 log.info(new StringBuilder().append("output size: >> ").append(listOut.size()));
             } catch (InterruptedException e) {
                 log.error(e, e);
@@ -71,7 +71,7 @@ public class FacebookRepliesProbeConcurrent extends FacebookRepliesProbe {
      * util. List)
      */
     @Override
-    protected List<FacebookComment> doFilterGeo(List<FacebookComment> fbReplyList) {
+    protected List<FacebookComment> doFilterGeo(GeoCmdLine geoCmdLine, List<FacebookComment> fbReplyList) {
         List<FacebookComment> hasGeoList = new ArrayList<>();
         if (fbReplyList != null && !fbReplyList.isEmpty()) {
             int length = fbReplyList.size();
@@ -84,7 +84,7 @@ public class FacebookRepliesProbeConcurrent extends FacebookRepliesProbe {
             }
             // invokeAll tasks
             try {
-                List<Future<String>> listOut = GeoExecutorService.getSingle().getService().invokeAll(listIn);
+                List<Future<String>> listOut = GeoExecutorService.getSingle(geoCmdLine).getService().invokeAll(listIn);
                 log.info(new StringBuilder().append("output size: >> ").append(listOut.size()));
             } catch (InterruptedException e) {
                 log.error(e, e);

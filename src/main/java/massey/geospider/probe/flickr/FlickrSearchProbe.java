@@ -275,7 +275,7 @@ public class FlickrSearchProbe extends FlickrAbstractProbe {
         List<FlickrPhoto> photoList = doFilterKeyword(geoCmdLine, flickrSearchRsp);
         this.sizeOfPhotosHasKeyword += photoList.size();
         // filter geoplaces
-        List<FlickrPhoto> hasGeoPhotoList = doFilterGeo(photoList);
+        List<FlickrPhoto> hasGeoPhotoList = doFilterGeo(geoCmdLine, photoList);
         this.sizeOfPhotosHasKeywordAndGeo += hasGeoPhotoList.size();
         return hasGeoPhotoList;
     }
@@ -299,7 +299,7 @@ public class FlickrSearchProbe extends FlickrAbstractProbe {
      * @param flickrPhotoList
      * @return
      */
-    protected List<FlickrPhoto> doFilterGeo(List<FlickrPhoto> flickrPhotoList) {
+    protected List<FlickrPhoto> doFilterGeo(GeoCmdLine geoCmdLine, List<FlickrPhoto> flickrPhotoList) {
         List<FlickrPhoto> hasGeoList = new ArrayList<>();
         for (FlickrPhoto photo : flickrPhotoList) {
             doFilterGeoOne(hasGeoList, photo);

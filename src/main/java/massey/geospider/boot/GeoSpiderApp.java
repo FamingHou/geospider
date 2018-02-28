@@ -35,12 +35,12 @@ public class GeoSpiderApp {
             log.fatal("========================================");
 
             // init services
-            init();
+            init(geoCmdLine);
 
             GeoController.getSingleton().dispatch(geoCmdLine);
 
             // shutdown services
-            shutdown();
+            shutdown(geoCmdLine);
 
             log.fatal("================");
             log.fatal("|| All done!  ||");
@@ -61,17 +61,17 @@ public class GeoSpiderApp {
      * Initiates services before the application is working.
      * 
      */
-    private static void init() {
-        GeoExecutorService.getSingle();
+    private static void init(GeoCmdLine geoCmdLine) {
+        GeoExecutorService.getSingle(geoCmdLine);
     }
 
     /**
      * Stops services before the application exists.
      */
-    private static void shutdown() {
-        GeoExecutorService.getSingle().shutdown();
+    private static void shutdown(GeoCmdLine geoCmdLine) {
+        GeoExecutorService.getSingle(geoCmdLine).shutdown();
         try {
-            GeoExecutorService.getSingle().getService().awaitTermination(5, TimeUnit.MINUTES);
+            GeoExecutorService.getSingle(geoCmdLine).getService().awaitTermination(5, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
             log.error(e, e);
         }

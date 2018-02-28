@@ -266,7 +266,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
         // append hasKeywordCommentList size into SizeOfCommentsHasKeyword
         fbPage.setSizeOfCommentsHasKeyword(fbPage.getSizeOfCommentsHasKeyword() + hasKeywordCommentList.size());
         // filter geoplaces
-        List<FacebookComment> hasKeywordAndGeoCommentList = doFilterGeo(hasKeywordCommentList);
+        List<FacebookComment> hasKeywordAndGeoCommentList = doFilterGeo(geoCmdLine, hasKeywordCommentList);
         // append hasKeywordAndGeoCommentList size into
         // SizeOfCommentsHasKeywordAndGeo
         fbPage.setSizeOfCommentsHasKeywordAndGeo(
@@ -310,7 +310,7 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
      * @param fbCommentList
      * @return
      */
-    protected List<FacebookComment> doFilterGeo(List<FacebookComment> fbCommentList) {
+    protected List<FacebookComment> doFilterGeo(GeoCmdLine geoCmdLine, List<FacebookComment> fbCommentList) {
         List<FacebookComment> hasGeoList = new ArrayList<>();
         for (FacebookComment fbComment : fbCommentList) {
             doFilterGeoOne(hasGeoList, fbComment);

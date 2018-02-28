@@ -56,7 +56,7 @@ public class FacebookPostsProbeConcurrent extends FacebookPostsProbe {
             }
             // invokeAll tasks
             try {
-                List<Future<String>> listOut = GeoExecutorService.getSingle().getService().invokeAll(listIn);
+                List<Future<String>> listOut = GeoExecutorService.getSingle(geoCmdLine).getService().invokeAll(listIn);
                 log.info(new StringBuilder().append("output size: >> ").append(listOut.size()));
             } catch (InterruptedException e) {
                 log.error(e, e);
@@ -74,7 +74,7 @@ public class FacebookPostsProbeConcurrent extends FacebookPostsProbe {
      * List)
      */
     @Override
-    protected List<FacebookPost> doFilterGeo(List<FacebookPost> fbPostList) {
+    protected List<FacebookPost> doFilterGeo(GeoCmdLine geoCmdLine, List<FacebookPost> fbPostList) {
         List<FacebookPost> hasGeoList = new ArrayList<>();
         if (fbPostList != null && !fbPostList.isEmpty()) {
             int length = fbPostList.size();
@@ -87,7 +87,7 @@ public class FacebookPostsProbeConcurrent extends FacebookPostsProbe {
             }
             // invokeAll tasks
             try {
-                List<Future<String>> listOut = GeoExecutorService.getSingle().getService().invokeAll(listIn);
+                List<Future<String>> listOut = GeoExecutorService.getSingle(geoCmdLine).getService().invokeAll(listIn);
                 log.info(new StringBuilder().append("output size: >> ").append(listOut.size()));
             } catch (InterruptedException e) {
                 log.error(e, e);
@@ -124,7 +124,7 @@ public class FacebookPostsProbeConcurrent extends FacebookPostsProbe {
             }
             // invokeAll tasks
             try {
-                List<Future<String>> listOut = GeoExecutorService.getSingle().getService().invokeAll(listIn);
+                List<Future<String>> listOut = GeoExecutorService.getSingle(geoCmdLine).getService().invokeAll(listIn);
                 log.info(new StringBuilder().append("output size: >> ").append(listOut.size()));
             } catch (InterruptedException e) {
                 log.error(e, e);

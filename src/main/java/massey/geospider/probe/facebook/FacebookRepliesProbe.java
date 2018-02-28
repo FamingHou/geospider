@@ -103,7 +103,7 @@ public class FacebookRepliesProbe extends FacebookCommentsProbe {
         // append hasKeywordReplyList size into SizeOfRepliesHasKeyword
         fbPage.setSizeOfRepliesHasKeyword(fbPage.getSizeOfRepliesHasKeyword() + hasKeywordReplyList.size());
         // filter geoplaces
-        List<FacebookComment> hasKeywordAndGeoReplyList = doFilterGeo(hasKeywordReplyList);
+        List<FacebookComment> hasKeywordAndGeoReplyList = doFilterGeo(geoCmdLine, hasKeywordReplyList);
         // append hasKeywordAndGeoReplyList size into
         // SizeOfRepliesHasKeywordAndGeo
         fbPage.setSizeOfRepliesHasKeywordAndGeo(

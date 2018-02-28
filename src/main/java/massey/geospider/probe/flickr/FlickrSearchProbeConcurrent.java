@@ -41,7 +41,7 @@ public class FlickrSearchProbeConcurrent extends FlickrSearchProbe {
      * List)
      */
     @Override
-    protected List<FlickrPhoto> doFilterGeo(List<FlickrPhoto> flickrPhotoList) {
+    protected List<FlickrPhoto> doFilterGeo(GeoCmdLine geoCmdLine, List<FlickrPhoto> flickrPhotoList) {
         List<FlickrPhoto> hasGeoList = new ArrayList<>();
         if (flickrPhotoList != null && !flickrPhotoList.isEmpty()) {
             int length = flickrPhotoList.size();
@@ -55,7 +55,7 @@ public class FlickrSearchProbeConcurrent extends FlickrSearchProbe {
             }
             // invokeAll tasks
             try {
-                List<Future<String>> listOut = GeoExecutorService.getSingle().getService().invokeAll(listIn);
+                List<Future<String>> listOut = GeoExecutorService.getSingle(geoCmdLine).getService().invokeAll(listIn);
                 log.info(new StringBuilder().append("output size: >> ").append(listOut.size()));
             } catch (InterruptedException e) {
                 log.error(e, e);
@@ -86,7 +86,7 @@ public class FlickrSearchProbeConcurrent extends FlickrSearchProbe {
             }
             // invokeAll tasks
             try {
-                List<Future<String>> listOut = GeoExecutorService.getSingle().getService().invokeAll(listIn);
+                List<Future<String>> listOut = GeoExecutorService.getSingle(geoCmdLine).getService().invokeAll(listIn);
                 log.info(new StringBuilder().append("output size: >> ").append(listOut.size()));
             } catch (InterruptedException e) {
                 log.error(e, e);
@@ -120,7 +120,7 @@ public class FlickrSearchProbeConcurrent extends FlickrSearchProbe {
             }
             // invokeAll tasks
             try {
-                List<Future<String>> listOut = GeoExecutorService.getSingle().getService().invokeAll(listIn);
+                List<Future<String>> listOut = GeoExecutorService.getSingle(geoCmdLine).getService().invokeAll(listIn);
                 log.info(new StringBuilder().append("output size: >> ").append(listOut.size()));
             } catch (InterruptedException e) {
                 log.error(e, e);

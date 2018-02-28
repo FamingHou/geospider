@@ -285,7 +285,7 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
         // append the size of hasKeywordPostList into SizeOfPostsHasKeyword
         fbPage.setSizeOfPostsHasKeyword(fbPage.getSizeOfPostsHasKeyword() + hasKeywordPostList.size());
         // filter geoplaces
-        List<FacebookPost> hasKeywordAndGeoPostList = doFilterGeo(hasKeywordPostList);
+        List<FacebookPost> hasKeywordAndGeoPostList = doFilterGeo(geoCmdLine, hasKeywordPostList);
         // append the size of hasKeywordAndGeoPostList into
         // SizeOfPostsHasKeywordAndGeo
         fbPage.setSizeOfPostsHasKeywordAndGeo(
@@ -327,7 +327,7 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
      * @param fbPostList
      * @return
      */
-    protected List<FacebookPost> doFilterGeo(List<FacebookPost> fbPostList) {
+    protected List<FacebookPost> doFilterGeo(GeoCmdLine geoCmdLine, List<FacebookPost> fbPostList) {
         List<FacebookPost> hasGeoList = new ArrayList<>();
         for (FacebookPost fbPost : fbPostList) {
             doFilterGeoOne(hasGeoList, fbPost);

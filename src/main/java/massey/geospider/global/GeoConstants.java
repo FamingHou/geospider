@@ -10,6 +10,9 @@ public interface GeoConstants {
 
     /** # the number of thread count of GeoExecutorService */
     public static final String THREAD_COUNT_OF_GEO_EXECUTOR_SERVICE_PROP_NAME = "THREAD_COUNT_OF_GEO_EXECUTOR_SERVICE";
+    public static final String THREAD_COUNT_OF_GEO_EXECUTOR_SERVICE_FACEBOOK_PROP_NAME = "THREAD_COUNT_OF_GEO_EXECUTOR_SERVICE_FACEBOOK";
+    public static final String THREAD_COUNT_OF_GEO_EXECUTOR_SERVICE_TWITTER_PROP_NAME = "THREAD_COUNT_OF_GEO_EXECUTOR_SERVICE_TWITTER";
+    public static final String THREAD_COUNT_OF_GEO_EXECUTOR_SERVICE_FLICKR_PROP_NAME = "THREAD_COUNT_OF_GEO_EXECUTOR_SERVICE_FLICKR";
 
     /** the option name of keyword for searching usage */
     public static final String KEYWORD_OPTION = "keyword";
