@@ -68,6 +68,14 @@ public class GeoCmdLine implements GeoConstants {
     public boolean isConcurrentOption() {
         return hasOption(ISCONCURRENT_OPTION);
     }
+
+    /**
+     * GS-1001-1
+     * @return
+     */
+    public boolean isOnlyEnglish() {
+        return hasOption(ISONLYENGLISH_OPTION);
+    }
     
     /**
      * 

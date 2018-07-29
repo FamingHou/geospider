@@ -25,6 +25,9 @@ public interface GeoConstants {
     public static final String YOUTUBE_OPTION = "youtube";
     public static final String FLICKR_OPTION = "flickr";
     public static final String ISCONCURRENT_OPTION = "concurrent";
+    //GS-1001-1
+    public static final String ISONLYENGLISH_OPTION = "onlyenglish";
+    
 
     public static final String SEPARATOR = "/";
 

@@ -62,6 +62,10 @@ public class GeoCmdLineBuilder implements GeoConstants {
         Option isConcurrent = Option.builder("c").required(false).hasArg(false).longOpt(ISCONCURRENT_OPTION)
                 .desc("Jobs will be done concurrently.").build();
 
+        //GS-1001-1
+        Option isOnlyEnglish = Option.builder("e").required(false).hasArg(false).longOpt(ISONLYENGLISH_OPTION)
+                .desc("Messages are written in only English.").build();
+
         final Options options = new Options();
         options.addOption(keyword);
         options.addOption(facebook);
@@ -71,6 +75,8 @@ public class GeoCmdLineBuilder implements GeoConstants {
         options.addOption(youtube);
         options.addOption(flickr);
         options.addOption(isConcurrent);
+        //GS-1001-1
+        options.addOption(isOnlyEnglish);
         return options;
     }
 
@@ -129,9 +135,9 @@ public class GeoCmdLineBuilder implements GeoConstants {
         HelpFormatter formatter = new HelpFormatter();
         final String header = "\nPlease choose at least one social media:\n\n";
         final String footer = "\nEXAMPLES\n"
-                + "    The following is how to do a geospider collecting work on Facebook \n"
-                + "    and Twitter filtered by the keyword \"Massey University\".\n"
-                + "        geospider -k \"Massey University\" -ft\n"
+                + "    The following command shows how to collect messages written in only English on Facebook and "
+                + "Twitter filtered by the keyword \"Massey University\" concurrently.\n"
+                + "        geospider -e -c -k \"Massey University\" -ft\n"
                 + "\nPlease report issues to faming.hou@gmail.com\n\n";
         formatter.printHelp("geospider", header, options, footer, true);
     }
@@ -158,6 +164,8 @@ public class GeoCmdLineBuilder implements GeoConstants {
             log.info("Youtube is " + geoCmdLine.isYoutubeOption());
             log.info("Flickr is " + geoCmdLine.isFlickrOption());
             log.info("isConcurrent is " + geoCmdLine.isConcurrentOption());
+            //GS-1001-1
+            log.info("isOnlyEnglish is " +geoCmdLine.isOnlyEnglish());
             return geoCmdLine;
         } else {
             printUsage(options);
