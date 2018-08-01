@@ -5,6 +5,8 @@ package massey.geospider.probe.facebook;
 
 import java.net.URISyntaxException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.log4j.Logger;
@@ -265,9 +267,34 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
     private FacebookPagesResponse createFacebookPagesResponse(String responseString) {
         JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
         FacebookPage[] dataArray = parseDataArray(jsonObj);
+        // GS-1001-3
+        FacebookPage[] lanFilteredArray = filterByLan(dataArray);
         FacebookError error = parseError(jsonObj);
         FacebookPaging paging = parsePaging(jsonObj);
-        return new FacebookPagesResponse(dataArray, error, paging);
+        return new FacebookPagesResponse(lanFilteredArray, error, paging);
+    }
+
+    /**
+     * GS-1001-3:
+     * 
+     * Filters messages by language. If the English Only switch is on, messages
+     * which are not written in English will be ignored.
+     * 
+     * @param dataArray
+     * @return
+     */
+    protected FacebookPage[] filterByLan(FacebookPage[] dataArray) {
+        if (geoCmdLine != null && geoCmdLine.isOnlyEnglish()) {
+            List<FacebookPage> dataList = new ArrayList<>();
+            for (FacebookPage data : dataArray) {
+                if (isEnglish(data.getName())) {
+                    dataList.add(data);
+                }
+            }
+            return dataList.toArray(new FacebookPage[dataList.size()]);
+        } else {
+            return dataArray;
+        }
     }
 
     /**

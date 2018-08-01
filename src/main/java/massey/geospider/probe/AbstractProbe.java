@@ -13,6 +13,7 @@ import massey.geospider.api.http.HttpHelper;
 import massey.geospider.boot.GeoCmdLine;
 import massey.geospider.conf.PropReader;
 import massey.geospider.global.GeoConstants;
+import massey.geospider.language.LangDetector;
 import massey.geospider.message.response.GeoResponse;
 import massey.geospider.persistence.dao.StatsPageDAO;
 import massey.geospider.persistence.dao.StatsPageDAOImpl;
@@ -29,7 +30,8 @@ import massey.geospider.util.JSONHelper;
 public abstract class AbstractProbe implements Probe {
 
     private static final Logger log = Logger.getLogger(AbstractProbe.class);
-
+    protected GeoCmdLine geoCmdLine;
+    
     /**
      * Does preparation work for this collecting task
      * 
@@ -41,6 +43,8 @@ public abstract class AbstractProbe implements Probe {
      */
     protected boolean doPreCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
         log.debug("doPreCollect");
+        //GS-1001-3 parameters which are used when filtering response data array.
+        this.geoCmdLine = geoCmdLine;
         return true;
     }
 
@@ -112,6 +116,16 @@ public abstract class AbstractProbe implements Probe {
             log.error(e, e);
         }
         return false;
+    }
+
+    /**
+     * Is the msg written in English or not?
+     * 
+     * @param msg
+     * @return true - the text is written in English; false - otherwise
+     */
+    protected boolean isEnglish(String msg) {
+        return LangDetector.isEnglish(msg);
     }
 
     /**
