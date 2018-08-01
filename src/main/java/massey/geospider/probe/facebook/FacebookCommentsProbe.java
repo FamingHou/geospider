@@ -183,9 +183,37 @@ public class FacebookCommentsProbe extends FacebookAbstractProbe implements GeoC
     private FacebookCommentsResponse createFacebookCommentsResponse(String responseString) {
         JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
         FacebookComment[] dataArray = parseData(jsonObj);
+        //GS-1001-6
+        FacebookComment[] lanFilteredArray = filterByLan(dataArray);
         FacebookError error = parseError(jsonObj);
         FacebookPaging paging = parsePaging(jsonObj);
-        return new FacebookCommentsResponse(dataArray, error, paging);
+        return new FacebookCommentsResponse(lanFilteredArray, error, paging);
+    }
+
+    /**
+     * GS-1001-6:
+     * 
+     * Filters messages by language. If the English Only switch is on, messages
+     * which are not written in English will be ignored.
+     * 
+     * FB: If the message of a comment is not written in English, all sub
+     * replies will not be fetched.
+     * 
+     * @param dataArray
+     * @return
+     */
+    protected FacebookComment[] filterByLan(FacebookComment[] dataArray) {
+        if (geoCmdLine != null && geoCmdLine.isOnlyEnglish()) {
+            List<FacebookComment> dataList = new ArrayList<>();
+            for (FacebookComment data : dataArray) {
+                if (isEnglish(data.getMessage())) {
+                    dataList.add(data);
+                }
+            }
+            return dataList.toArray(new FacebookComment[dataList.size()]);
+        } else {
+            return dataArray;
+        }
     }
 
     /**
