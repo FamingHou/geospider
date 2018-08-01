@@ -191,9 +191,37 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
     private FacebookPostsResponse createFacebookPostsResponse(String responseString) {
         JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
         FacebookPost[] dataArray = parseDataArray(jsonObj);
+        // GS-1001-5
+        FacebookPost[] lanFilteredArray = filterByLan(dataArray);
         FacebookError error = parseError(jsonObj);
         FacebookPaging paging = parsePaging(jsonObj);
-        return new FacebookPostsResponse(dataArray, error, paging);
+        return new FacebookPostsResponse(lanFilteredArray, error, paging);
+    }
+
+    /**
+     * GS-1001-5:
+     * 
+     * Filters messages by language. If the English Only switch is on, messages
+     * which are not written in English will be ignored.
+     * 
+     * FB: If the message of a post is not written in English, all sub comments
+     * and replies will not be fetched.
+     * 
+     * @param dataArray
+     * @return
+     */
+    protected FacebookPost[] filterByLan(FacebookPost[] dataArray) {
+        if (geoCmdLine != null && geoCmdLine.isOnlyEnglish()) {
+            List<FacebookPost> dataList = new ArrayList<>();
+            for (FacebookPost data : dataArray) {
+                if (isEnglish(data.getMessage())) {
+                    dataList.add(data);
+                }
+            }
+            return dataList.toArray(new FacebookPost[dataList.size()]);
+        } else {
+            return dataArray;
+        }
     }
 
     /**
@@ -277,7 +305,8 @@ public class FacebookPostsProbe extends FacebookAbstractProbe implements GeoCons
      */
     private List<FacebookPost> doFilterPost(final GeoCmdLine geoCmdLine, final FacebookPostsResponse fbPostsRsp) {
         if (fbPostsRsp != null && fbPostsRsp.getDataArray() != null) {
-            // append the size of fbPostsRsp.getDataArray() into SizeOfPostsInTotal
+            // append the size of fbPostsRsp.getDataArray() into
+            // SizeOfPostsInTotal
             fbPage.setSizeOfPostsInTotal(fbPage.getSizeOfPostsInTotal() + fbPostsRsp.getDataArray().length);
         }
         // filter keyword
