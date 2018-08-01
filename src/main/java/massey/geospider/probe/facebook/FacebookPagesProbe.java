@@ -267,7 +267,7 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
     private FacebookPagesResponse createFacebookPagesResponse(String responseString) {
         JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
         FacebookPage[] dataArray = parseDataArray(jsonObj);
-        // GS-1001-3
+        // GS-1001-4
         FacebookPage[] lanFilteredArray = filterByLan(dataArray);
         FacebookError error = parseError(jsonObj);
         FacebookPaging paging = parsePaging(jsonObj);
@@ -275,7 +275,7 @@ public class FacebookPagesProbe extends FacebookAbstractProbe implements GeoCons
     }
 
     /**
-     * GS-1001-3:
+     * GS-1001-4:
      * 
      * Filters messages by language. If the English Only switch is on, messages
      * which are not written in English will be ignored.
