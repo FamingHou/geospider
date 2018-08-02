@@ -66,6 +66,8 @@ public class FlickrSearchProbe extends FlickrAbstractProbe {
      */
     @Override
     protected boolean doPreCollect(GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
+        // GS-1001-11
+        this.geoCmdLine = geoCmdLine;
         log.info("Fetching all photos filtered by the keyword [" + geoCmdLine.getKeywordOptionValue() + "]");
         if (!isRecursive) {
             // this method is called for the first time.
@@ -202,10 +204,35 @@ public class FlickrSearchProbe extends FlickrAbstractProbe {
         JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
         JSONObject photosObj = JSONHelper.getJSONObj(jsonObj, "photos");
         FlickrPhoto[] photos = parsePhotos(photosObj);
+        // GS-1001-11
+        FlickrPhoto[] lanFilteredPhotos = filterByLan(photos);
         int page = JSONHelper.getInt(photosObj, "page");
         int pages = JSONHelper.getInt(photosObj, "pages");
         int total = JSONHelper.getInt(photosObj, "total");
-        return new FlickrSearchResponse(photos, page, pages, total);
+        return new FlickrSearchResponse(lanFilteredPhotos, page, pages, total);
+    }
+
+    /**
+     * GS-1001-11:
+     * 
+     * Flickr: If the English Only switch is on, ignore all messages which are
+     * not written in English.
+     * 
+     * @param dataArray
+     * @return
+     */
+    protected FlickrPhoto[] filterByLan(FlickrPhoto[] dataArray) {
+        if (geoCmdLine != null && geoCmdLine.isOnlyEnglish()) {
+            List<FlickrPhoto> dataList = new ArrayList<>();
+            for (FlickrPhoto data : dataArray) {
+                if (isEnglish(data.getText())) {
+                    dataList.add(data);
+                }
+            }
+            return dataList.toArray(new FlickrPhoto[dataList.size()]);
+        } else {
+            return dataArray;
+        }
     }
 
     /**
