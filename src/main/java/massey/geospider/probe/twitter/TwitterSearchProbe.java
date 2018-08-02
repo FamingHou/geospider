@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import massey.geospider.api.http.HttpHelper;
 import massey.geospider.boot.GeoCmdLine;
 import massey.geospider.conf.PropReader;
+import massey.geospider.message.facebook.FacebookComment;
 import massey.geospider.message.response.GeoResponse;
 import massey.geospider.message.response.twitter.TwitterSearchResponse;
 import massey.geospider.message.twitter.TwitterSearchMetaData;
@@ -61,6 +62,8 @@ public class TwitterSearchProbe extends TwitterAbstractProbe {
 
     @Override
     protected boolean doPreCollect(final GeoCmdLine geoCmdLine, GeoResponse inputGeoResponse) {
+        //GS-1001-10
+        this.geoCmdLine = geoCmdLine;
         log.info("Fetching all tweets&replies filtered by the keyword [" + geoCmdLine.getKeywordOptionValue() + "]");
         if (!isRecursive) {
             // this method is called for the first time.
@@ -204,8 +207,33 @@ public class TwitterSearchProbe extends TwitterAbstractProbe {
     private TwitterSearchResponse createTwitterSearchResponse(String responseString) {
         JSONObject jsonObj = JSONHelper.createAJSONObject(responseString);
         TwitterStatus[] tweets = parseStatuses(jsonObj);
+        // GS-1001-10
+        TwitterStatus[] lanFilteredTweets = filterByLan(tweets);
         TwitterSearchMetaData meta = parseSearchMetaData(jsonObj);
-        return new TwitterSearchResponse(tweets, meta);
+        return new TwitterSearchResponse(lanFilteredTweets, meta);
+    }
+
+    /**
+     * GS-1001-10:
+     * 
+     * Twitter: If the English Only switch is on, ignore all messages which are
+     * not written in English.
+     * 
+     * @param dataArray
+     * @return
+     */
+    protected TwitterStatus[] filterByLan(TwitterStatus[] dataArray) {
+        if (geoCmdLine != null && geoCmdLine.isOnlyEnglish()) {
+            List<TwitterStatus> dataList = new ArrayList<>();
+            for (TwitterStatus data : dataArray) {
+                if (isEnglish(data.getText())) {
+                    dataList.add(data);
+                }
+            }
+            return dataList.toArray(new TwitterStatus[dataList.size()]);
+        } else {
+            return dataArray;
+        }
     }
 
     /**
